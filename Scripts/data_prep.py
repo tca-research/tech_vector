@@ -145,7 +145,7 @@ jobs_tech['Date'] = pd.to_datetime(jobs_tech['Date'], format='%b-%y')
 jobs_tech['Month Year'] = jobs_tech['Date'].dt.strftime('%B %Y')
 jobs_tech.pivot(index = 'Date', columns = 'Industry', values = 'Number').to_csv("Data/output/dashboard/jobs_in_tech_companies_WIDE.csv", index = False)
 
-## SALARY DISTRICTUION BY TECH ROLES & CAREER STAGE
+## Remuneration DISTRICTUION BY TECH ROLES & CAREER STAGE
 
 levels_fyi_salaries_df['Salary'] = levels_fyi_salaries_df['Salary'].apply(lambda x: x * 1000 if 10 <= x < 100 else x)
 salary_levels_summary = levels_fyi_salaries_df[(levels_fyi_salaries_df['Metric'] == "Summary")]
@@ -204,7 +204,7 @@ percentage_columns = [
     'Lower quartile % women'
 ]
 
-# Clean and convert salary and percentage columns to a numeric format
+# Clean and convert Remuneration and percentage columns to a numeric format
 # This removes '$', ',', '%' and handles 'NC' values
 for col in salary_columns:
     wgea_salary_df[col] = wgea_salary_df[col].replace({'\$': '', ',': ''}, regex=True).astype(float)
@@ -218,8 +218,8 @@ for col in percentage_columns:
 
 # Define the other sectors of interest
 other_sectors_df = wgea_salary_df
+other_sectors_df['Industry (ANZSIC Division)'] = 'Australian Average'
 
-# Group by industry division and calculate the average salary and women percentage
 sector_comparison_df = other_sectors_df.groupby('Industry (ANZSIC Division)').agg(
     Avg_Total_Remuneration=('Total workforce - average total remuneration ($)*', 'mean'),
     Avg_Women_Percentage=('Total workforce % women', 'mean')
@@ -242,7 +242,7 @@ tech_avg_women = tech_council_wgea_salary_df['Total workforce % women'].mean()
 tech_row = pd.DataFrame([['TCA Member Companies', tech_avg_remuneration, tech_avg_women]], 
                         columns=['Industry (ANZSIC Division)', 'Avg_Total_Remuneration', 'Avg_Women_Percentage'])
 
-### Cross-Sector Comparison (Average Salary & Gender Representation) 
+### Cross-Sector Comparison (Average Remuneration & Gender Representation) 
 
 final_comparison_df = pd.concat([sector_comparison_df, direct_tech_sector_df, tech_row], ignore_index=True)
 final_comparison_df['Avg_Total_Remuneration'] = final_comparison_df['Avg_Total_Remuneration'].apply(
@@ -264,7 +264,7 @@ final_comparison_df.to_csv("Data/output/dashboard/salaries_comparision.csv", ind
 
 ## PAY QUARTILES
 
-# Calculate average WGEA quartile salaries for Tech Council members
+# Calculate average WGEA quartile Remuneration for Tech Council members
 avg_wgea_quartile_salaries = {
     'Q4': tech_council_wgea_salary_df['Upper quartile - average total remuneration ($)'].mean(),
     'Q3': tech_council_wgea_salary_df['Upper-middle quartile - average total remuneration ($)'].mean(),
@@ -278,12 +278,12 @@ avg_wgea_total_salaries = {
 for quartile, salary in avg_wgea_quartile_salaries.items():
     f"  - {quartile}: ${salary:,.0f}"
 
-# Filter Levels.FYI for all percentile and median salary data
+# Filter Levels.FYI for all percentile and median Remuneration data
 levels_percentile_df = levels_fyi_salaries_df[(levels_fyi_salaries_df['Metric'] == 'Summary') & (levels_fyi_salaries_df['Measurement'] == 'Percentile')].copy()
 levels_percentile_df['Level'] = levels_percentile_df['Level'].str.strip()
 
 # Find specific roles for a more comprehensive narrative
-def find_example_roles(df, salary_min, salary_max):
+def find_example_roles(df, Remuneration_min, Remuneration_max):
     examples = []
     # Prioritize well-known technical and non-technical roles
     prioritized_roles = [
@@ -295,8 +295,8 @@ def find_example_roles(df, salary_min, salary_max):
     ]
     for role in prioritized_roles:
         roles_df = df[(df['Job Title'] == role) & 
-                      (df['Salary'] >= salary_min) & 
-                      (df['Salary'] <= salary_max)]
+                      (df['Salary'] >= Remuneration_min) & 
+                      (df['Salary'] <= Remuneration_max)]
         if not roles_df.empty:
             for _, row in roles_df.head(1).iterrows():
                 examples.append(f"{row['Label']} {row['Level']} {row['Job Title']}")
@@ -306,7 +306,7 @@ levels_percentile_df = levels_fyi_salaries_df[(levels_fyi_salaries_df['Metric'] 
                                 (levels_fyi_salaries_df['Measurement'] == 'Percentile') &
                                 (levels_fyi_salaries_df['Level'] != 'All')].copy()
 
-# Find example roles for each quartile based on salary ranges
+# Find example roles for each quartile based on Remuneration ranges
 q1_examples = find_example_roles(levels_percentile_df, 0, avg_wgea_quartile_salaries['Q1'])
 q2_examples = find_example_roles(levels_percentile_df, avg_wgea_quartile_salaries['Q1'], avg_wgea_quartile_salaries['Q2'])
 q3_examples = find_example_roles(levels_percentile_df, avg_wgea_quartile_salaries['Q2'], avg_wgea_quartile_salaries['Q3'])
@@ -320,7 +320,7 @@ picked_4 = random.sample(q4_examples, 4)
 # Create the final conceptual mapping DataFrame with a more narrative style
 mapping_data = pd.DataFrame({
     'WGEA Quartile': [f'Q{i} ({"Lower" if i == 1 else "Lower-middle" if i == 2 else "Upper-middle" if i == 3 else "Upper"} quartile)' for i in range(1, 5)],
-    'TCA Member Salaries - Average': [f"${avg_wgea_quartile_salaries[f'Q{i}']:,.0f}" for i in range(1, 5)],
+    'TCA Member Remuneration - Average': [f"${avg_wgea_quartile_salaries[f'Q{i}']:,.0f}" for i in range(1, 5)],
     'Gender - Average': [
         f"{tech_council_wgea_salary_df['Lower quartile % women'].mean():.1%} women, {1 - tech_council_wgea_salary_df['Lower quartile % women'].mean():.1%} men",
         f"{tech_council_wgea_salary_df['Lower-middle quartile % women'].mean():.1%} women, {1 - tech_council_wgea_salary_df['Lower-middle quartile % women'].mean():.1%} men",
@@ -352,7 +352,7 @@ mapping_data['TCA Members - Example Roles'] = mapping_data['TCA Members - Exampl
 
 mapping_data_total= pd.DataFrame({
     'WGEA Quartile': ['Total workforce'],
-    'TCA Member Salaries - Average': [f"${avg_wgea_total_salaries['Total workforce']:,.0f}"],
+    'TCA Member Remuneration - Average': [f"${avg_wgea_total_salaries['Total workforce']:,.0f}"],
     'Gender - Average': [
         f"{tech_council_wgea_salary_df['Total workforce % women'].mean():.1%} women, {1 - tech_council_wgea_salary_df['Total workforce % women'].mean():.1%} men"
     ],
@@ -398,11 +398,11 @@ direct_tech_avg_long['Measure'] = direct_tech_avg_long['Metric'].str.replace(r'^
 direct_tech_avg_long = direct_tech_avg_long.drop(columns='Metric')
 direct_tech_avg = direct_tech_avg_long.pivot(index = ['Sector','Group'], columns='Measure', values = 'Value').reset_index()
 direct_tech_avg['WGEA Quartile'] = direct_tech_avg['Group']
-direct_tech_avg['WGEA Avg Salary (avg across group)'] = direct_tech_avg['average total remuneration ($)']
+direct_tech_avg['WGEA Avg Remuneration (avg across group)'] = direct_tech_avg['average total remuneration ($)']
 direct_tech_avg['Gender Split (avg across group)'] = direct_tech_avg['% women']
 
 
-direct_tech_avg = direct_tech_avg[['WGEA Quartile', 'WGEA Avg Salary (avg across group)', 'Gender Split (avg across group)']]
+direct_tech_avg = direct_tech_avg[['WGEA Quartile', 'WGEA Avg Remuneration (avg across group)', 'Gender Split (avg across group)']]
 
 quartile_map = {
     "Lower quartile": "Q1 (Lower quartile)",
@@ -413,7 +413,7 @@ quartile_map = {
 }
 
 direct_tech_avg['WGEA Quartile'] = direct_tech_avg['WGEA Quartile'].map(quartile_map)
-direct_tech_avg['Direct Tech Salary - Average'] = direct_tech_avg['WGEA Avg Salary (avg across group)'].apply(lambda x: f"${x:,.0f}")
+direct_tech_avg['Direct Tech Remuneration - Average'] = direct_tech_avg['WGEA Avg Remuneration (avg across group)'].apply(lambda x: f"${x:,.0f}")
 
 direct_tech_avg['Direct Tech Gender - Average'] = direct_tech_avg['Gender Split (avg across group)'].apply(
     lambda x: f"{x:.1%} women, {1 - x:.1%} men"
@@ -425,7 +425,7 @@ direct_tech_avg['Direct Tech - % Women - Average'] = direct_tech_avg['Gender Spl
 direct_tech_avg['Direct Tech - % Men - Average'] = direct_tech_avg['Gender Split (avg across group)'].apply(
     lambda x: f"{100-(x*100):.3}"
 )
-direct_tech_avg.drop(columns=['WGEA Avg Salary (avg across group)', 'Gender Split (avg across group)'], inplace=True)
+direct_tech_avg.drop(columns=['WGEA Avg Remuneration (avg across group)', 'Gender Split (avg across group)'], inplace=True)
 quartile_order = ["Q1 (Lower quartile)", "Q2 (Lower-middle quartile)", 
                   "Q3 (Upper-middle quartile)", "Q4 (Upper quartile)"]
 total_row = direct_tech_avg[direct_tech_avg['WGEA Quartile'] == "Total workforce"]
@@ -434,7 +434,74 @@ quartile_rows['WGEA Quartile'] = pd.Categorical(quartile_rows['WGEA Quartile'], 
 quartile_rows = quartile_rows.sort_values('WGEA Quartile')
 direct_tech_avg_sorted = pd.concat([quartile_rows, total_row], ignore_index=True)
 
-mapping_data = mapping_data.merge(direct_tech_avg_sorted, left_on="WGEA Quartile", right_on = "WGEA Quartile")
+all_workers_sector = wgea_salary_df
+all_workers_sector['Sector'] = 'All Australian Companies Who Report to WGEA'
+all_workers_avg = all_workers_sector.groupby('Sector').mean(numeric_only=True).reset_index()[[
+    'Sector', 
+    'Total workforce % women', 
+    'Upper quartile % women', 
+    'Upper-middle quartile % women',
+    'Lower-middle quartile % women', 'Lower quartile % women',
+    'Total workforce - average total remuneration ($)*',
+    'Upper quartile - average total remuneration ($)',
+    'Upper-middle quartile - average total remuneration ($)',
+    'Lower-middle quartile  - average total remuneration ($)',
+    'Lower quartile - average total remuneration ($)']]
+
+all_workers_avg_long = all_workers_avg.melt(
+    id_vars="Sector",
+    var_name="Metric",
+    value_name="Value"
+)
+
+all_workers_avg_long["Metric"] = all_workers_avg_long["Metric"].str.replace("*", "", regex=False)
+
+# Extract group (everything before "% women" or "average total remuneration")
+all_workers_avg_long['Group'] = all_workers_avg_long['Metric'].str.extract(r'^(.*?(?:workforce|quartile))', expand=False).str.strip()
+
+# Extract measure (everything after the group)
+all_workers_avg_long['Measure'] = all_workers_avg_long['Metric'].str.replace(r'^.*?(workforce|quartile)\s*-?\s*', '', regex=True).str.strip()
+# Drop original Metric if desired
+all_workers_avg_long = all_workers_avg_long.drop(columns='Metric')
+all_workers_avg = all_workers_avg_long.pivot(index = ['Sector','Group'], columns='Measure', values = 'Value').reset_index()
+all_workers_avg['WGEA Quartile'] = all_workers_avg['Group']
+all_workers_avg['WGEA Avg Remuneration (avg across group)'] = all_workers_avg['average total remuneration ($)']
+all_workers_avg['Gender Split (avg across group)'] = all_workers_avg['% women']
+
+
+all_workers_avg = all_workers_avg[['WGEA Quartile', 'WGEA Avg Remuneration (avg across group)', 'Gender Split (avg across group)']]
+
+quartile_map = {
+    "Lower quartile": "Q1 (Lower quartile)",
+    "Lower-middle quartile": "Q2 (Lower-middle quartile)",
+    "Upper-middle quartile": "Q3 (Upper-middle quartile)",
+    "Upper quartile": "Q4 (Upper quartile)",
+    "Total workforce": "Total workforce"
+}
+
+all_workers_avg['WGEA Quartile'] = all_workers_avg['WGEA Quartile'].map(quartile_map)
+all_workers_avg['Australian Average Remuneration - Average'] = all_workers_avg['WGEA Avg Remuneration (avg across group)'].apply(lambda x: f"${x:,.0f}")
+
+all_workers_avg['Australian Average Gender - Average'] = all_workers_avg['Gender Split (avg across group)'].apply(
+    lambda x: f"{x:.1%} women, {1 - x:.1%} men"
+)
+all_workers_avg['Australian Average - % Women - Average'] = all_workers_avg['Gender Split (avg across group)'].apply(
+    lambda x: f"{x*100:.3}"
+)
+
+all_workers_avg['Australian Average - % Men - Average'] = all_workers_avg['Gender Split (avg across group)'].apply(
+    lambda x: f"{100-(x*100):.3}"
+)
+all_workers_avg.drop(columns=['WGEA Avg Remuneration (avg across group)', 'Gender Split (avg across group)'], inplace=True)
+quartile_order = ["Q1 (Lower quartile)", "Q2 (Lower-middle quartile)", 
+                  "Q3 (Upper-middle quartile)", "Q4 (Upper quartile)"]
+total_row = all_workers_avg[all_workers_avg['WGEA Quartile'] == "Total workforce"]
+quartile_rows = all_workers_avg[all_workers_avg['WGEA Quartile'] != "Total workforce"]
+quartile_rows['WGEA Quartile'] = pd.Categorical(quartile_rows['WGEA Quartile'], categories=quartile_order, ordered=True)
+quartile_rows = quartile_rows.sort_values('WGEA Quartile')
+all_workers_avg_sorted = pd.concat([quartile_rows, total_row], ignore_index=True)
+
+mapping_data = mapping_data.merge(direct_tech_avg_sorted, left_on="WGEA Quartile", right_on = "WGEA Quartile").merge(all_workers_avg_sorted, left_on="WGEA Quartile", right_on = "WGEA Quartile")
 
 mapping_data.to_csv('Data/output/dashboard/tech_pay_quartiles.csv', index = False)
 
@@ -450,10 +517,7 @@ wgea_workforce_composition.loc[wgea_workforce_composition['manager_category'] ==
 
 wgea_workforce_composition['occupation'] = wgea_workforce_composition['occupation'].replace({'Key Management Personnel': 'Other managers', 'Overseas Reporting Managers': 'Other managers'})
 
-other_sectors_comp = wgea_workforce_composition[wgea_workforce_composition['anzsic_division'].isin([
-    'Financial and Insurance Services',
-    'Professional, Scientific and Technical Services'
-])].copy()
+other_sectors_comp = wgea_workforce_composition
 
 direct_tech_sector_comp =  wgea_workforce_composition[wgea_workforce_composition['anzsic_class'].isin(anzsic_class)]
 
@@ -461,7 +525,7 @@ wgea_workforce_composition['employer_abn'] = wgea_workforce_composition['employe
 tca_sector_comp = wgea_workforce_composition[wgea_workforce_composition['employer_abn'].isin(abn_df['ABN'])].copy()
 
 tca_sector_comp['Sector'] = 'TCA Member Companies'
-other_sectors_comp['Sector'] = wgea_workforce_composition['anzsic_division']
+other_sectors_comp['Sector'] = 'Australian Average'
 direct_tech_sector_comp['Sector'] = 'Direct Tech Sector Companies'
 
 comp_sum = pd.concat([tca_sector_comp, direct_tech_sector_comp, other_sectors_comp])[['Sector', 'occupation', 'gender', 'n_employees']].groupby(['Sector', 'occupation', 'gender']).sum(numeric_only=True)
@@ -471,12 +535,12 @@ comp_sum['pct'] = round((
     comp_sum.groupby(['Sector', 'occupation'])['n_employees'].transform('sum')
 ) * 100, 1)
 
-comp_pct = comp_sum.reset_index().pivot(columns='gender', values='pct', index=['Sector', 'occupation']).reset_index()
+comp_pct = comp_sum.reset_index().pivot(columns='gender', values='pct', index=['Sector', 'occupation']).reset_index().sort_values(by=['Sector'], ascending=False)
 comp_pct.to_csv('Data/output/dashboard/workplace_leadership_comp_pct.csv', index = False)
 
 ## WOMEN PROMOTION RATES BY MANAGERIAL LEVEL & SECTOR
 
-wgea_mgmt_promotions = wgea_mgmt[wgea_mgmt['movement_type'] == 'Promotions']
+wgea_mgmt_promotions = wgea_mgmt[wgea_mgmt['movement_type'].isin(['Promotions', 'Internal appointments', 'External appointments'])]
 
 other_sectors_mgmt_promotions = wgea_mgmt_promotions
 
@@ -489,16 +553,16 @@ tca_sector_mgmt_promotions['Sector'] = 'TCA Members Companies'
 other_sectors_mgmt_promotions['Sector'] = 'Australian Average'
 direct_tech_sector_mgmt_promotions['Sector'] = 'Direct Tech Sector Companies'
 
-promos_sum = pd.concat([tca_sector_mgmt_promotions, direct_tech_sector_mgmt_promotions, other_sectors_mgmt_promotions])[['Sector', 'manager_type', 'gender', 'n_employees']].groupby(['Sector', 'manager_type', 'gender']).sum(numeric_only=True)
+promos_sum = pd.concat([tca_sector_mgmt_promotions, direct_tech_sector_mgmt_promotions, other_sectors_mgmt_promotions])[['Sector', 'movement_type', 'manager_type', 'gender', 'n_employees']].groupby(['Sector', 'movement_type', 'manager_type', 'gender']).sum(numeric_only=True)
 
 promos_sum['pct'] = round((
     promos_sum['n_employees'] /
-    promos_sum.groupby(['Sector', 'manager_type'])['n_employees'].transform('sum')
+    promos_sum.groupby(['Sector', 'movement_type', 'manager_type'])['n_employees'].transform('sum')
 ) * 100, 1)
 
-promos_pct = promos_sum.reset_index().pivot(columns='gender', values='pct', index=['Sector', 'manager_type']).reset_index()
+promos_pct = promos_sum.reset_index().pivot(columns='gender', values='pct', index=['Sector', 'movement_type', 'manager_type']).reset_index().sort_values(by=['Sector', 'movement_type'], ascending=False)
 promos_pct.to_csv('Data/output/dashboard/mgmt_promotions_pct.csv', index = False)
-promos_n = promos_sum.reset_index().pivot(columns='gender', values='n_employees', index=['Sector', 'manager_type']).reset_index()
+promos_n = promos_sum.reset_index().pivot(columns='gender', values='n_employees', index=['Sector', 'movement_type', 'manager_type']).reset_index().sort_values(by=['Sector', 'movement_type'], ascending=False)
 promos_n.to_csv('Data/output/dashboard/mgmt_promotions_n.csv', index = False)
 
 # INTERNATIONAL BENCHMARKING
@@ -551,7 +615,19 @@ ai_total_ranking["region"] = ai_total_ranking["country"].map(region_map)
 cols = list(ai_total_ranking.columns)
 cols.insert(1, cols.pop(cols.index('Total')))
 ai_total_ranking = ai_total_ranking[cols]
-ai_total_ranking.to_csv('Data/output/dashboard/global_ai_rankings.csv', index = False)
+
+
+ai_total_ranking_top_5 = (
+    ai_total_ranking.groupby("region", group_keys=False)
+      .apply(lambda x: x.nlargest(5, "Total"))
+)
+
+ai_total_ranking_top_5 = pd.concat([
+    ai_total_ranking_top_5,
+    ai_total_ranking[ai_total_ranking["country"] == "Australia"]
+]).drop_duplicates()
+
+ai_total_ranking_top_5.to_csv('Data/output/dashboard/global_ai_rankings.csv', index = False)
 
 ## R&D
 
@@ -599,7 +675,18 @@ region_map = {
 
 rd["Region"] = rd["Category"].map(region_map)
 
-rd.to_csv('Data/output/dashboard/global_r_and_d_rankings.csv', index = False)
+rd_top_5= (
+    rd.groupby("Region", group_keys=False)
+      .apply(lambda x: x.nlargest(5, "% of GDP"))
+)
+
+
+rd_total_ranking_top_5 = pd.concat([
+    rd_top_5,
+    rd[rd["Category"] == "Australia"]
+]).drop_duplicates()
+
+rd_total_ranking_top_5.to_csv('Data/output/dashboard/global_r_and_d_rankings.csv', index = False)
 
 ## ENERGY USAGE
 renewable_energy_usage = pd.read_csv("https://ourworldindata.org/grapher/renewable-share-energy.csv?v=1&csvType=full&useColumnShortNames=true", storage_options = {'User-Agent': 'Our World In Data data fetch/1.0'})
@@ -699,9 +786,10 @@ renewable_energy_usage_24.to_csv('Data/output/dashboard/global_renewable_energy_
 ## SKILLS
 
 
-skills = pd.read_csv("Data/input/tech_international_benchmarks/skills/skills_readiness_adoption_index_oecd.csv", skiprows=1)
+skills_index = pd.read_csv("Data/input/tech_international_benchmarks/skills/skills_readiness_adoption_index_oecd.csv", skiprows=1)
+labour_market_pressure_index = pd.read_csv("Data/input/tech_international_benchmarks/skills/skills_readiness_labour_market_pressure_oecd.csv", skiprows=1)
 
-
+skills = skills_index.merge(labour_market_pressure_index, on = 'Category')
 region_map = {
     "Israel": "EMEA",
     "Korea": "APAC",
@@ -724,7 +812,7 @@ region_map = {
     "Canada": "Americas",
     "Estonia": "EMEA",
     "Portugal": "EMEA",
-    "Australia": "APAC",
+    "Australia": "Australia",
     "Hungary": "EMEA",
     "New Zealand": "APAC",
     "Greece": "EMEA",
@@ -738,7 +826,9 @@ region_map = {
     "Slovak Rep.": "EMEA",
     "Latvia": "EMEA",
     "Chile": "Americas",
-    "Costa Rica": "Americas"
+    "Costa Rica": "Americas",
+    "Singapore": "EMEA", 
+    "Average": "Global Average"
 }
 
 skills["Region"] = skills["Category"].map(region_map)

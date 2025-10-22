@@ -1,25 +1,19 @@
 Sector,occupation,Men,Women
-Direct Tech Sector Companies,CEOs,88.3,11.7
-Direct Tech Sector Companies,Heads of Business,77.1,22.9
-Direct Tech Sector Companies,Non-managers,67.5,32.5
-Direct Tech Sector Companies,Other Executives and General Managers,70.0,30.0
+TCA Member Companies,Senior managers,70.3,29.7
+TCA Member Companies,Other managers,66.1,33.9
+TCA Member Companies,Other Executives and General Managers,68.8,31.2
+TCA Member Companies,Non-managers,57.1,42.9
+TCA Member Companies,Heads of Business,63.3,36.7
+TCA Member Companies,CEOs,79.5,20.5
 Direct Tech Sector Companies,Other managers,70.2,29.8
 Direct Tech Sector Companies,Senior managers,69.1,30.9
-Financial and Insurance Services,CEOs,87.0,13.0
-Financial and Insurance Services,Heads of Business,71.5,28.5
-Financial and Insurance Services,Non-managers,44.6,55.4
-Financial and Insurance Services,Other Executives and General Managers,64.8,35.2
-Financial and Insurance Services,Other managers,54.3,45.7
-Financial and Insurance Services,Senior managers,59.6,40.4
-"Professional, Scientific and Technical Services",CEOs,83.4,16.6
-"Professional, Scientific and Technical Services",Heads of Business,70.8,29.2
-"Professional, Scientific and Technical Services",Non-managers,55.9,44.1
-"Professional, Scientific and Technical Services",Other Executives and General Managers,63.7,36.3
-"Professional, Scientific and Technical Services",Other managers,60.9,39.1
-"Professional, Scientific and Technical Services",Senior managers,62.8,37.2
-TCA Member Companies,CEOs,79.5,20.5
-TCA Member Companies,Heads of Business,63.3,36.7
-TCA Member Companies,Non-managers,57.1,42.9
-TCA Member Companies,Other Executives and General Managers,68.8,31.2
-TCA Member Companies,Other managers,66.1,33.9
-TCA Member Companies,Senior managers,70.3,29.7
+Direct Tech Sector Companies,Other Executives and General Managers,70.0,30.0
+Direct Tech Sector Companies,Non-managers,67.5,32.5
+Direct Tech Sector Companies,Heads of Business,77.1,22.9
+Direct Tech Sector Companies,CEOs,88.3,11.7
+Australian Average,Heads of Business,71.0,29.0
+Australian Average,Senior managers,60.3,39.7
+Australian Average,Other managers,56.1,43.9
+Australian Average,Other Executives and General Managers,63.2,36.8
+Australian Average,Non-managers,47.6,52.4
+Australian Average,CEOs,74.7,25.3

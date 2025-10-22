@@ -1,10 +1,28 @@
-Sector,manager_type,Men,Women
-Australian Average,Mid to entry level management,36977,35761
-Australian Average,Non-managers,109803,115614
-Australian Average,Top level management,2235,1626
-Direct Tech Sector Companies,Mid to entry level management,1548,832
-Direct Tech Sector Companies,Non-managers,5042,2714
-Direct Tech Sector Companies,Top level management,128,81
-TCA Members Companies,Mid to entry level management,790,433
-TCA Members Companies,Non-managers,2615,1715
-TCA Members Companies,Top level management,58,49
+Sector,movement_type,manager_type,Men,Women
+TCA Members Companies,Promotions,Mid to entry level management,790,433
+TCA Members Companies,Promotions,Non-managers,2615,1715
+TCA Members Companies,Promotions,Top level management,58,49
+TCA Members Companies,Internal appointments,Mid to entry level management,1174,602
+TCA Members Companies,Internal appointments,Non-managers,2467,1676
+TCA Members Companies,Internal appointments,Top level management,93,40
+TCA Members Companies,External appointments,Mid to entry level management,511,293
+TCA Members Companies,External appointments,Non-managers,3737,2644
+TCA Members Companies,External appointments,Top level management,36,18
+Direct Tech Sector Companies,Promotions,Mid to entry level management,1548,832
+Direct Tech Sector Companies,Promotions,Non-managers,5042,2714
+Direct Tech Sector Companies,Promotions,Top level management,128,81
+Direct Tech Sector Companies,Internal appointments,Mid to entry level management,1038,538
+Direct Tech Sector Companies,Internal appointments,Non-managers,4862,2363
+Direct Tech Sector Companies,Internal appointments,Top level management,151,62
+Direct Tech Sector Companies,External appointments,Mid to entry level management,1096,577
+Direct Tech Sector Companies,External appointments,Non-managers,10278,6153
+Direct Tech Sector Companies,External appointments,Top level management,131,63
+Australian Average,Promotions,Mid to entry level management,36977,35761
+Australian Average,Promotions,Non-managers,109803,115614
+Australian Average,Promotions,Top level management,2235,1626
+Australian Average,Internal appointments,Mid to entry level management,30751,30682
+Australian Average,Internal appointments,Non-managers,190580,248424
+Australian Average,Internal appointments,Top level management,1310,1037
+Australian Average,External appointments,Mid to entry level management,35039,29525
+Australian Average,External appointments,Non-managers,739328,843589
+Australian Average,External appointments,Top level management,2424,1824
