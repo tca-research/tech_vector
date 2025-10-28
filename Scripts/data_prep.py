@@ -121,7 +121,7 @@ lfs_tech_simplified_wide.to_csv('Data/output/dashboard/tech_jobs_occupations_ove
 ## TECH ROLES AS A SHARE OF LABOUR FORCE
 
 lfs_perc_occ = lfs
-lfs_perc_occ = lfs.groupby(['date', 'tech_occupation']).size().reset_index(name='n')
+lfs_perc_occ = lfs.groupby(['date', 'tech_occupation'])['employed_total_000'].sum().reset_index(name='n')
 lfs_perc_occ['percent'] = lfs_perc_occ['n'] / lfs_perc_occ.groupby('date')['n'].transform('sum') * 100
 lfs_perc_occ = lfs_perc_occ[lfs_perc_occ.tech_occupation != 'Not tech']
 lfs_perc_occ['% of labour force in tech occupations (smoothed)'] = round(lfs_perc_occ['percent'].rolling(window=3, center=True).mean(),1)
