@@ -1,0 +1,531 @@
+<title>Tech Vector — hiring vs macro conditions</title>
+<style>
+:root {
+  --surface: #ffffff;
+  --surface-alt: #f7f5f8;
+  --ink-primary: #18151d;
+  --ink-secondary: #4d4954;
+  --ink-muted: #8b8792;
+  --grid: #e8e6ea;
+  --axis: #c7c3cb;
+  --card-border: #ece9ee;
+
+  --cat-1: #EC3E9E; --cat-1-text: #A8256C;
+  --cat-2: #E0904A; --cat-2-text: #9C5716;
+  --cat-3: #5B9BE0; --cat-3-text: #22589C;
+  --cat-4: #5A3A9E; --cat-4-text: #4A2E85;
+  --cat-5: #D998D0; --cat-5-text: #953F85;
+  --cat-5-tint: #F8EEF6;
+  --corner-accent: #C93FB0;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--surface-alt);
+  color: var(--ink-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.page { margin: 0; padding: 0; }
+
+figure.chart-card {
+  position: relative;
+  margin: 0;
+  background: var(--surface);
+  padding: 16px 18px 12px;
+  overflow: hidden;
+  min-height: 100vh;
+}
+figure.chart-card::after {
+  content: "";
+  position: absolute; right: -1px; bottom: -1px;
+  width: 46px; height: 46px;
+  background: var(--corner-accent);
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+  opacity: 0.9;
+}
+.chart-title { font-size: 17px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+.chart-caption { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.55; margin: 0 0 16px; max-width: 900px; }
+.chart-caption b { color: var(--ink-primary); }
+
+.legend-row { display: flex; flex-wrap: wrap; gap: 16px 22px; margin-bottom: 14px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-secondary); }
+.legend-swatch { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.legend-swatch.line { width: 16px; height: 3px; border-radius: 2px; }
+
+.chart-mount { width: 100%; }
+.chart-mount svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+.chart-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--card-border); flex-wrap: wrap; }
+.chart-source { font-size: 12px; color: var(--ink-muted); }
+.download-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: inherit; font-size: 12.5px; font-weight: 600; color: var(--ink-secondary);
+  background: var(--surface-alt); border: 1px solid var(--card-border); border-radius: 7px;
+  padding: 5px 11px; cursor: pointer;
+}
+.download-btn:hover { color: var(--ink-primary); border-color: var(--axis); }
+.download-btn svg { width: 13px; height: 13px; flex: none; }
+
+.filter-row { margin-bottom: 16px; }
+.filter-note { font-size: 12px; color: var(--ink-muted); margin: 8px 0 0; }
+
+.filter-select {
+  font: inherit; font-size: 14px; min-width: 240px;
+  padding: 9px 34px 9px 12px; border-radius: 10px; border: 1px solid var(--card-border);
+  background: var(--surface-alt); color: var(--ink-primary); cursor: pointer;
+}
+.filter-select:focus { outline: 2px solid var(--cat-3); outline-offset: 1px; }
+
+.multiselect { position: relative; display: inline-block; }
+.multiselect-button {
+  font: inherit; font-size: 14px; display: flex; align-items: center; gap: 10px;
+  justify-content: space-between; min-width: 240px;
+  padding: 9px 12px; border-radius: 10px; border: 1px solid var(--card-border);
+  background: var(--surface-alt); color: var(--ink-primary); cursor: pointer;
+}
+.multiselect-button:focus { outline: 2px solid var(--cat-3); outline-offset: 1px; }
+.multiselect-button .chevron { color: var(--ink-muted); font-size: 11px; flex: none; }
+.multiselect-panel {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 20;
+  min-width: 260px; max-height: 280px; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--card-border); border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14); padding: 6px;
+}
+.multiselect-panel.open { display: block; }
+.multiselect-option {
+  display: flex; align-items: center; gap: 9px; padding: 7px 8px; border-radius: 6px;
+  font-size: 13.5px; color: var(--ink-primary); cursor: pointer;
+}
+.multiselect-option:hover { background: var(--surface-alt); }
+.multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
+.multiselect-option input:disabled { cursor: not-allowed; }
+
+.small-multiples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 22px 18px;
+}
+.sm-panel-title { font-size: 13px; font-weight: 700; margin: 0 0 6px; }
+
+.tooltip {
+  position: fixed; pointer-events: none; z-index: 50;
+  background: var(--ink-primary); color: var(--surface);
+  font-size: 12.5px; line-height: 1.45; border-radius: 8px;
+  padding: 8px 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  opacity: 0; transform: translate(-9999px, -9999px);
+  transition: opacity 0.08s ease-out;
+  max-width: 240px;
+}
+.tooltip.visible { opacity: 1; }
+.tooltip .tt-value { font-weight: 700; }
+.tooltip .tt-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.tooltip .tt-key { width: 10px; height: 2px; border-radius: 1px; flex: none; }
+.tooltip .tt-title { font-weight: 700; margin-bottom: 4px; opacity: 0.85; }
+
+.bar-annotation {
+  box-sizing: border-box; height: 100%; display: flex; align-items: center;
+  font-size: 12px; line-height: 1.5; color: var(--ink-secondary);
+  background: var(--cat-5-tint); border-radius: 8px; padding: 8px 10px;
+}
+
+.end-label { font-weight: 700; font-size: 12.5px; }
+.axis-label { fill: var(--ink-muted); font-size: 11.5px; }
+.grid-line { stroke: var(--grid); stroke-width: 1; }
+.axis-line { stroke: var(--axis); stroke-width: 1; }
+
+@media (max-width: 640px) {
+  figure.chart-card { padding: 12px 12px 10px; }
+  .legend-row { gap: 10px 16px; }
+}
+
+</style>
+<div class="page">
+  <figure class="chart-card" id="card-sm">
+    <h3 class="chart-title" id="chart-title"></h3>
+    <p class="chart-caption" id="sm-caption"></p>
+    <div class="legend-row" id="sm-legend"></div>
+    <div class="small-multiples-grid" id="sm-grid"></div>
+    <div class="chart-footer">
+      <span class="chart-source" id="chart-source"></span>
+      <button class="download-btn" data-target="sm"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
+    </div>
+  </figure>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script type="application/json" id="chart-data">
+{"smallMultiples": {"config": {"pageTitle": "Tech Vector \u2014 hiring vs macro conditions", "title": "Tech sector hiring vs macroeconomic conditions", "source": "Source: Australian Bureau of Statistics, Reserve Bank of Australia \u00b7 tech_jobs_in_australia.csv, abs_unemployment_rate.csv, rba_cash_rate.csv", "downloadFilename": "tech_hiring_vs_macro.csv", "captionParts": [["Strong increases in tech sector hiring \u2014 ", null], ["employee count", "muted"], [", ", null], ["smoothed rolling average", "cat-3"], [" \u2014 coincided with falling ", null], ["interest rates", "cat-2"], [" during COVID-19 as well as a sharp decline in the national ", null], ["unemployment rate", "cat-1"], [".", null]], "legend": [{"color": "ink-muted", "label": "Employee count (raw)"}, {"color": "cat-3", "label": "Smoothed rolling average"}, {"color": "cat-2", "label": "Cash rate (RBA)"}, {"color": "cat-1", "label": "Unemployment rate (ABS)"}], "macroPanel": {"title": "Macroeconomic indicators (%)", "series": [{"key": "unemployment", "label": "Unemployment rate", "color": "cat-1", "valueSuffix": "%", "valueDecimals": 1}, {"key": "cashRate", "label": "Cash rate", "color": "cat-2", "valueSuffix": "%", "valueDecimals": 2}]}, "occupationPanels": [{"key": "nonTechSectorTechOcc", "metric": "Non Tech Sector Industries", "occupation": "Tech occupations", "title": "Tech occupations \u2014 Non-tech sector industries"}, {"key": "techSectorTechOcc", "metric": "Tech Sector Industries", "occupation": "Tech occupations", "title": "Tech occupations \u2014 Tech sector industries"}, {"key": "techSectorNonTechOcc", "metric": "Tech Sector Industries", "occupation": "Non tech occupations", "title": "Non-tech occupations \u2014 Tech sector industries"}], "excludeCombo": {"metric": "Non Tech Sector Industries", "occupation": "Non tech occupations"}, "startDate": "2018-01"}, "data": {"macro": {"unemployment": [{"date": "2018-01", "value": 5.5241874}, {"date": "2018-02", "value": 5.5809423}, {"date": "2018-03", "value": 5.5293159}, {"date": "2018-04", "value": 5.5430574}, {"date": "2018-05", "value": 5.4337177}, {"date": "2018-06", "value": 5.3424428}, {"date": "2018-07", "value": 5.2950182}, {"date": "2018-08", "value": 5.2442572}, {"date": "2018-09", "value": 5.0207524}, {"date": "2018-10", "value": 5.0030917}, {"date": "2018-11", "value": 5.1098697}, {"date": "2018-12", "value": 5.0185252}, {"date": "2019-01", "value": 5.0494261}, {"date": "2019-02", "value": 4.9919141}, {"date": "2019-03", "value": 5.0875264}, {"date": "2019-04", "value": 5.2166569}, {"date": "2019-05", "value": 5.1926705}, {"date": "2019-06", "value": 5.260615}, {"date": "2019-07", "value": 5.2765724}, {"date": "2019-08", "value": 5.2587567}, {"date": "2019-09", "value": 5.2303443}, {"date": "2019-10", "value": 5.3042888}, {"date": "2019-11", "value": 5.1735187}, {"date": "2019-12", "value": 5.0399835}, {"date": "2020-01", "value": 5.2486436}, {"date": "2020-02", "value": 5.1120412}, {"date": "2020-03", "value": 5.1968924}, {"date": "2020-04", "value": 6.2974604}, {"date": "2020-05", "value": 6.980559}, {"date": "2020-06", "value": 7.4271744}, {"date": "2020-07", "value": 7.43802}, {"date": "2020-08", "value": 6.7961449}, {"date": "2020-09", "value": 6.9309577}, {"date": "2020-10", "value": 6.952021}, {"date": "2020-11", "value": 6.8129247}, {"date": "2020-12", "value": 6.5603978}, {"date": "2021-01", "value": 6.2762419}, {"date": "2021-02", "value": 5.8460614}, {"date": "2021-03", "value": 5.671598}, {"date": "2021-04", "value": 5.4585444}, {"date": "2021-05", "value": 5.1020583}, {"date": "2021-06", "value": 5.0273273}, {"date": "2021-07", "value": 4.725844}, {"date": "2021-08", "value": 4.57567}, {"date": "2021-09", "value": 4.7080974}, {"date": "2021-10", "value": 5.2390813}, {"date": "2021-11", "value": 4.6348338}, {"date": "2021-12", "value": 4.2105412}, {"date": "2022-01", "value": 4.1663905}, {"date": "2022-02", "value": 4.0303601}, {"date": "2022-03", "value": 3.9813789}, {"date": "2022-04", "value": 3.84571}, {"date": "2022-05", "value": 3.9298279}, {"date": "2022-06", "value": 3.6098913}, {"date": "2022-07", "value": 3.450789}, {"date": "2022-08", "value": 3.5292683}, {"date": "2022-09", "value": 3.6040414}, {"date": "2022-10", "value": 3.4382406}, {"date": "2022-11", "value": 3.5172951}, {"date": "2022-12", "value": 3.5267986}, {"date": "2023-01", "value": 3.6617862}, {"date": "2023-02", "value": 3.6092473}, {"date": "2023-03", "value": 3.5931732}, {"date": "2023-04", "value": 3.6970104}, {"date": "2023-05", "value": 3.5755864}, {"date": "2023-06", "value": 3.5225415}, {"date": "2023-07", "value": 3.7187522}, {"date": "2023-08", "value": 3.6823526}, {"date": "2023-09", "value": 3.565228}, {"date": "2023-10", "value": 3.7808988}, {"date": "2023-11", "value": 3.9328175}, {"date": "2023-12", "value": 3.9871935}, {"date": "2024-01", "value": 4.0928903}, {"date": "2024-02", "value": 3.7394564}, {"date": "2024-03", "value": 3.8960714}, {"date": "2024-04", "value": 4.0731336}, {"date": "2024-05", "value": 3.9874625}, {"date": "2024-06", "value": 4.0371617}, {"date": "2024-07", "value": 4.2023302}, {"date": "2024-08", "value": 4.1298576}, {"date": "2024-09", "value": 4.0236501}, {"date": "2024-10", "value": 4.0938633}, {"date": "2024-11", "value": 3.9370137}, {"date": "2024-12", "value": 3.9985323}, {"date": "2025-01", "value": 4.1276515}, {"date": "2025-02", "value": 4.071336}, {"date": "2025-03", "value": 4.0777091}, {"date": "2025-04", "value": 4.046898}, {"date": "2025-05", "value": 4.0819009}, {"date": "2025-06", "value": 4.3202023}, {"date": "2025-07", "value": 4.250091}, {"date": "2025-08", "value": 4.250147}, {"date": "2025-09", "value": 4.4520733}, {"date": "2025-10", "value": 4.3343903}, {"date": "2025-11", "value": 4.3227299}, {"date": "2025-12", "value": 4.1179458}, {"date": "2026-01", "value": 4.082555}, {"date": "2026-02", "value": 4.30171}, {"date": "2026-03", "value": 4.2784112}, {"date": "2026-04", "value": 4.4813396}, {"date": "2026-05", "value": 4.3559489}], "cashRate": [{"date": "2018-01", "value": 1.5}, {"date": "2018-02", "value": 1.5}, {"date": "2018-03", "value": 1.5}, {"date": "2018-04", "value": 1.5}, {"date": "2018-05", "value": 1.5}, {"date": "2018-06", "value": 1.5}, {"date": "2018-07", "value": 1.5}, {"date": "2018-08", "value": 1.5}, {"date": "2018-09", "value": 1.5}, {"date": "2018-10", "value": 1.5}, {"date": "2018-11", "value": 1.5}, {"date": "2018-12", "value": 1.5}, {"date": "2019-01", "value": 1.5}, {"date": "2019-02", "value": 1.5}, {"date": "2019-03", "value": 1.5}, {"date": "2019-04", "value": 1.5}, {"date": "2019-05", "value": 1.5}, {"date": "2019-06", "value": 1.25}, {"date": "2019-07", "value": 1.0}, {"date": "2019-08", "value": 1.0}, {"date": "2019-09", "value": 1.0}, {"date": "2019-10", "value": 0.75}, {"date": "2019-11", "value": 0.75}, {"date": "2019-12", "value": 0.75}, {"date": "2020-01", "value": 0.75}, {"date": "2020-02", "value": 0.75}, {"date": "2020-03", "value": 0.25}, {"date": "2020-04", "value": 0.25}, {"date": "2020-05", "value": 0.25}, {"date": "2020-06", "value": 0.25}, {"date": "2020-07", "value": 0.25}, {"date": "2020-08", "value": 0.25}, {"date": "2020-09", "value": 0.25}, {"date": "2020-10", "value": 0.25}, {"date": "2020-11", "value": 0.1}, {"date": "2020-12", "value": 0.1}, {"date": "2021-01", "value": 0.1}, {"date": "2021-02", "value": 0.1}, {"date": "2021-03", "value": 0.1}, {"date": "2021-04", "value": 0.1}, {"date": "2021-05", "value": 0.1}, {"date": "2021-06", "value": 0.1}, {"date": "2021-07", "value": 0.1}, {"date": "2021-08", "value": 0.1}, {"date": "2021-09", "value": 0.1}, {"date": "2021-10", "value": 0.1}, {"date": "2021-11", "value": 0.1}, {"date": "2021-12", "value": 0.1}, {"date": "2022-01", "value": 0.1}, {"date": "2022-02", "value": 0.1}, {"date": "2022-03", "value": 0.1}, {"date": "2022-04", "value": 0.1}, {"date": "2022-05", "value": 0.35}, {"date": "2022-06", "value": 0.85}, {"date": "2022-07", "value": 1.35}, {"date": "2022-08", "value": 1.85}, {"date": "2022-09", "value": 2.35}, {"date": "2022-10", "value": 2.6}, {"date": "2022-11", "value": 2.85}, {"date": "2022-12", "value": 3.1}, {"date": "2023-01", "value": 3.1}, {"date": "2023-02", "value": 3.35}, {"date": "2023-03", "value": 3.6}, {"date": "2023-04", "value": 3.6}, {"date": "2023-05", "value": 3.85}, {"date": "2023-06", "value": 4.1}, {"date": "2023-07", "value": 4.1}, {"date": "2023-08", "value": 4.1}, {"date": "2023-09", "value": 4.1}, {"date": "2023-10", "value": 4.1}, {"date": "2023-11", "value": 4.35}, {"date": "2023-12", "value": 4.35}, {"date": "2024-01", "value": 4.35}, {"date": "2024-02", "value": 4.35}, {"date": "2024-03", "value": 4.35}, {"date": "2024-04", "value": 4.35}, {"date": "2024-05", "value": 4.35}, {"date": "2024-06", "value": 4.35}, {"date": "2024-07", "value": 4.35}, {"date": "2024-08", "value": 4.35}, {"date": "2024-09", "value": 4.35}, {"date": "2024-10", "value": 4.35}, {"date": "2024-11", "value": 4.35}, {"date": "2024-12", "value": 4.35}, {"date": "2025-01", "value": 4.35}, {"date": "2025-02", "value": 4.1}, {"date": "2025-03", "value": 4.1}, {"date": "2025-04", "value": 4.1}, {"date": "2025-05", "value": 3.85}, {"date": "2025-06", "value": 3.85}, {"date": "2025-07", "value": 3.85}, {"date": "2025-08", "value": 3.6}, {"date": "2025-09", "value": 3.6}, {"date": "2025-10", "value": 3.6}, {"date": "2025-11", "value": 3.6}, {"date": "2025-12", "value": 3.6}, {"date": "2026-01", "value": 3.6}, {"date": "2026-02", "value": 3.85}, {"date": "2026-03", "value": 4.1}, {"date": "2026-04", "value": 4.1}, {"date": "2026-05", "value": 4.35}, {"date": "2026-06", "value": 4.35}, {"date": "2026-07", "value": 4.35}]}, "sharedYAxis": true, "nonTechSectorTechOcc": [{"date": "2006-08-01", "value": 268.9}, {"date": "2006-11-01", "value": 264.6}, {"date": "2007-02-01", "value": 277.6}, {"date": "2007-05-01", "value": 284.4}, {"date": "2007-08-01", "value": 289.9}, {"date": "2007-11-01", "value": 309.6}, {"date": "2008-02-01", "value": 301.0}, {"date": "2008-05-01", "value": 285.0}, {"date": "2008-08-01", "value": 297.3}, {"date": "2008-11-01", "value": 311.4}, {"date": "2009-02-01", "value": 320.2}, {"date": "2009-05-01", "value": 287.2}, {"date": "2009-08-01", "value": 288.1}, {"date": "2009-11-01", "value": 295.7}, {"date": "2010-02-01", "value": 305.9}, {"date": "2010-05-01", "value": 300.6}, {"date": "2010-08-01", "value": 289.9}, {"date": "2010-11-01", "value": 292.8}, {"date": "2011-02-01", "value": 318.3}, {"date": "2011-05-01", "value": 325.2}, {"date": "2011-08-01", "value": 315.0}, {"date": "2011-11-01", "value": 301.0}, {"date": "2012-02-01", "value": 323.1}, {"date": "2012-05-01", "value": 347.5}, {"date": "2012-08-01", "value": 330.0}, {"date": "2012-11-01", "value": 334.7}, {"date": "2013-02-01", "value": 345.7}, {"date": "2013-05-01", "value": 340.7}, {"date": "2013-08-01", "value": 330.7}, {"date": "2013-11-01", "value": 338.9}, {"date": "2014-02-01", "value": 322.9}, {"date": "2014-05-01", "value": 325.4}, {"date": "2014-08-01", "value": 338.9}, {"date": "2014-11-01", "value": 330.5}, {"date": "2015-02-01", "value": 359.6}, {"date": "2015-05-01", "value": 359.8}, {"date": "2015-08-01", "value": 332.3}, {"date": "2015-11-01", "value": 340.5}, {"date": "2016-02-01", "value": 352.7}, {"date": "2016-05-01", "value": 359.3}, {"date": "2016-08-01", "value": 361.3}, {"date": "2016-11-01", "value": 345.9}, {"date": "2017-02-01", "value": 341.3}, {"date": "2017-05-01", "value": 359.2}, {"date": "2017-08-01", "value": 348.8}, {"date": "2017-11-01", "value": 347.2}, {"date": "2018-02-01", "value": 360.0}, {"date": "2018-05-01", "value": 374.2}, {"date": "2018-08-01", "value": 383.2}, {"date": "2018-11-01", "value": 389.9}, {"date": "2019-02-01", "value": 435.8}, {"date": "2019-05-01", "value": 426.4}, {"date": "2019-08-01", "value": 402.8}, {"date": "2019-11-01", "value": 429.3}, {"date": "2020-02-01", "value": 402.9}, {"date": "2020-05-01", "value": 410.2}, {"date": "2020-08-01", "value": 431.7}, {"date": "2020-11-01", "value": 437.3}, {"date": "2021-02-01", "value": 452.1}, {"date": "2021-05-01", "value": 460.3}, {"date": "2021-08-01", "value": 458.3}, {"date": "2021-11-01", "value": 484.2}, {"date": "2022-02-01", "value": 490.8}, {"date": "2022-05-01", "value": 491.9}, {"date": "2022-08-01", "value": 473.8}, {"date": "2022-11-01", "value": 493.8}, {"date": "2023-02-01", "value": 532.6}, {"date": "2023-05-01", "value": 516.8}, {"date": "2023-08-01", "value": 507.4}, {"date": "2023-11-01", "value": 556.8}, {"date": "2024-02-01", "value": 571.1}, {"date": "2024-05-01", "value": 548.5}, {"date": "2024-08-01", "value": 525.4}, {"date": "2024-11-01", "value": 509.1}, {"date": "2025-02-01", "value": 534.2}, {"date": "2025-05-01", "value": 527.1}, {"date": "2025-08-01", "value": 573.1}, {"date": "2025-11-01", "value": 580.1}], "techSectorTechOcc": [{"date": "2006-08-01", "value": 149.2}, {"date": "2006-11-01", "value": 137.1}, {"date": "2007-02-01", "value": 130.6}, {"date": "2007-05-01", "value": 147.4}, {"date": "2007-08-01", "value": 154.4}, {"date": "2007-11-01", "value": 154.8}, {"date": "2008-02-01", "value": 149.9}, {"date": "2008-05-01", "value": 146.7}, {"date": "2008-08-01", "value": 163.5}, {"date": "2008-11-01", "value": 148.9}, {"date": "2009-02-01", "value": 144.8}, {"date": "2009-05-01", "value": 146.9}, {"date": "2009-08-01", "value": 158.9}, {"date": "2009-11-01", "value": 160.0}, {"date": "2010-02-01", "value": 168.0}, {"date": "2010-05-01", "value": 156.8}, {"date": "2010-08-01", "value": 165.5}, {"date": "2010-11-01", "value": 155.8}, {"date": "2011-02-01", "value": 172.8}, {"date": "2011-05-01", "value": 172.9}, {"date": "2011-08-01", "value": 165.5}, {"date": "2011-11-01", "value": 170.5}, {"date": "2012-02-01", "value": 166.1}, {"date": "2012-05-01", "value": 175.7}, {"date": "2012-08-01", "value": 182.9}, {"date": "2012-11-01", "value": 183.2}, {"date": "2013-02-01", "value": 176.0}, {"date": "2013-05-01", "value": 185.3}, {"date": "2013-08-01", "value": 183.3}, {"date": "2013-11-01", "value": 165.4}, {"date": "2014-02-01", "value": 179.3}, {"date": "2014-05-01", "value": 190.7}, {"date": "2014-08-01", "value": 214.5}, {"date": "2014-11-01", "value": 189.3}, {"date": "2015-02-01", "value": 190.8}, {"date": "2015-05-01", "value": 208.1}, {"date": "2015-08-01", "value": 207.8}, {"date": "2015-11-01", "value": 196.2}, {"date": "2016-02-01", "value": 200.0}, {"date": "2016-05-01", "value": 201.1}, {"date": "2016-08-01", "value": 205.5}, {"date": "2016-11-01", "value": 206.8}, {"date": "2017-02-01", "value": 204.5}, {"date": "2017-05-01", "value": 218.6}, {"date": "2017-08-01", "value": 217.6}, {"date": "2017-11-01", "value": 219.0}, {"date": "2018-02-01", "value": 241.0}, {"date": "2018-05-01", "value": 249.9}, {"date": "2018-08-01", "value": 259.0}, {"date": "2018-11-01", "value": 232.9}, {"date": "2019-02-01", "value": 243.6}, {"date": "2019-05-01", "value": 235.2}, {"date": "2019-08-01", "value": 240.4}, {"date": "2019-11-01", "value": 230.4}, {"date": "2020-02-01", "value": 262.6}, {"date": "2020-05-01", "value": 253.3}, {"date": "2020-08-01", "value": 255.2}, {"date": "2020-11-01", "value": 273.2}, {"date": "2021-02-01", "value": 283.7}, {"date": "2021-05-01", "value": 259.6}, {"date": "2021-08-01", "value": 244.4}, {"date": "2021-11-01", "value": 268.0}, {"date": "2022-02-01", "value": 286.0}, {"date": "2022-05-01", "value": 292.0}, {"date": "2022-08-01", "value": 299.2}, {"date": "2022-11-01", "value": 309.3}, {"date": "2023-02-01", "value": 286.8}, {"date": "2023-05-01", "value": 279.9}, {"date": "2023-08-01", "value": 304.3}, {"date": "2023-11-01", "value": 292.2}, {"date": "2024-02-01", "value": 301.4}, {"date": "2024-05-01", "value": 321.2}, {"date": "2024-08-01", "value": 303.9}, {"date": "2024-11-01", "value": 287.0}, {"date": "2025-02-01", "value": 275.5}, {"date": "2025-05-01", "value": 305.2}, {"date": "2025-08-01", "value": 297.1}, {"date": "2025-11-01", "value": 318.1}], "techSectorNonTechOcc": [{"date": "2006-08-01", "value": 94.3}, {"date": "2006-11-01", "value": 96.5}, {"date": "2007-02-01", "value": 100.7}, {"date": "2007-05-01", "value": 95.0}, {"date": "2007-08-01", "value": 93.7}, {"date": "2007-11-01", "value": 92.2}, {"date": "2008-02-01", "value": 86.3}, {"date": "2008-05-01", "value": 90.0}, {"date": "2008-08-01", "value": 92.7}, {"date": "2008-11-01", "value": 91.9}, {"date": "2009-02-01", "value": 106.3}, {"date": "2009-05-01", "value": 107.1}, {"date": "2009-08-01", "value": 94.5}, {"date": "2009-11-01", "value": 96.8}, {"date": "2010-02-01", "value": 90.2}, {"date": "2010-05-01", "value": 96.5}, {"date": "2010-08-01", "value": 93.9}, {"date": "2010-11-01", "value": 94.3}, {"date": "2011-02-01", "value": 96.2}, {"date": "2011-05-01", "value": 96.6}, {"date": "2011-08-01", "value": 104.8}, {"date": "2011-11-01", "value": 98.4}, {"date": "2012-02-01", "value": 104.0}, {"date": "2012-05-01", "value": 114.7}, {"date": "2012-08-01", "value": 106.3}, {"date": "2012-11-01", "value": 104.9}, {"date": "2013-02-01", "value": 99.9}, {"date": "2013-05-01", "value": 105.4}, {"date": "2013-08-01", "value": 93.8}, {"date": "2013-11-01", "value": 89.7}, {"date": "2014-02-01", "value": 99.1}, {"date": "2014-05-01", "value": 91.4}, {"date": "2014-08-01", "value": 97.1}, {"date": "2014-11-01", "value": 97.4}, {"date": "2015-02-01", "value": 96.1}, {"date": "2015-05-01", "value": 104.5}, {"date": "2015-08-01", "value": 96.8}, {"date": "2015-11-01", "value": 102.0}, {"date": "2016-02-01", "value": 99.3}, {"date": "2016-05-01", "value": 107.4}, {"date": "2016-08-01", "value": 122.2}, {"date": "2016-11-01", "value": 110.0}, {"date": "2017-02-01", "value": 107.6}, {"date": "2017-05-01", "value": 118.8}, {"date": "2017-08-01", "value": 118.0}, {"date": "2017-11-01", "value": 107.3}, {"date": "2018-02-01", "value": 101.3}, {"date": "2018-05-01", "value": 105.9}, {"date": "2018-08-01", "value": 133.5}, {"date": "2018-11-01", "value": 101.0}, {"date": "2019-02-01", "value": 109.1}, {"date": "2019-05-01", "value": 119.0}, {"date": "2019-08-01", "value": 112.1}, {"date": "2019-11-01", "value": 110.2}, {"date": "2020-02-01", "value": 108.6}, {"date": "2020-05-01", "value": 106.0}, {"date": "2020-08-01", "value": 115.7}, {"date": "2020-11-01", "value": 107.7}, {"date": "2021-02-01", "value": 107.7}, {"date": "2021-05-01", "value": 125.4}, {"date": "2021-08-01", "value": 116.4}, {"date": "2021-11-01", "value": 122.5}, {"date": "2022-02-01", "value": 130.1}, {"date": "2022-05-01", "value": 124.8}, {"date": "2022-08-01", "value": 153.6}, {"date": "2022-11-01", "value": 161.8}, {"date": "2023-02-01", "value": 145.9}, {"date": "2023-05-01", "value": 144.3}, {"date": "2023-08-01", "value": 126.3}, {"date": "2023-11-01", "value": 144.6}, {"date": "2024-02-01", "value": 130.3}, {"date": "2024-05-01", "value": 136.8}, {"date": "2024-08-01", "value": 133.5}, {"date": "2024-11-01", "value": 135.1}, {"date": "2025-02-01", "value": 123.4}, {"date": "2025-05-01", "value": 128.7}, {"date": "2025-08-01", "value": 139.3}, {"date": "2025-11-01", "value": 113.2}]}}}
+</script>
+<script>
+(function () {
+  "use strict";
+  const DATA = JSON.parse(document.getElementById("chart-data").textContent);
+
+const SVGNS = "http://www.w3.org/2000/svg";
+
+// Applies the title/source/caption fields every chart's Python config
+// carries, so per-dataset text lives in build_charts.py only — none of it
+// is hardcoded in these JS files.
+function colorVar(token) {
+  return "var(--" + token + ")";
+}
+function colorTextVar(token) {
+  return "var(--" + token + "-text)";
+}
+function applyChromeConfig(cfg) {
+  if (cfg.pageTitle) document.title = cfg.pageTitle;
+  const titleEl = document.getElementById("chart-title");
+  if (titleEl) titleEl.textContent = cfg.title || "";
+  const sourceEl = document.getElementById("chart-source");
+  if (sourceEl) sourceEl.textContent = cfg.source || "";
+  const captionEl = document.getElementById("chart-caption");
+  if (captionEl && cfg.caption) captionEl.textContent = cfg.caption;
+}
+
+// ---------- generic helpers ----------------------------------------------
+function el(tag, attrs, parent) {
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function textEl(x, y, str, attrs, parent) {
+  const t = el("text", Object.assign({ x, y }, attrs), parent);
+  t.textContent = str; // untrusted-safe: textContent, never innerHTML
+  return t;
+}
+function niceStep(rawStep) {
+  const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+  const norm = rawStep / mag;
+  let step;
+  if (norm < 1.5) step = 1;
+  else if (norm < 3) step = 2;
+  else if (norm < 7) step = 5;
+  else step = 10;
+  return step * mag;
+}
+function niceTicks(min, max, count) {
+  const step = niceStep((max - min) / count || 1);
+  const start = Math.floor(min / step) * step;
+  const end = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let v = start; v <= end + step * 1e-6; v += step) ticks.push(Math.round(v * 1e6) / 1e6);
+  return ticks;
+}
+function formatMoney(v) {
+  return "$" + Math.round(v / 1000) + "K";
+}
+function formatCount(v) {
+  return Math.round(v).toLocaleString("en-AU");
+}
+function formatCountShort(v) {
+  // Independent-axis small multiples can have a max well under 1000 (e.g. a
+  // ~100-160 range) — dividing everything by 1000 there would print "0K" on
+  // every tick, so only use the K suffix once it's actually needed.
+  if (Math.abs(v) < 1000) return String(Math.round(v));
+  return Math.round(v / 1000) + "K";
+}
+function rollingMeanCentered(values, window) {
+  const half = Math.floor(window / 2);
+  return values.map((_, i) => {
+    const lo = Math.max(0, i - half);
+    const hi = Math.min(values.length - 1, i + half);
+    let sum = 0, n = 0;
+    for (let j = lo; j <= hi; j++) {
+      if (values[j] != null) { sum += values[j]; n++; }
+    }
+    return n ? sum / n : null;
+  });
+}
+function monthYearToDate(my) {
+  // "August 1986" -> Date
+  const [mon, yr] = my.split(" ");
+  return new Date(Date.parse(mon + " 1, " + yr));
+}
+// All date fields in chart-data.json MUST already be ISO "YYYY-MM-DD" or
+// "YYYY-MM" strings by the time they reach this page (see DATA_FORMAT.md).
+// This guard exists because that exact mistake shipped once already: an
+// ABS-style "Aug-06" string handed to `new Date()` silently parses as
+// month=Aug, day=06, year=2000 — not August 2006 — which produces a
+// non-monotonic x-scale and a shredded, zig-zagging line with no error or
+// warning anywhere. Fail loudly instead.
+function assertIsoDate(d) {
+  if (!/^\d{4}-\d{2}(-\d{2})?$/.test(d)) {
+    throw new Error("Expected an ISO date (YYYY-MM-DD or YYYY-MM), got: " + JSON.stringify(d) +
+      ". See DATA_FORMAT.md — non-ISO date strings parse silently wrong in JS.");
+  }
+  return d;
+}
+
+// shared tooltip -----------------------------------------------------------
+const tooltipEl = document.getElementById("tooltip");
+function showTooltip(x, y, html) {
+  tooltipEl.innerHTML = "";
+  tooltipEl.appendChild(html);
+  tooltipEl.classList.add("visible");
+  const pad = 14;
+  let left = x + pad, top = y + pad;
+  const rect = tooltipEl.getBoundingClientRect();
+  if (left + rect.width > window.innerWidth - 8) left = x - rect.width - pad;
+  if (top + rect.height > window.innerHeight - 8) top = y - rect.height - pad;
+  tooltipEl.style.transform = "translate(" + left + "px," + top + "px)";
+}
+function hideTooltip() {
+  tooltipEl.classList.remove("visible");
+}
+function ttRow(color, label, value) {
+  const row = document.createElement("div");
+  row.className = "tt-row";
+  if (color) {
+    const key = document.createElement("span");
+    key.className = "tt-key";
+    key.style.background = color;
+    row.appendChild(key);
+  }
+  const lab = document.createElement("span");
+  lab.textContent = label;
+  row.appendChild(lab);
+  if (value !== undefined) {
+    const val = document.createElement("span");
+    val.className = "tt-value";
+    val.style.marginLeft = "auto";
+    val.style.paddingLeft = "10px";
+    val.textContent = value;
+    row.appendChild(val);
+  }
+  return row;
+}
+function ttBox(titleText, rows) {
+  const box = document.createElement("div");
+  if (titleText) {
+    const t = document.createElement("div");
+    t.className = "tt-title";
+    t.textContent = titleText;
+    box.appendChild(t);
+  }
+  rows.forEach((r) => box.appendChild(r));
+  return box;
+}
+
+function legendItem(container, color, label, lineStyle) {
+  const item = document.createElement("div");
+  item.className = "legend-item";
+  const sw = document.createElement("span");
+  sw.className = "legend-swatch" + (lineStyle ? " line" : "");
+  sw.style.background = color;
+  item.appendChild(sw);
+  const lab = document.createElement("span");
+  lab.textContent = label;
+  item.appendChild(lab);
+  container.appendChild(item);
+}
+
+// csv download — replaces the table-view toggle with a direct data export
+const downloadRegistry = {};
+function csvCell(v) {
+  const s = String(v);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function registerDownload(key, filename, columns, rows) {
+  const csv = [columns, ...rows].map((r) => r.map(csvCell).join(",")).join("\r\n");
+  downloadRegistry[key] = { filename, csv };
+}
+function wireDownloadButtons() {
+  document.querySelectorAll(".download-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const entry = downloadRegistry[btn.dataset.target];
+      if (!entry) return;
+      const blob = new Blob([entry.csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = entry.filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  });
+}
+
+
+// SMALL MULTIPLES — macro panel + N dual-line occupation panels
+// All dataset-specific values (caption, legend, panel titles/series, which
+// Metric/Occupation keys map to which panel) come from
+// DATA.smallMultiples.config, built in build_charts.py's
+// SMALL_MULTIPLES_CONFIG.
+function renderSmallMultiples() {
+  const cfg = DATA.smallMultiples.config;
+  const data = DATA.smallMultiples.data;
+  applyChromeConfig(cfg);
+
+  const caption = document.getElementById("sm-caption");
+  caption.innerHTML = "";
+  cfg.captionParts.forEach(([txt, cls]) => {
+    const span = document.createElement("span");
+    if (cls === "muted") { span.style.color = "var(--ink-muted)"; span.style.fontWeight = "700"; }
+    else if (cls) { span.style.color = colorTextVar(cls); span.style.fontWeight = "700"; }
+    span.textContent = txt;
+    caption.appendChild(span);
+  });
+
+  const legend = document.getElementById("sm-legend");
+  legend.innerHTML = "";
+  cfg.legend.forEach((item) => legendItem(legend, colorVar(item.color), item.label, true));
+
+  const grid = document.getElementById("sm-grid");
+  grid.innerHTML = "";
+
+  const START = cfg.startDate;
+  const occPanels = cfg.occupationPanels;
+  occPanels.forEach((p) => data[p.key].forEach((d) => assertIsoDate(d.date)));
+  cfg.macroPanel.series.forEach((s) => data.macro[s.key].forEach((d) => assertIsoDate(d.date)));
+
+  // data.sharedYAxis (set by build_charts.py's --small-multiples-y-axis
+  // flag): true -> all occupation panels use one common scale (heights
+  // comparable across panels); false -> each panel scales to fit only its
+  // own values.
+  const sharedOccMax = Math.max(...occPanels.flatMap((p) => data[p.key].filter((d) => d.date >= START).map((d) => d.value)));
+  const sharedOccTicks = niceTicks(0, sharedOccMax, 4);
+  const sharedOccYMax = sharedOccTicks[sharedOccTicks.length - 1];
+
+  function drawPanel(title) {
+    const wrap = document.createElement("div");
+    const h3 = document.createElement("h4");
+    h3.className = "sm-panel-title";
+    h3.textContent = title;
+    wrap.appendChild(h3);
+    const mount = document.createElement("div");
+    mount.className = "chart-mount";
+    wrap.appendChild(mount);
+    grid.appendChild(wrap);
+    return mount;
+  }
+
+  const W = 260, H = 190, padL = 34, padB = 22, padT = 8, padR = 8;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  function xScaleFor(dates) {
+    const t0 = new Date(dates[0]).getTime(), t1 = new Date(dates[dates.length - 1]).getTime();
+    return (d) => padL + ((new Date(d).getTime() - t0) / (t1 - t0)) * plotW;
+  }
+
+  function drawAxes(svg, dates, yTicks, yMax, yFmt) {
+    const x = xScaleFor(dates);
+    yTicks.forEach((t) => {
+      const gy = padT + plotH - (t / yMax) * plotH;
+      el("line", { class: "grid-line", x1: padL, x2: W - padR, y1: gy, y2: gy }, svg);
+      textEl(padL - 6, gy + 3, yFmt(t), { class: "axis-label", "text-anchor": "end", "font-size": "9.5" }, svg);
+    });
+    const years = [...new Set(dates.map((d) => new Date(d).getFullYear()))];
+    const step = Math.ceil(years.length / 4) || 1;
+    years.filter((_, i) => i % step === 0).forEach((yr) => {
+      const gx = x(yr + "-06-15");
+      textEl(gx, H - 4, yr, { class: "axis-label", "text-anchor": "middle", "font-size": "9.5" }, svg);
+    });
+    el("line", { class: "axis-line", x1: padL, x2: padL, y1: padT, y2: padT + plotH }, svg);
+  }
+
+  function linePath(svg, dates, values, yMax, color, width, dash) {
+    const x = xScaleFor(dates);
+    const y = (v) => padT + plotH - (v / yMax) * plotH;
+    let d = "";
+    values.forEach((v, i) => {
+      if (v == null) return;
+      d += (d ? " L " : "M ") + x(dates[i]) + " " + y(v);
+    });
+    const attrs = { d, fill: "none", stroke: color, "stroke-width": width, "stroke-linejoin": "round", "stroke-linecap": "round" };
+    if (dash) attrs["stroke-dasharray"] = dash;
+    el("path", attrs, svg);
+  }
+
+  function hoverLayer(svg, dates, seriesList, yMax) {
+    const x = xScaleFor(dates);
+    const hit = el("rect", { x: padL, y: padT, width: plotW, height: plotH, fill: "transparent" }, svg);
+    const cross = el("line", { x1: 0, x2: 0, y1: padT, y2: padT + plotH, stroke: "var(--axis)", "stroke-width": 1, opacity: 0 }, svg);
+    hit.addEventListener("pointermove", (ev) => {
+      const rect = svg.getBoundingClientRect();
+      const scale = rect.width / W;
+      const mx = (ev.clientX - rect.left) / scale;
+      let idx = 0, best = Infinity;
+      dates.forEach((d, i) => { const dx = Math.abs(x(d) - mx); if (dx < best) { best = dx; idx = i; } });
+      cross.setAttribute("x1", x(dates[idx]));
+      cross.setAttribute("x2", x(dates[idx]));
+      cross.setAttribute("opacity", 1);
+      const rows = seriesList
+        .filter((s) => s.values[idx] != null)
+        .map((s) => ttRow(s.color, s.label, s.fmt(s.values[idx])));
+      showTooltip(ev.clientX, ev.clientY, ttBox(new Date(dates[idx]).toLocaleDateString("en-AU", { year: "numeric", month: "short" }), rows));
+    });
+    hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTooltip(); });
+  }
+
+  // macro panel — an arbitrary number of series, all sharing one Y-axis,
+  // aligned onto the first series' dates.
+  (function () {
+    const macroCfg = cfg.macroPanel;
+    const mount = drawPanel(macroCfg.title);
+    const baseSeries = macroCfg.series[0];
+    const dates = data.macro[baseSeries.key].map((d) => d.date).filter((d) => d >= START);
+    const seriesValues = macroCfg.series.map((s) => {
+      const byDate = new Map(data.macro[s.key].map((d) => [d.date, d.value]));
+      return dates.map((d) => (byDate.has(d) ? byDate.get(d) : null));
+    });
+    const yMax = niceTicks(0, Math.max(...seriesValues.flat().filter((v) => v != null)), 4).slice(-1)[0];
+    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
+    drawAxes(svg, dates, niceTicks(0, yMax, 4), yMax, (v) => v);
+    macroCfg.series.forEach((s, i) => linePath(svg, dates, seriesValues[i], yMax, colorVar(s.color), 2, null));
+    hoverLayer(svg, dates, macroCfg.series.map((s, i) => ({
+      label: s.label,
+      color: colorVar(s.color),
+      values: seriesValues[i],
+      fmt: (v) => v.toFixed(s.valueDecimals == null ? 1 : s.valueDecimals) + (s.valueSuffix || ""),
+    })), yMax);
+  })();
+
+  occPanels.forEach((p) => {
+    const mount = drawPanel(p.title);
+    const rows = data[p.key].filter((d) => d.date >= START);
+    const dates = rows.map((d) => d.date);
+    const raw = rows.map((d) => d.value);
+    const smoothed = rollingMeanCentered(raw, 5);
+
+    let panelTicks, panelYMax;
+    if (data.sharedYAxis) {
+      panelTicks = sharedOccTicks;
+      panelYMax = sharedOccYMax;
+    } else {
+      panelTicks = niceTicks(0, Math.max(...raw), 4);
+      panelYMax = panelTicks[panelTicks.length - 1];
+    }
+
+    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
+    drawAxes(svg, dates, panelTicks, panelYMax, formatCountShort);
+    linePath(svg, dates, raw, panelYMax, "var(--ink-muted)", 1.5, "4 3");
+    linePath(svg, dates, smoothed, panelYMax, "var(--cat-3)", 2, null);
+    hoverLayer(svg, dates, [
+      { label: "Smoothed", color: "var(--cat-3)", values: smoothed, fmt: (v) => formatCount(v) },
+      { label: "Raw count", color: "var(--ink-muted)", values: raw, fmt: (v) => formatCount(v) },
+    ], panelYMax);
+  });
+
+  const macroByDate = cfg.macroPanel.series.map((s) => new Map(data.macro[s.key].map((d) => [d.date, d.value])));
+  const occByDate = occPanels.map((p) => new Map(data[p.key].map((d) => [d.date, d.value])));
+  const tableDates = data[occPanels[0].key].filter((d) => d.date >= START).map((d) => d.date);
+  const tableCols = ["Date", ...cfg.macroPanel.series.map((s) => s.label), ...occPanels.map((p) => p.title)];
+  const tableRows = tableDates.map((d) => [
+    d,
+    ...macroByDate.map((m, i) => (m.has(d) ? m.get(d).toFixed(cfg.macroPanel.series[i].valueDecimals == null ? 1 : cfg.macroPanel.series[i].valueDecimals) : "")),
+    ...occByDate.map((m) => (m.has(d) ? formatCount(m.get(d)) : "")),
+  ]);
+  registerDownload("sm", cfg.downloadFilename, tableCols, tableRows);
+}
+
+renderSmallMultiples();
+wireDownloadButtons();
+
+})();
+</script>

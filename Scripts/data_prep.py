@@ -1,36 +1,30 @@
 import pandas as pd
 import numpy as np
-import rpy2.robjects as ro
-from rpy2.robjects import pandas2ri, conversion
 import random
 import os
 import time
+from pathlib import Path
 
-levels_csv_path = "Data/input/tech_sector_salaries/levels_fyi/au_levelsfyi_detailed_data.csv"
-
-# Check if CSV exists and its age
-run_script = True
-if os.path.exists(levels_csv_path):
-    mtime = os.path.getmtime(levels_csv_path)
-    age_seconds = time.time() - mtime
-    one_week_seconds = 7 * 24 * 60 * 60
-    if age_seconds < one_week_seconds:
-        run_script = False
-# Run the script only if CSV is older than 1 week or missing
-if run_script:
-    with open("Scripts/scrape_levels_fyi.py") as f:
-        levels_fyi_scrape_code = f.read()
-    exec(levels_fyi_scrape_code)
+# Data/ lives alongside Scripts/ at the repo root, not inside Scripts/ — anchor
+# to this file's own location so the script works regardless of the caller's
+# current working directory.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DATA_INPUT = REPO_ROOT / "Data" / "input"
+DATA_OUTPUT = REPO_ROOT / "Data" / "output"
 
 # Load datasets for analysis
 try:
-    wgea_salary_df = pd.read_csv('Data/input/tech_sector_salaries/wgea/WGEA_salary_data.csv')
-    wgea_workforce_composition = pd.read_csv("Data/input/wgea_public_dataset_2024/wgea_workforce_composition_2024.csv")
-    wgea_mgmt = pd.read_csv("Data/input/wgea_public_dataset_2024/wgea_workforce_management_statistics_2024.csv")
-    abn_df = pd.read_csv('Data/input/tech_sector_salaries/tca/Tech_Council_ABNs.csv')
-    jobs_per_industry = pd.read_csv("Data/input/tech_sector_jobs/lfs-tablebuilder/workers in the tech sector.csv")
-    levels_fyi_salaries_df = pd.read_csv("Data/input/tech_sector_salaries/levels_fyi/au_levelsfyi_detailed_data.csv")
-    ict_job_ad_salary = pd.read_csv("Data/input/tech_sector_salaries/seek/SEEK average advertised salary - ICT v other - July 2025.csv", skiprows=3)
+    wgea_salary_df = pd.read_csv(DATA_INPUT / "automated_pull" / "wgea_salary_data.csv")
+    wgea_workforce_composition = pd.read_csv(DATA_INPUT / "automated_pull" / "wgea_workforce_composition.csv")
+    wgea_mgmt = pd.read_csv(DATA_INPUT / "automated_pull" / "wgea_workforce_management_statistics.csv")
+    abn_df = pd.read_csv(DATA_INPUT / "manual_pull" / "Tech_Council_ABNs.csv")
+    jobs_per_industry = pd.read_csv(DATA_INPUT / "manual_pull" / "tech_roles_in_tech_subsector_cleaned.csv")
+    levels_fyi_salaries_df = pd.read_csv(DATA_INPUT / "automated_pull" / "au_levelsfyi_detailed_data.csv")
+    lfs = pd.read_csv(DATA_INPUT / "automated_pull" / "abs_eq08_employed_by_occupation.csv", parse_dates=['date'])
+    global_ai = pd.read_csv(DATA_INPUT / "automated_pull" / "global_ai_vibrancy_indices.csv")
+    global_oecd = pd.read_csv(DATA_INPUT / "automated_pull" / "oecd_msti_data.csv")
+    skills_index = pd.read_csv(DATA_INPUT / "automated_pull" / "skills_readiness_adoption_index_oecd.csv", skiprows=1)
+    labour_market_pressure_index = pd.read_csv(DATA_INPUT / "automated_pull" / "skills_readiness_labour_market_pressure_oecd.csv", skiprows=1)
 except FileNotFoundError as e:
     print(f"Error: {e}. Please ensure all data files are in the correct directories.")
     exit()
@@ -39,12 +33,6 @@ except FileNotFoundError as e:
 #--------------------#
 #--------------------#
 ## TECH OCCUPATION GROWTH
-labour_force_survey = ro.r('readabs::read_lfs_datacube("EQ08")')
-
-with conversion.localconverter(ro.default_converter + pandas2ri.converter):
-    lfs = conversion.rpy2py(labour_force_survey)
-
-lfs['date'] = pd.to_datetime(lfs['date'], origin='1970-01-01', unit='D')
 
 tech_occupations_4_digit = ['1350 ICT Managers nfd',	 
   '1351 ICT Managers',  
@@ -116,7 +104,7 @@ cols = list(lfs_tech_simplified_wide.columns)
 cols.insert(1, cols.pop(cols.index('Software Engineers')))
 lfs_tech_simplified_wide = lfs_tech_simplified_wide[cols]
 
-lfs_tech_simplified_wide.to_csv('Data/output/dashboard/tech_jobs_occupations_over_time_WIDE-SIMPLE.csv', index=False)
+lfs_tech_simplified_wide.to_csv(DATA_OUTPUT / "tech_jobs_occupations_over_time_WIDE-SIMPLE.csv", index=False)
 
 ## TECH ROLES AS A SHARE OF LABOUR FORCE
 
@@ -127,29 +115,29 @@ lfs_perc_occ = lfs_perc_occ[lfs_perc_occ.tech_occupation != 'Not tech']
 lfs_perc_occ['% of labour force in tech occupations (smoothed)'] = round(lfs_perc_occ['percent'].rolling(window=3, center=True).mean(),1)
 lfs_perc_occ = lfs_perc_occ.dropna(subset=['% of labour force in tech occupations (smoothed)'])
 lfs_perc_occ["Month Year"] = lfs_perc_occ["date"].dt.strftime("%B %Y")
-lfs_perc_occ.to_csv('Data/output/dashboard/tech_jobs_tech_occupations_as_percent_of_labour_force.csv', index = False)
+lfs_perc_occ.to_csv(DATA_OUTPUT / "tech_jobs_tech_occupations_as_percent_of_labour_force.csv", index = False)
 
 ## TOTAL EMPLOYMENT IN DIRECT TECH SECTOR
 
 ## -- Data downloaded from Table Builder
 
 jobs_per_industry['Date'] = jobs_per_industry['Date'].fillna(method='ffill')
-jobs_per_industry['Number'] = jobs_per_industry['Number'] * 1000
+jobs_per_industry['Number'] = jobs_per_industry['Count']*1000
 
 jobs_tech_sector = jobs_per_industry.groupby('Date', as_index=False)['Number'].sum()
 jobs_tech_sector['Industry'] = 'Total number of people in the tech sector'
 jobs_tech_sector = jobs_tech_sector[['Date', 'Industry', 'Number']]
 
-jobs_tech = pd.concat([jobs_per_industry, jobs_tech_sector], ignore_index=True)
+jobs_tech = pd.concat([jobs_tech_sector], ignore_index=True)
 jobs_tech['Date'] = pd.to_datetime(jobs_tech['Date'], format='%b-%y')
 jobs_tech['Month Year'] = jobs_tech['Date'].dt.strftime('%B %Y')
-jobs_tech.pivot(index = 'Date', columns = 'Industry', values = 'Number').to_csv("Data/output/dashboard/jobs_in_tech_companies_WIDE.csv", index = False)
+jobs_tech.pivot(index = ['Date', 'Month Year'], columns = 'Industry', values = 'Number').reset_index().to_csv(DATA_OUTPUT / "jobs_in_tech_companies_WIDE.csv", index = False)
 
 ## Remuneration DISTRICTUION BY TECH ROLES & CAREER STAGE
 
 levels_fyi_salaries_df['Salary'] = levels_fyi_salaries_df['Salary'].apply(lambda x: x * 1000 if 10 <= x < 100 else x)
 salary_levels_summary = levels_fyi_salaries_df[(levels_fyi_salaries_df['Metric'] == "Summary")]
-salary_levels_summary.to_csv('Data/output/dashboard/tech_jobs_pay_within_percentile_level_occupation.csv', index = False)
+salary_levels_summary.to_csv(DATA_OUTPUT / "tech_jobs_pay_within_percentile_level_occupation.csv", index = False)
 
 ## TOP RANKING TECH CO'S
 
@@ -162,15 +150,8 @@ top_location_pay['type'] = 'Location'
 top_companies_pay = top_companies_pay_role[['Label', 'Salary', 'Job Title']].drop_duplicates()
 top_companies_pay['type'] = 'Company'
 top_rank = pd.concat([top_companies_pay, top_location_pay], ignore_index=True)
-top_rank.to_csv('Data/output/dashboard/tech_jobs_top_rank_long.csv', index = False)
+top_rank.to_csv(DATA_OUTPUT / "tech_jobs_top_rank_long.csv", index = False)
 
-## ICT PAY JOB ADS
-
-## -- Data directly received from SEEK
-ict_job_ad_salary  = ict_job_ad_salary.pivot(index = 'date', columns = 'industry', values= 'ave_salary').reset_index()
-ict_job_ad_salary['date'] = pd.to_datetime(ict_job_ad_salary['date'], format = '%d/%m/%Y')
-ict_job_ad_salary['Month Year'] = ict_job_ad_salary['date'].dt.strftime('%B %Y')
-ict_job_ad_salary.to_csv('Data/output/dashboard/ict_job_ads.csv', index = False)
 
 ## CROSS SECTOR COMPARISIONS
 
@@ -195,8 +176,6 @@ percentage_columns = [
     'Average base salary GPG (%)',
     'Median total remuneration GPG (%)',
     'Median base salary GPG (%)',
-    '2022-23 Median total remuneration GPG (%)',
-    '2022-23 Median base salary GPG (%)',
     'Total workforce % women',
     'Upper quartile % women',
     'Upper-middle quartile % women',
@@ -258,7 +237,7 @@ final_comparison_df = final_comparison_df.sort_values(
 )
 
 final_comparison_df.rename(columns={'Industry (ANZSIC Division)': 'Industry', 'Avg_Total_Remuneration':'Average Total Remuneration', 'Avg_Women_Percentage': 'Average % of Women'}, inplace=True)
-final_comparison_df.to_csv("Data/output/dashboard/salaries_comparision.csv", index = False)
+final_comparison_df.to_csv(DATA_OUTPUT / "salaries_comparision.csv", index = False)
 
 
 
@@ -503,7 +482,7 @@ all_workers_avg_sorted = pd.concat([quartile_rows, total_row], ignore_index=True
 
 mapping_data = mapping_data.merge(direct_tech_avg_sorted, left_on="WGEA Quartile", right_on = "WGEA Quartile").merge(all_workers_avg_sorted, left_on="WGEA Quartile", right_on = "WGEA Quartile")
 
-mapping_data.to_csv('Data/output/dashboard/tech_pay_quartiles.csv', index = False)
+mapping_data.to_csv(DATA_OUTPUT / "tech_pay_quartiles.csv", index = False)
 
 # WOMEN IN TECH
 #--------------#
@@ -536,7 +515,7 @@ comp_sum['pct'] = round((
 ) * 100, 1)
 
 comp_pct = comp_sum.reset_index().pivot(columns='gender', values='pct', index=['Sector', 'occupation']).reset_index().sort_values(by=['Sector'], ascending=False)
-comp_pct.to_csv('Data/output/dashboard/workplace_leadership_comp_pct.csv', index = False)
+comp_pct.to_csv(DATA_OUTPUT / "workplace_leadership_comp_pct.csv", index = False)
 
 ## WOMEN PROMOTION RATES BY MANAGERIAL LEVEL & SECTOR
 
@@ -561,16 +540,15 @@ promos_sum['pct'] = round((
 ) * 100, 1)
 
 promos_pct = promos_sum.reset_index().pivot(columns='gender', values='pct', index=['Sector', 'movement_type', 'manager_type']).reset_index().sort_values(by=['Sector', 'movement_type'], ascending=False)
-promos_pct.to_csv('Data/output/dashboard/mgmt_promotions_pct.csv', index = False)
+promos_pct.to_csv(DATA_OUTPUT / "mgmt_promotions_pct.csv", index = False)
 promos_n = promos_sum.reset_index().pivot(columns='gender', values='n_employees', index=['Sector', 'movement_type', 'manager_type']).reset_index().sort_values(by=['Sector', 'movement_type'], ascending=False)
-promos_n.to_csv('Data/output/dashboard/mgmt_promotions_n.csv', index = False)
+promos_n.to_csv(DATA_OUTPUT / "mgmt_promotions_n.csv", index = False)
 
 # INTERNATIONAL BENCHMARKING
 #---------------------------#
 #---------------------------#
 ## AI
 
-ai_total_ranking = pd.read_csv('Data/input/tech_international_benchmarks/ai/global AI vibrancy indices.csv',  usecols=[0, 1, 2]).pivot(index = 'country', columns = 'index', values= 'score').reset_index()
 region_map = {
     "United States": "Americas",
     "China": "APAC",
@@ -610,29 +588,29 @@ region_map = {
     "South Africa": "EMEA"
 }
 
-ai_total_ranking["region"] = ai_total_ranking["country"].map(region_map)
+global_ai["region"] = global_ai["CountryName"].map(region_map)
 
-cols = list(ai_total_ranking.columns)
-cols.insert(1, cols.pop(cols.index('Total')))
-ai_total_ranking = ai_total_ranking[cols]
+cols = list(global_ai.columns)
+cols.insert(1, cols.pop(cols.index('total_score')))
+global_ai = global_ai[cols]
 
 
 ai_total_ranking_top_5 = (
-    ai_total_ranking.groupby("region", group_keys=False)
-      .apply(lambda x: x.nlargest(5, "Total"))
+    global_ai.groupby("region", group_keys=False)
+      .apply(lambda x: x.nlargest(5, "total_score"))
 )
 
 ai_total_ranking_top_5 = pd.concat([
     ai_total_ranking_top_5,
-    ai_total_ranking[ai_total_ranking["country"] == "Australia"]
+    global_ai[global_ai["CountryName"] == "Australia"]
 ]).drop_duplicates()
 
-ai_total_ranking_top_5.to_csv('Data/output/dashboard/global_ai_rankings.csv', index = False)
+ai_total_ranking_top_5.to_csv(DATA_OUTPUT / "global_ai_rankings.csv", index = False)
 
 ## R&D
 
-rd = pd.read_csv("Data/input/tech_international_benchmarks/r_and_d/r_and_d_pc_gdp_oecd.csv", skiprows=2)
-rd['% of GDP'] = round(rd['% of GDP'], 1)
+global_oecd = global_oecd.rename(columns={'country': 'Category', 'value': '% of GDP'})
+global_oecd['% of GDP'] = round(global_oecd['% of GDP'], 1)
 
 region_map = {
     "Israel": "EMEA",
@@ -667,127 +645,29 @@ region_map = {
     "Lithuania": "EMEA",
     "Ireland": "EMEA",
     "Luxembourg": "EMEA",
-    "Slovak Rep.": "EMEA",
+    "Slovak Republic": "EMEA",
     "Latvia": "EMEA",
     "Chile": "Americas",
     "Costa Rica": "Americas"
 }
 
-rd["Region"] = rd["Category"].map(region_map)
+global_oecd["Region"] = global_oecd["Category"].map(region_map)
 
 rd_top_5= (
-    rd.groupby("Region", group_keys=False)
+    global_oecd.groupby("Region", group_keys=False)
       .apply(lambda x: x.nlargest(5, "% of GDP"))
-)
+)  
 
 
 rd_total_ranking_top_5 = pd.concat([
     rd_top_5,
-    rd[rd["Category"] == "Australia"]
+    global_oecd[global_oecd["Category"] == "Australia"]
 ]).drop_duplicates()
 
-rd_total_ranking_top_5.to_csv('Data/output/dashboard/global_r_and_d_rankings.csv', index = False)
-
-## ENERGY USAGE
-renewable_energy_usage = pd.read_csv("https://ourworldindata.org/grapher/renewable-share-energy.csv?v=1&csvType=full&useColumnShortNames=true", storage_options = {'User-Agent': 'Our World In Data data fetch/1.0'})
-renewable_energy_usage = renewable_energy_usage[renewable_energy_usage['Code'].notna()]
-renewable_energy_usage_24 = renewable_energy_usage[renewable_energy_usage['Year'] == 2024]
-renewable_energy_usage_24 = renewable_energy_usage_24[renewable_energy_usage_24['Entity'] != "World"].sort_values(by='renewables__pct_equivalent_primary_energy', ascending=False)
-
-country_to_region = {
-    # APAC
-    "New Zealand": "APAC",
-    "Australia": "APAC",
-    "China": "APAC",
-    "Japan": "APAC",
-    "South Korea": "APAC",
-    "Taiwan": "APAC",
-    "India": "APAC",
-    "Sri Lanka": "APAC",
-    "Vietnam": "APAC",
-    "Indonesia": "APAC",
-    "Malaysia": "APAC",
-    "Philippines": "APAC",
-    "Bangladesh": "APAC",
-    "Hong Kong": "APAC",
-    "Uzbekistan": "APAC",
-    "Kazakhstan": "APAC",
-    "Turkmenistan": "APAC",
-    
-    # Americas
-    "Brazil": "Americas",
-    "Argentina": "Americas",
-    "Chile": "Americas",
-    "Colombia": "Americas",
-    "Peru": "Americas",
-    "Venezuela": "Americas",
-    "Mexico": "Americas",
-    "Canada": "Americas",
-    "United States": "Americas",
-    "Trinidad and Tobago": "Americas",
-    
-    # EMEA (Europe + Middle East + Africa)
-    "Iceland": "EMEA",
-    "Norway": "EMEA",
-    "Sweden": "EMEA",
-    "Denmark": "EMEA",
-    "Finland": "EMEA",
-    "Austria": "EMEA",
-    "Switzerland": "EMEA",
-    "Portugal": "EMEA",
-    "Spain": "EMEA",
-    "Latvia": "EMEA",
-    "Lithuania": "EMEA",
-    "Croatia": "EMEA",
-    "Slovenia": "EMEA",
-    "Germany": "EMEA",
-    "Ireland": "EMEA",
-    "United Kingdom": "EMEA",
-    "Greece": "EMEA",
-    "Italy": "EMEA",
-    "Turkey": "EMEA",
-    "Romania": "EMEA",
-    "Netherlands": "EMEA",
-    "Estonia": "EMEA",
-    "France": "EMEA",
-    "Bulgaria": "EMEA",
-    "North Macedonia": "EMEA",
-    "Luxembourg": "EMEA",
-    "Poland": "EMEA",
-    "Belgium": "EMEA",
-    "Slovakia": "EMEA",
-    "Czechia": "EMEA",
-    "Belarus": "EMEA",
-    "Russia": "EMEA",
-    "Israel": "EMEA",
-    "Cyprus": "EMEA",
-    "Egypt": "EMEA",
-    "Morocco": "EMEA",
-    "United Arab Emirates": "EMEA",
-    "Iran": "EMEA",
-    "Oman": "EMEA",
-    "Qatar": "EMEA",
-    "Saudi Arabia": "EMEA",
-    "Iraq": "EMEA",
-    "Kuwait": "EMEA",
-    "Algeria": "EMEA",
-    "Ukraine": "EMEA",
-    "Azerbaijan": "APAC",
-    "Thailand": "APAC",
-    "Ecuador": "Americas",
-    "Pakistan": "APAC",
-    "South Africa": "EMEA",
-    "Singapore": "APAC",
-    "Hungary": "EMEA"
-}
-renewable_energy_usage_24['Region'] = renewable_energy_usage_24['Entity'].map(country_to_region)
-renewable_energy_usage_24.to_csv('Data/output/dashboard/global_renewable_energy_usage_rankings.csv', index = False)
+rd_total_ranking_top_5.to_csv(DATA_OUTPUT / "global_r_and_d_rankings.csv", index = False)
 
 ## SKILLS
 
-
-skills_index = pd.read_csv("Data/input/tech_international_benchmarks/skills/skills_readiness_adoption_index_oecd.csv", skiprows=1)
-labour_market_pressure_index = pd.read_csv("Data/input/tech_international_benchmarks/skills/skills_readiness_labour_market_pressure_oecd.csv", skiprows=1)
 
 skills = skills_index.merge(labour_market_pressure_index, on = 'Category')
 region_map = {
@@ -833,4 +713,4 @@ region_map = {
 
 skills["Region"] = skills["Category"].map(region_map)
 
-skills.to_csv('Data/output/dashboard/global_skills_rankings.csv', index = False)
+skills.to_csv(DATA_OUTPUT / "global_skills_rankings.csv", index = False)

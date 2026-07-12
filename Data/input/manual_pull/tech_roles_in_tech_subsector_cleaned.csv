@@ -1,0 +1,296 @@
+Date,Metric,Count,Rolling Average
+Aug-06,Telecommunications Services,42.1,
+Aug-06,Internet Service Providers and Web Search Portals,5.0,
+Aug-06,"Data Processing, Web Hosting and Electronic Information Storage Services",6.7,
+Aug-06,Computer System Design and Related Services,93.9,
+Nov-06,Telecommunications Services,40.2,
+Nov-06,Internet Service Providers and Web Search Portals,6.5,
+Nov-06,"Data Processing, Web Hosting and Electronic Information Storage Services",5.6,
+Nov-06,Computer System Design and Related Services,85.5,
+Feb-07,Telecommunications Services,41.6,
+Feb-07,Internet Service Providers and Web Search Portals,3.6,
+Feb-07,"Data Processing, Web Hosting and Electronic Information Storage Services",6.2,
+Feb-07,Computer System Design and Related Services,79.9,
+May-07,Telecommunications Services,43.3,41.8
+May-07,Internet Service Providers and Web Search Portals,5.2,5.08
+May-07,"Data Processing, Web Hosting and Electronic Information Storage Services",7.3,6.45
+May-07,Computer System Design and Related Services,90.8,87.52
+Aug-07,Telecommunications Services,41.4,41.62
+Aug-07,Internet Service Providers and Web Search Portals,4.3,4.9
+Aug-07,"Data Processing, Web Hosting and Electronic Information Storage Services",10.1,7.3
+Aug-07,Computer System Design and Related Services,99.2,88.85
+Nov-07,Telecommunications Services,44.4,42.68
+Nov-07,Internet Service Providers and Web Search Portals,4.2,4.32
+Nov-07,"Data Processing, Web Hosting and Electronic Information Storage Services",10.1,8.42
+Nov-07,Computer System Design and Related Services,96.7,91.65
+Feb-08,Telecommunications Services,42.7,42.95
+Feb-08,Internet Service Providers and Web Search Portals,4.7,4.6
+Feb-08,"Data Processing, Web Hosting and Electronic Information Storage Services",7.4,8.72
+Feb-08,Computer System Design and Related Services,96.3,95.75
+May-08,Telecommunications Services,41.1,42.4
+May-08,Internet Service Providers and Web Search Portals,2.3,3.88
+May-08,"Data Processing, Web Hosting and Electronic Information Storage Services",4.3,7.98
+May-08,Computer System Design and Related Services,99.7,97.98
+Aug-08,Telecommunications Services,45.9,43.53
+Aug-08,Internet Service Providers and Web Search Portals,6.9,4.53
+Aug-08,"Data Processing, Web Hosting and Electronic Information Storage Services",3.1,6.22
+Aug-08,Computer System Design and Related Services,108.2,100.22
+Nov-08,Telecommunications Services,42.5,43.05
+Nov-08,Internet Service Providers and Web Search Portals,2.6,4.12
+Nov-08,"Data Processing, Web Hosting and Electronic Information Storage Services",1.8,4.15
+Nov-08,Computer System Design and Related Services,99.2,100.85
+Feb-09,Telecommunications Services,31.9,40.35
+Feb-09,Internet Service Providers and Web Search Portals,1.8,3.4
+Feb-09,"Data Processing, Web Hosting and Electronic Information Storage Services",1.0,2.55
+Feb-09,Computer System Design and Related Services,107.8,103.72
+May-09,Telecommunications Services,34.9,38.8
+May-09,Internet Service Providers and Web Search Portals,3.1,3.6
+May-09,"Data Processing, Web Hosting and Electronic Information Storage Services",1.5,1.85
+May-09,Computer System Design and Related Services,110.0,106.3
+Aug-09,Telecommunications Services,37.4,36.67
+Aug-09,Internet Service Providers and Web Search Portals,2.8,2.58
+Aug-09,Computer System Design and Related Services,114.8,107.95
+Nov-09,Telecommunications Services,40.1,36.08
+Nov-09,Internet Service Providers and Web Search Portals,1.4,2.28
+Nov-09,"Data Processing, Web Hosting and Electronic Information Storage Services",1.4,1.42
+Nov-09,Computer System Design and Related Services,117.1,112.42
+Feb-10,Telecommunications Services,41.1,38.38
+Feb-10,Internet Service Providers and Web Search Portals,1.3,2.15
+Feb-10,"Data Processing, Web Hosting and Electronic Information Storage Services",2.3,1.55
+Feb-10,Computer System Design and Related Services,121.9,115.95
+May-10,Telecommunications Services,41.2,39.95
+May-10,Internet Service Providers and Web Search Portals,3.7,2.3
+May-10,"Data Processing, Web Hosting and Electronic Information Storage Services",3.0,2.05
+May-10,Computer System Design and Related Services,111.9,116.42
+Aug-10,Telecommunications Services,42.5,41.22
+Aug-10,Internet Service Providers and Web Search Portals,1.5,1.98
+Aug-10,"Data Processing, Web Hosting and Electronic Information Storage Services",1.2,1.98
+Aug-10,Computer System Design and Related Services,118.6,117.38
+Nov-10,Telecommunications Services,41.6,41.6
+Nov-10,Internet Publishing and Broadcasting,1.4,
+Nov-10,Internet Service Providers and Web Search Portals,1.8,2.08
+Nov-10,"Data Processing, Web Hosting and Electronic Information Storage Services",2.0,2.12
+Nov-10,Computer System Design and Related Services,110.4,115.7
+Feb-11,Telecommunications Services,46.2,42.88
+Feb-11,Internet Publishing and Broadcasting,1.4,
+Feb-11,Internet Service Providers and Web Search Portals,2.1,2.28
+Feb-11,"Data Processing, Web Hosting and Electronic Information Storage Services",1.1,1.82
+Feb-11,Computer System Design and Related Services,124.1,116.25
+May-11,Telecommunications Services,41.5,42.95
+May-11,Internet Publishing and Broadcasting,1.2,
+May-11,Internet Service Providers and Web Search Portals,2.0,1.85
+May-11,"Data Processing, Web Hosting and Electronic Information Storage Services",1.0,1.32
+May-11,Computer System Design and Related Services,122.9,119.0
+Aug-11,Telecommunications Services,35.3,41.15
+Aug-11,Internet Publishing and Broadcasting,1.3,1.32
+Aug-11,Internet Service Providers and Web Search Portals,2.6,2.12
+Aug-11,"Data Processing, Web Hosting and Electronic Information Storage Services",1.7,1.45
+Aug-11,Computer System Design and Related Services,125.1,120.62
+Nov-11,Telecommunications Services,31.6,38.65
+Nov-11,Internet Service Providers and Web Search Portals,2.4,2.28
+Nov-11,Computer System Design and Related Services,136.4,127.12
+Feb-12,Telecommunications Services,33.6,35.5
+Feb-12,Internet Service Providers and Web Search Portals,1.5,2.12
+Feb-12,Computer System Design and Related Services,130.5,128.73
+May-12,Telecommunications Services,39.6,35.02
+May-12,Internet Service Providers and Web Search Portals,3.5,2.5
+May-12,Computer System Design and Related Services,132.7,131.18
+Aug-12,Telecommunications Services,49.3,38.52
+Aug-12,Internet Publishing and Broadcasting,1.5,1.35
+Aug-12,Internet Service Providers and Web Search Portals,1.7,2.28
+Aug-12,"Data Processing, Web Hosting and Electronic Information Storage Services",1.3,1.27
+Aug-12,Computer System Design and Related Services,130.9,132.62
+Nov-12,Telecommunications Services,50.0,43.12
+Nov-12,Internet Service Providers and Web Search Portals,2.6,2.33
+Nov-12,"Data Processing, Web Hosting and Electronic Information Storage Services",1.9,1.48
+Nov-12,Computer System Design and Related Services,130.9,131.25
+Feb-13,Telecommunications Services,43.8,45.68
+Feb-13,Internet Service Providers and Web Search Portals,2.6,2.6
+Feb-13,"Data Processing, Web Hosting and Electronic Information Storage Services",1.1,1.5
+Feb-13,Computer System Design and Related Services,127.1,130.4
+May-13,Telecommunications Services,45.5,47.15
+May-13,Internet Service Providers and Web Search Portals,4.7,2.9
+May-13,"Data Processing, Web Hosting and Electronic Information Storage Services",2.4,1.68
+May-13,Computer System Design and Related Services,132.5,130.35
+Aug-13,Telecommunications Services,38.0,44.32
+Aug-13,Computer System Design and Related Services,144.0,133.62
+Nov-13,Telecommunications Services,31.3,39.65
+Nov-13,Internet Service Providers and Web Search Portals,1.0,2.72
+Nov-13,"Data Processing, Web Hosting and Electronic Information Storage Services",1.3,1.68
+Nov-13,Computer System Design and Related Services,131.1,133.68
+Feb-14,Telecommunications Services,42.9,39.42
+Feb-14,Internet Service Providers and Web Search Portals,1.5,2.45
+Feb-14,"Data Processing, Web Hosting and Electronic Information Storage Services",1.0,1.45
+Feb-14,Computer System Design and Related Services,133.6,135.3
+May-14,Telecommunications Services,51.1,40.82
+May-14,"Data Processing, Web Hosting and Electronic Information Storage Services",1.6,1.58
+May-14,Computer System Design and Related Services,138.1,136.7
+Aug-14,Telecommunications Services,57.9,45.8
+Aug-14,"Data Processing, Web Hosting and Electronic Information Storage Services",2.1,1.5
+Aug-14,Computer System Design and Related Services,155.8,139.65
+Nov-14,Telecommunications Services,52.5,51.1
+Nov-14,Internet Service Providers and Web Search Portals,1.6,2.2
+Nov-14,"Data Processing, Web Hosting and Electronic Information Storage Services",1.2,1.48
+Nov-14,Computer System Design and Related Services,133.3,140.2
+Feb-15,Telecommunications Services,44.4,51.48
+Feb-15,Internet Service Providers and Web Search Portals,1.4,1.38
+Feb-15,"Data Processing, Web Hosting and Electronic Information Storage Services",4.3,2.3
+Feb-15,Computer System Design and Related Services,138.9,141.52
+May-15,Telecommunications Services,49.7,51.12
+May-15,Internet Service Providers and Web Search Portals,1.5,1.5
+May-15,"Data Processing, Web Hosting and Electronic Information Storage Services",2.8,2.6
+May-15,Computer System Design and Related Services,155.7,145.93
+Aug-15,Telecommunications Services,46.1,48.18
+Aug-15,Internet Service Providers and Web Search Portals,6.9,2.85
+Aug-15,"Data Processing, Web Hosting and Electronic Information Storage Services",1.3,2.4
+Aug-15,Computer System Design and Related Services,153.3,145.3
+Nov-15,Telecommunications Services,52.3,48.12
+Nov-15,Internet Service Providers and Web Search Portals,1.9,2.92
+Nov-15,"Data Processing, Web Hosting and Electronic Information Storage Services",1.3,2.43
+Nov-15,Computer System Design and Related Services,141.1,147.25
+Feb-16,Telecommunications Services,47.0,48.78
+Feb-16,Internet Service Providers and Web Search Portals,5.7,4.0
+Feb-16,"Data Processing, Web Hosting and Electronic Information Storage Services",1.3,1.68
+Feb-16,Computer System Design and Related Services,146.0,149.02
+May-16,Telecommunications Services,44.5,47.48
+May-16,Internet Service Providers and Web Search Portals,4.0,4.62
+May-16,Computer System Design and Related Services,154.0,148.6
+Aug-16,Telecommunications Services,50.9,48.68
+Aug-16,"Data Processing, Web Hosting and Electronic Information Storage Services",2.7,1.65
+Aug-16,Computer System Design and Related Services,149.1,147.55
+Nov-16,Telecommunications Services,50.6,48.25
+Nov-16,Internet Service Providers and Web Search Portals,4.3,3.97
+Nov-16,Computer System Design and Related Services,152.4,150.38
+Feb-17,Telecommunications Services,44.4,47.6
+Feb-17,Internet Publishing and Broadcasting,2.6,1.65
+Feb-17,Internet Service Providers and Web Search Portals,3.2,4.3
+Feb-17,"Data Processing, Web Hosting and Electronic Information Storage Services",1.4,1.68
+Feb-17,Computer System Design and Related Services,155.0,152.62
+May-17,Telecommunications Services,47.3,48.3
+May-17,Internet Service Providers and Web Search Portals,1.7,3.3
+May-17,Computer System Design and Related Services,169.6,156.52
+Aug-17,Telecommunications Services,40.1,45.6
+Aug-17,Internet Service Providers and Web Search Portals,3.8,3.25
+Aug-17,"Data Processing, Web Hosting and Electronic Information Storage Services",1.5,1.72
+Aug-17,Computer System Design and Related Services,171.5,162.12
+Nov-17,Telecommunications Services,49.0,45.2
+Nov-17,Internet Service Providers and Web Search Portals,1.2,2.47
+Nov-17,"Data Processing, Web Hosting and Electronic Information Storage Services",1.1,1.68
+Nov-17,Computer System Design and Related Services,164.9,165.25
+Feb-18,Telecommunications Services,55.0,47.85
+Feb-18,Internet Service Providers and Web Search Portals,1.5,2.05
+Feb-18,"Data Processing, Web Hosting and Electronic Information Storage Services",1.3,1.32
+Feb-18,Computer System Design and Related Services,180.7,171.68
+May-18,Telecommunications Services,61.9,51.5
+May-18,Internet Service Providers and Web Search Portals,2.7,2.3
+May-18,"Data Processing, Web Hosting and Electronic Information Storage Services",1.7,1.4
+May-18,Computer System Design and Related Services,184.8,175.48
+Aug-18,Telecommunications Services,52.1,54.5
+Aug-18,Internet Service Providers and Web Search Portals,1.4,1.7
+Aug-18,"Data Processing, Web Hosting and Electronic Information Storage Services",1.5,1.4
+Aug-18,Computer System Design and Related Services,204.1,183.62
+Nov-18,Telecommunications Services,53.6,55.65
+Nov-18,Internet Service Providers and Web Search Portals,2.9,2.12
+Nov-18,"Data Processing, Web Hosting and Electronic Information Storage Services",1.7,1.55
+Nov-18,Computer System Design and Related Services,172.3,185.48
+Feb-19,Telecommunications Services,50.1,54.42
+Feb-19,Internet Service Providers and Web Search Portals,1.4,2.1
+Feb-19,Computer System Design and Related Services,189.7,187.73
+May-19,Telecommunications Services,49.1,51.22
+May-19,Internet Service Providers and Web Search Portals,1.9,1.9
+May-19,Computer System Design and Related Services,182.3,187.1
+Aug-19,Telecommunications Services,47.1,49.98
+Aug-19,Internet Service Providers and Web Search Portals,1.7,1.98
+Aug-19,"Data Processing, Web Hosting and Electronic Information Storage Services",2.0,1.72
+Aug-19,Computer System Design and Related Services,187.0,182.82
+Nov-19,Telecommunications Services,44.9,47.8
+Nov-19,Internet Service Providers and Web Search Portals,3.8,2.2
+Nov-19,Computer System Design and Related Services,181.5,185.12
+Feb-20,Telecommunications Services,52.7,48.45
+Feb-20,Internet Service Providers and Web Search Portals,6.3,3.42
+Feb-20,"Data Processing, Web Hosting and Electronic Information Storage Services",1.8,1.75
+Feb-20,Computer System Design and Related Services,203.8,188.65
+May-20,Telecommunications Services,44.2,47.22
+May-20,Internet Service Providers and Web Search Portals,7.3,4.78
+May-20,"Data Processing, Web Hosting and Electronic Information Storage Services",1.7,1.8
+May-20,Computer System Design and Related Services,200.8,193.28
+Aug-20,Telecommunications Services,45.1,46.73
+Aug-20,"Data Processing, Web Hosting and Electronic Information Storage Services",0.8,1.58
+Aug-20,Computer System Design and Related Services,207.5,198.4
+Nov-20,Telecommunications Services,47.4,47.35
+Nov-20,Internet Service Providers and Web Search Portals,2.0,4.85
+Nov-20,Computer System Design and Related Services,222.5,208.65
+Feb-21,Telecommunications Services,45.9,45.65
+Feb-21,Internet Service Providers and Web Search Portals,1.4,4.25
+Feb-21,"Data Processing, Web Hosting and Electronic Information Storage Services",1.5,1.45
+Feb-21,Computer System Design and Related Services,233.9,216.18
+May-21,Telecommunications Services,39.8,44.55
+May-21,Computer System Design and Related Services,217.9,220.45
+Aug-21,Telecommunications Services,34.9,42.0
+Aug-21,Internet Service Providers and Web Search Portals,4.8,3.88
+Aug-21,"Data Processing, Web Hosting and Electronic Information Storage Services",2.5,1.62
+Aug-21,Computer System Design and Related Services,204.4,219.68
+Nov-21,Telecommunications Services,42.8,40.85
+Nov-21,Internet Service Providers and Web Search Portals,3.5,2.92
+Nov-21,"Data Processing, Web Hosting and Electronic Information Storage Services",1.7,1.62
+Nov-21,Computer System Design and Related Services,222.5,219.68
+Feb-22,Telecommunications Services,49.1,41.65
+Feb-22,Internet Service Providers and Web Search Portals,3.5,3.3
+Feb-22,"Data Processing, Web Hosting and Electronic Information Storage Services",3.4,2.28
+Feb-22,Computer System Design and Related Services,233.1,219.48
+May-22,Telecommunications Services,45.9,43.18
+May-22,Internet Service Providers and Web Search Portals,2.6,3.6
+May-22,Computer System Design and Related Services,241.5,225.38
+Aug-22,Telecommunications Services,40.9,44.68
+Aug-22,Internet Service Providers and Web Search Portals,2.0,2.9
+Aug-22,Computer System Design and Related Services,255.6,238.18
+Nov-22,Telecommunications Services,41.8,44.42
+Nov-22,Internet Service Providers and Web Search Portals,1.2,2.33
+Nov-22,"Data Processing, Web Hosting and Electronic Information Storage Services",1.4,2.25
+Nov-22,Computer System Design and Related Services,264.2,248.6
+Feb-23,Telecommunications Services,40.5,42.27
+Feb-23,Internet Service Providers and Web Search Portals,3.8,2.4
+Feb-23,"Data Processing, Web Hosting and Electronic Information Storage Services",2.2,2.17
+Feb-23,Computer System Design and Related Services,239.5,250.2
+May-23,Telecommunications Services,41.1,41.08
+May-23,Internet Service Providers and Web Search Portals,5.1,3.02
+May-23,"Data Processing, Web Hosting and Electronic Information Storage Services",1.1,2.02
+May-23,Computer System Design and Related Services,233.1,248.1
+Aug-23,Telecommunications Services,42.1,41.38
+Aug-23,Internet Service Providers and Web Search Portals,5.1,3.8
+Aug-23,Computer System Design and Related Services,254.6,247.85
+Nov-23,Telecommunications Services,35.0,39.67
+Nov-23,Internet Service Providers and Web Search Portals,3.1,4.27
+Nov-23,Computer System Design and Related Services,253.5,245.18
+Feb-24,Telecommunications Services,39.3,39.38
+Feb-24,Internet Publishing and Broadcasting,3.3,2.17
+Feb-24,Internet Service Providers and Web Search Portals,2.5,3.95
+Feb-24,"Data Processing, Web Hosting and Electronic Information Storage Services",2.6,1.83
+Feb-24,Computer System Design and Related Services,255.0,249.05
+May-24,Telecommunications Services,46.1,40.62
+May-24,Internet Publishing and Broadcasting,1.9,2.32
+May-24,Internet Service Providers and Web Search Portals,4.4,3.78
+May-24,"Data Processing, Web Hosting and Electronic Information Storage Services",1.0,1.72
+May-24,Computer System Design and Related Services,269.8,258.23
+Aug-24,Telecommunications Services,33.3,38.42
+Aug-24,Internet Service Providers and Web Search Portals,4.9,3.72
+Aug-24,"Data Processing, Web Hosting and Electronic Information Storage Services",2.3,1.75
+Aug-24,Computer System Design and Related Services,266.5,261.2
+Nov-24,Telecommunications Services,31.9,37.65
+Nov-24,Internet Service Providers and Web Search Portals,1.3,3.28
+Nov-24,"Data Processing, Web Hosting and Electronic Information Storage Services",1.6,1.88
+Nov-24,Computer System Design and Related Services,250.5,260.45
+Feb-25,Telecommunications Services,40.3,37.9
+Feb-25,Internet Service Providers and Web Search Portals,3.5,3.53
+Feb-25,"Data Processing, Web Hosting and Electronic Information Storage Services",1.5,1.6
+Feb-25,Computer System Design and Related Services,227.3,253.53
+May-25,Telecommunications Services,34.9,35.1
+May-25,Internet Publishing and Broadcasting,0.8,2.15
+May-25,"Data Processing, Web Hosting and Electronic Information Storage Services",0.8,1.55
+May-25,Computer System Design and Related Services,266.5,252.7
+Aug-25,Telecommunications Services,34.9,35.5
+Aug-25,"Data Processing, Web Hosting and Electronic Information Storage Services",2.3,1.55
+Aug-25,Computer System Design and Related Services,259.4,250.92
+Nov-25,Telecommunications Services,39.3,37.35
+Nov-25,"Data Processing, Web Hosting and Electronic Information Storage Services",1.7,1.58
+Nov-25,Computer System Design and Related Services,277.1,257.58

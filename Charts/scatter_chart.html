@@ -1,0 +1,436 @@
+<title>Tech Vector — skills readiness vs labour market pressure</title>
+<style>
+:root {
+  --surface: #ffffff;
+  --surface-alt: #f7f5f8;
+  --ink-primary: #18151d;
+  --ink-secondary: #4d4954;
+  --ink-muted: #8b8792;
+  --grid: #e8e6ea;
+  --axis: #c7c3cb;
+  --card-border: #ece9ee;
+
+  --cat-1: #EC3E9E; --cat-1-text: #A8256C;
+  --cat-2: #E0904A; --cat-2-text: #9C5716;
+  --cat-3: #5B9BE0; --cat-3-text: #22589C;
+  --cat-4: #5A3A9E; --cat-4-text: #4A2E85;
+  --cat-5: #D998D0; --cat-5-text: #953F85;
+  --cat-5-tint: #F8EEF6;
+  --corner-accent: #C93FB0;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--surface-alt);
+  color: var(--ink-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.page { margin: 0; padding: 0; }
+
+figure.chart-card {
+  position: relative;
+  margin: 0;
+  background: var(--surface);
+  padding: 16px 18px 12px;
+  overflow: hidden;
+  min-height: 100vh;
+}
+figure.chart-card::after {
+  content: "";
+  position: absolute; right: -1px; bottom: -1px;
+  width: 46px; height: 46px;
+  background: var(--corner-accent);
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+  opacity: 0.9;
+}
+.chart-title { font-size: 17px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+.chart-caption { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.55; margin: 0 0 16px; max-width: 900px; }
+.chart-caption b { color: var(--ink-primary); }
+
+.legend-row { display: flex; flex-wrap: wrap; gap: 16px 22px; margin-bottom: 14px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-secondary); }
+.legend-swatch { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.legend-swatch.line { width: 16px; height: 3px; border-radius: 2px; }
+
+.chart-mount { width: 100%; }
+.chart-mount svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+.chart-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--card-border); flex-wrap: wrap; }
+.chart-source { font-size: 12px; color: var(--ink-muted); }
+.download-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: inherit; font-size: 12.5px; font-weight: 600; color: var(--ink-secondary);
+  background: var(--surface-alt); border: 1px solid var(--card-border); border-radius: 7px;
+  padding: 5px 11px; cursor: pointer;
+}
+.download-btn:hover { color: var(--ink-primary); border-color: var(--axis); }
+.download-btn svg { width: 13px; height: 13px; flex: none; }
+
+.filter-row { margin-bottom: 16px; }
+.filter-note { font-size: 12px; color: var(--ink-muted); margin: 8px 0 0; }
+
+.filter-select {
+  font: inherit; font-size: 14px; min-width: 240px;
+  padding: 9px 34px 9px 12px; border-radius: 10px; border: 1px solid var(--card-border);
+  background: var(--surface-alt); color: var(--ink-primary); cursor: pointer;
+}
+.filter-select:focus { outline: 2px solid var(--cat-3); outline-offset: 1px; }
+
+.multiselect { position: relative; display: inline-block; }
+.multiselect-button {
+  font: inherit; font-size: 14px; display: flex; align-items: center; gap: 10px;
+  justify-content: space-between; min-width: 240px;
+  padding: 9px 12px; border-radius: 10px; border: 1px solid var(--card-border);
+  background: var(--surface-alt); color: var(--ink-primary); cursor: pointer;
+}
+.multiselect-button:focus { outline: 2px solid var(--cat-3); outline-offset: 1px; }
+.multiselect-button .chevron { color: var(--ink-muted); font-size: 11px; flex: none; }
+.multiselect-panel {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 20;
+  min-width: 260px; max-height: 280px; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--card-border); border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14); padding: 6px;
+}
+.multiselect-panel.open { display: block; }
+.multiselect-option {
+  display: flex; align-items: center; gap: 9px; padding: 7px 8px; border-radius: 6px;
+  font-size: 13.5px; color: var(--ink-primary); cursor: pointer;
+}
+.multiselect-option:hover { background: var(--surface-alt); }
+.multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
+.multiselect-option input:disabled { cursor: not-allowed; }
+
+.small-multiples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 22px 18px;
+}
+.sm-panel-title { font-size: 13px; font-weight: 700; margin: 0 0 6px; }
+
+.tooltip {
+  position: fixed; pointer-events: none; z-index: 50;
+  background: var(--ink-primary); color: var(--surface);
+  font-size: 12.5px; line-height: 1.45; border-radius: 8px;
+  padding: 8px 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  opacity: 0; transform: translate(-9999px, -9999px);
+  transition: opacity 0.08s ease-out;
+  max-width: 240px;
+}
+.tooltip.visible { opacity: 1; }
+.tooltip .tt-value { font-weight: 700; }
+.tooltip .tt-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.tooltip .tt-key { width: 10px; height: 2px; border-radius: 1px; flex: none; }
+.tooltip .tt-title { font-weight: 700; margin-bottom: 4px; opacity: 0.85; }
+
+.bar-annotation {
+  box-sizing: border-box; height: 100%; display: flex; align-items: center;
+  font-size: 12px; line-height: 1.5; color: var(--ink-secondary);
+  background: var(--cat-5-tint); border-radius: 8px; padding: 8px 10px;
+}
+
+.end-label { font-weight: 700; font-size: 12.5px; }
+.axis-label { fill: var(--ink-muted); font-size: 11.5px; }
+.grid-line { stroke: var(--grid); stroke-width: 1; }
+.axis-line { stroke: var(--axis); stroke-width: 1; }
+
+@media (max-width: 640px) {
+  figure.chart-card { padding: 12px 12px 10px; }
+  .legend-row { gap: 10px 16px; }
+}
+
+</style>
+<div class="page">
+  <figure class="chart-card" id="card-scatter">
+    <h3 class="chart-title" id="chart-title"></h3>
+    <div class="legend-row" id="scatter-legend"></div>
+    <div class="chart-mount" id="scatter-chart"></div>
+    <div class="chart-footer">
+      <span class="chart-source" id="chart-source"></span>
+      <button class="download-btn" data-target="scatter"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
+    </div>
+  </figure>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script type="application/json" id="chart-data">
+{"scatter": {"config": {"pageTitle": "Tech Vector \u2014 skills readiness vs labour market pressure", "title": "Skills-first readiness vs labour market pressure, by region", "source": "Source: global_skills_rankings.csv", "downloadFilename": "global_skills_rankings.csv", "nameColumn": "Category", "xColumn": "Skills-First Readiness and Adoption Index", "yColumn": "Labour Market Pressure Index", "groupColumn": "Region", "xAxisLabel": "Skills-First Readiness and Adoption Index", "yAxisLabel": "Labour Market Pressure Index", "groups": [{"value": "Australia", "label": "Australia", "color": "cat-1"}, {"value": "EMEA", "label": "EMEA", "color": "cat-3"}, {"value": "Americas", "label": "Americas", "color": "cat-2"}, {"value": "Global Average", "label": "Global Average", "color": "cat-4"}, {"value": "APAC", "label": "APAC", "color": "cat-5"}], "highlightGroup": "Australia", "quadrantAnnotations": [{"corner": "top-left", "lines": ["\u2191 Greater labour market", "pressure \u2014 and greater benefits", "from timely action"]}, {"corner": "bottom-left", "lines": ["\u2193 Weaker labour market", "pressure \u2014 and fewer benefits", "from timely action"]}]}, "data": [{"name": "Australia", "x": 0.704414164, "y": 0.438553423, "group": "Australia"}, {"name": "Sweden", "x": 0.699748329, "y": 0.341116965, "group": "EMEA"}, {"name": "France", "x": 0.689671217, "y": 0.396039188, "group": "EMEA"}, {"name": "United Kingdom", "x": 0.647904726, "y": 0.445369661, "group": "EMEA"}, {"name": "Belgium", "x": 0.642790532, "y": 0.373349071, "group": "EMEA"}, {"name": "Finland", "x": 0.6280873, "y": 0.312758893, "group": "EMEA"}, {"name": "Czechia", "x": 0.61403539, "y": 0.318339974, "group": "EMEA"}, {"name": "Norway", "x": 0.612036182, "y": 0.450341702, "group": "EMEA"}, {"name": "Latvia", "x": 0.607183109, "y": 0.32123065, "group": "EMEA"}, {"name": "United States", "x": 0.5983154, "y": 0.566761017, "group": "Americas"}, {"name": "Spain", "x": 0.592875242, "y": 0.440267265, "group": "EMEA"}, {"name": "Singapore", "x": 0.585379057, "y": 0.518856704, "group": "EMEA"}, {"name": "Denmark", "x": 0.583790619, "y": 0.313057095, "group": "EMEA"}, {"name": "Portugal", "x": 0.582678024, "y": 0.652433872, "group": "EMEA"}, {"name": "Italy", "x": 0.580265507, "y": 0.507116139, "group": "EMEA"}, {"name": "Lithuania", "x": 0.580240749, "y": 0.256051332, "group": "EMEA"}, {"name": "Average", "x": 0.57917248, "y": 0.445522132, "group": "Global Average"}, {"name": "Poland", "x": 0.576291583, "y": 0.158884302, "group": "EMEA"}, {"name": "Austria", "x": 0.575009712, "y": 0.469525605, "group": "EMEA"}, {"name": "Germany", "x": 0.571100169, "y": 0.49797219, "group": "EMEA"}, {"name": "Switzerland", "x": 0.565127961, "y": 0.504567146, "group": "EMEA"}, {"name": "Netherlands", "x": 0.555256261, "y": 0.526492953, "group": "EMEA"}, {"name": "Canada", "x": 0.548896518, "y": 0.508125424, "group": "Americas"}, {"name": "Slovak Rep.", "x": 0.543534247, "y": 0.294165194, "group": "EMEA"}, {"name": "Slovenia", "x": 0.543235638, "y": 0.421981543, "group": "EMEA"}, {"name": "T\u00fcrkiye", "x": 0.52261126, "y": 0.756761193, "group": "EMEA"}, {"name": "New Zealand", "x": 0.519715272, "y": 0.607887685, "group": "APAC"}, {"name": "Japan", "x": 0.513842531, "y": 0.551632643, "group": "APAC"}, {"name": "Korea", "x": 0.483579574, "y": 0.458720326, "group": "APAC"}, {"name": "Greece", "x": 0.460971719, "y": 0.573704839, "group": "EMEA"}, {"name": "Hungary", "x": 0.446586411, "y": 0.383599967, "group": "EMEA"}]}}
+</script>
+<script>
+(function () {
+  "use strict";
+  const DATA = JSON.parse(document.getElementById("chart-data").textContent);
+
+const SVGNS = "http://www.w3.org/2000/svg";
+
+// Applies the title/source/caption fields every chart's Python config
+// carries, so per-dataset text lives in build_charts.py only — none of it
+// is hardcoded in these JS files.
+function colorVar(token) {
+  return "var(--" + token + ")";
+}
+function colorTextVar(token) {
+  return "var(--" + token + "-text)";
+}
+function applyChromeConfig(cfg) {
+  if (cfg.pageTitle) document.title = cfg.pageTitle;
+  const titleEl = document.getElementById("chart-title");
+  if (titleEl) titleEl.textContent = cfg.title || "";
+  const sourceEl = document.getElementById("chart-source");
+  if (sourceEl) sourceEl.textContent = cfg.source || "";
+  const captionEl = document.getElementById("chart-caption");
+  if (captionEl && cfg.caption) captionEl.textContent = cfg.caption;
+}
+
+// ---------- generic helpers ----------------------------------------------
+function el(tag, attrs, parent) {
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function textEl(x, y, str, attrs, parent) {
+  const t = el("text", Object.assign({ x, y }, attrs), parent);
+  t.textContent = str; // untrusted-safe: textContent, never innerHTML
+  return t;
+}
+function niceStep(rawStep) {
+  const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+  const norm = rawStep / mag;
+  let step;
+  if (norm < 1.5) step = 1;
+  else if (norm < 3) step = 2;
+  else if (norm < 7) step = 5;
+  else step = 10;
+  return step * mag;
+}
+function niceTicks(min, max, count) {
+  const step = niceStep((max - min) / count || 1);
+  const start = Math.floor(min / step) * step;
+  const end = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let v = start; v <= end + step * 1e-6; v += step) ticks.push(Math.round(v * 1e6) / 1e6);
+  return ticks;
+}
+function formatMoney(v) {
+  return "$" + Math.round(v / 1000) + "K";
+}
+function formatCount(v) {
+  return Math.round(v).toLocaleString("en-AU");
+}
+function formatCountShort(v) {
+  // Independent-axis small multiples can have a max well under 1000 (e.g. a
+  // ~100-160 range) — dividing everything by 1000 there would print "0K" on
+  // every tick, so only use the K suffix once it's actually needed.
+  if (Math.abs(v) < 1000) return String(Math.round(v));
+  return Math.round(v / 1000) + "K";
+}
+function rollingMeanCentered(values, window) {
+  const half = Math.floor(window / 2);
+  return values.map((_, i) => {
+    const lo = Math.max(0, i - half);
+    const hi = Math.min(values.length - 1, i + half);
+    let sum = 0, n = 0;
+    for (let j = lo; j <= hi; j++) {
+      if (values[j] != null) { sum += values[j]; n++; }
+    }
+    return n ? sum / n : null;
+  });
+}
+function monthYearToDate(my) {
+  // "August 1986" -> Date
+  const [mon, yr] = my.split(" ");
+  return new Date(Date.parse(mon + " 1, " + yr));
+}
+// All date fields in chart-data.json MUST already be ISO "YYYY-MM-DD" or
+// "YYYY-MM" strings by the time they reach this page (see DATA_FORMAT.md).
+// This guard exists because that exact mistake shipped once already: an
+// ABS-style "Aug-06" string handed to `new Date()` silently parses as
+// month=Aug, day=06, year=2000 — not August 2006 — which produces a
+// non-monotonic x-scale and a shredded, zig-zagging line with no error or
+// warning anywhere. Fail loudly instead.
+function assertIsoDate(d) {
+  if (!/^\d{4}-\d{2}(-\d{2})?$/.test(d)) {
+    throw new Error("Expected an ISO date (YYYY-MM-DD or YYYY-MM), got: " + JSON.stringify(d) +
+      ". See DATA_FORMAT.md — non-ISO date strings parse silently wrong in JS.");
+  }
+  return d;
+}
+
+// shared tooltip -----------------------------------------------------------
+const tooltipEl = document.getElementById("tooltip");
+function showTooltip(x, y, html) {
+  tooltipEl.innerHTML = "";
+  tooltipEl.appendChild(html);
+  tooltipEl.classList.add("visible");
+  const pad = 14;
+  let left = x + pad, top = y + pad;
+  const rect = tooltipEl.getBoundingClientRect();
+  if (left + rect.width > window.innerWidth - 8) left = x - rect.width - pad;
+  if (top + rect.height > window.innerHeight - 8) top = y - rect.height - pad;
+  tooltipEl.style.transform = "translate(" + left + "px," + top + "px)";
+}
+function hideTooltip() {
+  tooltipEl.classList.remove("visible");
+}
+function ttRow(color, label, value) {
+  const row = document.createElement("div");
+  row.className = "tt-row";
+  if (color) {
+    const key = document.createElement("span");
+    key.className = "tt-key";
+    key.style.background = color;
+    row.appendChild(key);
+  }
+  const lab = document.createElement("span");
+  lab.textContent = label;
+  row.appendChild(lab);
+  if (value !== undefined) {
+    const val = document.createElement("span");
+    val.className = "tt-value";
+    val.style.marginLeft = "auto";
+    val.style.paddingLeft = "10px";
+    val.textContent = value;
+    row.appendChild(val);
+  }
+  return row;
+}
+function ttBox(titleText, rows) {
+  const box = document.createElement("div");
+  if (titleText) {
+    const t = document.createElement("div");
+    t.className = "tt-title";
+    t.textContent = titleText;
+    box.appendChild(t);
+  }
+  rows.forEach((r) => box.appendChild(r));
+  return box;
+}
+
+function legendItem(container, color, label, lineStyle) {
+  const item = document.createElement("div");
+  item.className = "legend-item";
+  const sw = document.createElement("span");
+  sw.className = "legend-swatch" + (lineStyle ? " line" : "");
+  sw.style.background = color;
+  item.appendChild(sw);
+  const lab = document.createElement("span");
+  lab.textContent = label;
+  item.appendChild(lab);
+  container.appendChild(item);
+}
+
+// csv download — replaces the table-view toggle with a direct data export
+const downloadRegistry = {};
+function csvCell(v) {
+  const s = String(v);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function registerDownload(key, filename, columns, rows) {
+  const csv = [columns, ...rows].map((r) => r.map(csvCell).join(",")).join("\r\n");
+  downloadRegistry[key] = { filename, csv };
+}
+function wireDownloadButtons() {
+  document.querySelectorAll(".download-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const entry = downloadRegistry[btn.dataset.target];
+      if (!entry) return;
+      const blob = new Blob([entry.csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = entry.filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  });
+}
+
+
+// SCATTER — quadrant annotations, categorical by group
+// All dataset-specific values (groups/colors, axis labels, quadrant callouts)
+// come from DATA.scatter.config, built in build_charts.py's SCATTER_CONFIG.
+function renderScatter() {
+  const cfg = DATA.scatter.config;
+  const data = DATA.scatter.data;
+  applyChromeConfig(cfg);
+
+  const mount = document.getElementById("scatter-chart");
+  const legend = document.getElementById("scatter-legend");
+  legend.innerHTML = "";
+  const groupColor = {};
+  cfg.groups.forEach((g) => { groupColor[g.value] = colorVar(g.color); });
+  const fallbackColor = colorVar(cfg.groups[cfg.groups.length - 1].color);
+  cfg.groups.forEach((g) => legendItem(legend, colorVar(g.color), g.label));
+
+  const W = 900, H = 560, pad = 46;
+  const plotW = W - pad * 2, plotH = H - pad * 2;
+  const x = (v) => pad + v * plotW;
+  const y = (v) => pad + plotH - v * plotH;
+
+  mount.innerHTML = "";
+  const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
+
+  for (let t = 0; t <= 1.0001; t += 0.1) {
+    const gx = x(t), gy = y(t);
+    el("line", { class: "grid-line", x1: gx, x2: gx, y1: pad, y2: H - pad }, svg);
+    el("line", { class: "grid-line", x1: pad, x2: W - pad, y1: gy, y2: gy }, svg);
+    textEl(gx, H - pad + 18, t.toFixed(1), { class: "axis-label", "text-anchor": "middle" }, svg);
+    textEl(pad - 10, gy + 4, t.toFixed(1), { class: "axis-label", "text-anchor": "end" }, svg);
+  }
+  el("line", { class: "axis-line", x1: pad, x2: pad, y1: pad, y2: H - pad }, svg);
+  el("line", { class: "axis-line", x1: pad, x2: W - pad, y1: H - pad, y2: H - pad }, svg);
+
+  textEl(W / 2, H - 6, cfg.xAxisLabel, { class: "axis-label", "text-anchor": "middle", "font-size": "12.5" }, svg);
+  const ylab = textEl(16, H / 2, cfg.yAxisLabel, { class: "axis-label", "text-anchor": "middle", "font-size": "12.5" }, svg);
+  ylab.setAttribute("transform", "rotate(-90 16 " + H / 2 + ")");
+
+  const cornerPos = {
+    "top-left": { x: pad + 14, y: pad + 22 },
+    "bottom-left": { x: pad + 14, y: H - pad - 48 },
+  };
+  (cfg.quadrantAnnotations || []).forEach((ann) => {
+    const pos = cornerPos[ann.corner];
+    if (!pos) return;
+    const t = el("text", { x: pos.x, y: pos.y, fill: "var(--cat-1-text)", "font-size": "12.5", "font-weight": "700" }, svg);
+    ann.lines.forEach((line, i) => {
+      el("tspan", { x: pos.x, dy: i === 0 ? 0 : 15 }, t).textContent = line;
+    });
+  });
+
+  const tableRows = [];
+  data.forEach((d) => {
+    const color = groupColor[d.group] || fallbackColor;
+    const cx = x(d.x), cy = y(d.y);
+    const isHighlighted = d.group === cfg.highlightGroup;
+    // Visible mark first, then a larger transparent hit-circle on top of it
+    // (same center) — an SVG element painted later sits on top and wins
+    // hit-testing, so the hit target must be last or hovering directly over
+    // the dot itself (what a user actually aims for) hits the marker, which
+    // has no listener, instead of the hit target underneath it.
+    el("circle", { cx, cy, r: isHighlighted ? 8 : 7, fill: color, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    if (isHighlighted) {
+      textEl(cx + 12, cy + 4, d.name, { "font-size": "12", "font-weight": "700", fill: color }, svg);
+    }
+    el("circle", { cx, cy, r: 14, fill: "transparent" }, svg).addEventListener("pointermove", (ev) => {
+      showTooltip(ev.clientX, ev.clientY, ttBox(d.name, [
+        ttRow(color, cfg.xAxisLabel, d.x.toFixed(2)),
+        ttRow(color, cfg.yAxisLabel, d.y.toFixed(2)),
+      ]));
+    });
+    svg.lastChild.addEventListener("pointerleave", hideTooltip);
+    tableRows.push([d.name, d.group, d.x.toFixed(3), d.y.toFixed(3)]);
+  });
+
+  registerDownload("scatter", cfg.downloadFilename, ["Name", "Group", cfg.xAxisLabel, cfg.yAxisLabel], tableRows);
+}
+
+renderScatter();
+wireDownloadButtons();
+
+})();
+</script>

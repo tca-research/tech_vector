@@ -208,3 +208,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Large raw automated data pulls — fully reproducible via Scripts/automated_fetch_*
+# (regenerate with automated_fetch_macro_data.R and automated_fetch_wgea.py).
+# Too large to keep in git history (~200MB combined, growing on every re-fetch).
+Data/input/automated_pull/abs_eq08_employed_by_occupation.csv
+Data/input/automated_pull/wgea_workforce_composition.csv
+Data/input/automated_pull/wgea_workforce_management_statistics.csv
