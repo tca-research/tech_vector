@@ -3,15 +3,15 @@
 This document explains how to download CSVs from the ABS TableBuilder and upload them to this repository so the automated GH Actions workflows can run.
 
 **Overview**
-- **Purpose:** Download the required CSV(s) from ABS TableBuilder and place them in the repository at `data/input/manual_pull/` with the exact filenames expected by the automation: `tech_vector_roles_in_subsector.csv` and `tech_vector_roles_across_economy.csv`.
+- **Purpose:** Download the required CSV(s) from ABS TableBuilder and place them in the repository at `data/input/manual_pull/` with the exact filenames expected by the automation: `tech_roles_in_tech_subsector.csv` and `tech_jobs_in_australia.csv`.
 
 **Step 1: Downloading CSV from ABS TableBuilder**
 - **Open the TableBuilder link:** Click the link to the ABS TableBuilder page provided by the dashboard or bookmarking the ABS TableBuilder URL in your browser.
 - **Sign in / accept terms:** If prompted, sign in or accept any usage terms required by ABS TableBuilder.
 - **Open the table layout:** Locate and open the relevant table (the dashboard usually points to the exact table). If the table provides multiple views, choose the view/layout that matches the automation expectations (usually the full table with variables in columns and years/units in rows).
-- **Export / Download:** Look for an `Export` or `Download` button (top-right). Choose `CSV` (comma-separated) as the format. Name the files `tech_vector_roles_in_subsector` and `tech_vector_roles_across_economy`. You may need to delete older versions of this file to write over the data.
+- **Export / Download:** Look for an `Export` or `Download` button (top-right). Choose `CSV` (comma-separated) as the format. Name the files `tech_roles_in_tech_subsector` and `tech_jobs_in_australia`. You may need to delete older versions of this file to write over the data.
 - **View the saved files page:** Click through to the saved files page and download the files you need.
-- **Save file with expected filename:** Save the downloaded files: `tech_vector_roles_in_subsector.csv` and `tech_vector_roles_across_economy.csv`
+- **Save file with expected filename:** Save the downloaded files: `tech_roles_in_tech_subsector.csv` and `tech_jobs_in_australia.csv`
 - **Unzip the zipped folder and grab the CSV export.**
 
 
@@ -19,7 +19,7 @@ This document explains how to download CSVs from the ABS TableBuilder and upload
 - **Open the repository in GitHub:** Go to the repo page in your browser.
 - **Navigate to folder:** Click through to `data/input/manual_pull/`.
 - **Add file → Upload files:** Click `Add file` → `Upload files` and either drag-and-drop the CSV or use the file picker to select it.
-- **Commit changes:** In the commit form, set a clear message, e.g. `Add ABS TableBuilder CSV: tech_vector_roles_in_subsector.csv`.
+- **Commit changes:** In the commit form, set a clear message, e.g. `Add ABS TableBuilder CSV: tech_roles_in_tech_subsector.csv`.
   - If you want to use a branch and PR workflow, create a new branch and then create a pull request after uploading.
   - If you have permission and the repo policy allows, you can commit directly to `main` (or the default branch).
 - **Wait for GH Actions:** After pushing or merging, GitHub Actions should trigger automatically. Check the Actions tab for the workflow run and any errors.
