@@ -135,7 +135,10 @@ figure.chart-card::after {
 .multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
 .multiselect-option input:disabled { cursor: not-allowed; }
 
-.kpi-card { max-width: 420px; }
+/* Fixed regardless of description length (1 vs. 2 lines) so gauges shown
+   side by side (e.g. as separate iframes on the live site) resize to the
+   same height and align, rather than each fitting only its own content. */
+.kpi-card { max-width: 420px; min-height: 156px; }
 .kpi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .kpi-icon { flex: none; width: 28px; height: 28px; }
 .kpi-icon svg { width: 100%; height: 100%; display: block; }
