@@ -16,7 +16,6 @@
   --cat-4: #5A3A9E; --cat-4-text: #4A2E85;
   --cat-5: #D998D0; --cat-5-text: #953F85;
   --cat-5-tint: #F8EEF6;
-  --corner-accent: #C93FB0;
 
   /* Status (not categorical) — reserved for "target met" state, never used
      for series/identity. */
@@ -48,14 +47,6 @@ figure.chart-card {
   background: var(--surface);
   padding: 16px 18px 12px;
   overflow: hidden;
-}
-figure.chart-card::after {
-  content: "";
-  position: absolute; right: -1px; bottom: -1px;
-  width: 46px; height: 46px;
-  background: var(--corner-accent);
-  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-  opacity: 0.9;
 }
 .chart-title { font-size: 17px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
 .chart-caption { font-size: 13.5px; color: var(--ink-secondary); line-height: 1.55; margin: 0 0 16px; max-width: 900px; }
