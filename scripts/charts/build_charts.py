@@ -214,13 +214,6 @@ def load_scatter_data(config=SCATTER_CONFIG, source_file="global_skills_rankings
 INTERACTIVE_LINE_CONFIG = {
     "pageTitle": "Tech Vector — employment by occupation",
     "title": "Employed persons by tech occupation, 1986–2025",
-    "caption": (
-        "Real ABS employment counts, standing in for Tech Vector's searchable "
-        "long-run salary chart — same interaction pattern (type to isolate "
-        "series, direct end-of-line labels, shared crosshair tooltip), "
-        "honestly re-labeled since no historical salary series exists in "
-        "this repo yet."
-    ),
     "source": "Source: Australian Bureau of Statistics ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
     "downloadFilename": "tech_occupations_over_time.csv",
     # Which column holds the date label, and its strptime format (used only
