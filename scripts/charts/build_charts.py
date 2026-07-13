@@ -5,7 +5,7 @@ Generates the Tech Vector-style chart set as standalone HTML files — one
 file per chart, each self-contained (no external requests, no build step;
 just open it in a browser). Run from anywhere:
 
-  python3 Scripts/charts/build_charts.py
+  python3 scripts/charts/build_charts.py
 
 Repurposing a chart for a different dataset: everything a coder is likely to
 need to change — source file/column names, title, caption, source line,
@@ -36,12 +36,12 @@ import pandas as pd
 CHARTS_DIR = Path(__file__).resolve().parent
 SCRIPTS_DIR = CHARTS_DIR.parent
 REPO_ROOT = SCRIPTS_DIR.parent
-# Data/ and Charts/ live alongside Scripts/ at the repo root.
-DATA_OUTPUT_DIR = REPO_ROOT / "Data" / "output"
-PULL_DIR = REPO_ROOT / "Data" / "input" / "automated_pull"
-MANUAL_PULL_DIR = REPO_ROOT / "Data" / "input" / "manual_pull"
+# data/ and charts/ live alongside scripts/ at the repo root.
+DATA_OUTPUT_DIR = REPO_ROOT / "data" / "output"
+PULL_DIR = REPO_ROOT / "data" / "input" / "automated_pull"
+MANUAL_PULL_DIR = REPO_ROOT / "data" / "input" / "manual_pull"
 ASSETS_DIR = CHARTS_DIR / "assets"
-DEFAULT_OUT_DIR = REPO_ROOT / "Charts"
+DEFAULT_OUT_DIR = REPO_ROOT / "charts"
 
 sys.path.insert(0, str(SCRIPTS_DIR))
 import manual_data_prep as mdp  # noqa: E402
@@ -72,7 +72,7 @@ GAUGE_CONFIG = {
     "title": "Tech Sector Goals",
     "source": "Source: Tech Council of Australia research",
     "downloadFilename": "headline_metrics.csv",
-    # Per-gauge colors, matched to Data/input/manual_pull/headline_metrics.csv
+    # Per-gauge colors, matched to data/input/manual_pull/headline_metrics.csv
     # rows by "label" — everything else about a gauge (value, current/target
     # labels, description) lives in that CSV, not here.
     "colors": {
@@ -106,7 +106,7 @@ def load_gauge_data(config=GAUGE_CONFIG, source_file="headline_metrics.csv"):
 BAR_CONFIG = {
     "pageTitle": "Tech Vector — pay quartiles",
     "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees)",
-    "source": "Source: WGEA ({year}) · tech_pay_quartiles.csv",
+    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
     "downloadFilename": "tech_pay_quartiles.csv",
     # Which CSV column holds each row's category label (the Y-axis group).
     "categoryColumn": "WGEA Quartile",
@@ -144,7 +144,7 @@ def load_bar_data(config=BAR_CONFIG, source_file="tech_pay_quartiles.csv"):
 WOMENS_PAY_CONFIG = {
     "pageTitle": "Tech Vector — women's pay scales in tech",
     "title": "Quartile pay bands per company",
-    "source": "Source: WGEA ({year}) · tech_pay_quartiles.csv",
+    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
     "downloadFilename": "tech_pay_quartiles_women.csv",
     "categoryColumn": "WGEA Quartile",
     "annotationColumn": None,
@@ -167,7 +167,7 @@ def load_womens_pay_data(config=WOMENS_PAY_CONFIG, source_file="tech_pay_quartil
 SCATTER_CONFIG = {
     "pageTitle": "Tech Vector — skills readiness vs labour market pressure",
     "title": "Skills-first readiness vs labour market pressure, by region",
-    "source": "Source: OECD ({year}) · global_skills_rankings.csv",
+    "source": "Source: OECD ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
     "downloadFilename": "global_skills_rankings.csv",
     "nameColumn": "Category",
     "xColumn": "Skills-First Readiness and Adoption Index",
@@ -221,7 +221,7 @@ INTERACTIVE_LINE_CONFIG = {
         "honestly re-labeled since no historical salary series exists in "
         "this repo yet."
     ),
-    "source": "Source: Australian Bureau of Statistics ({year}) · tech_jobs_occupations_over_time_WIDE-SIMPLE.csv",
+    "source": "Source: Australian Bureau of Statistics ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
     "downloadFilename": "tech_occupations_over_time.csv",
     # Which column holds the date label, and its strptime format (used only
     # for sorting — the CSV's own row order can't be trusted, see
@@ -268,7 +268,7 @@ def load_interactive_line_data(config=INTERACTIVE_LINE_CONFIG, source_file="tech
 SMALL_MULTIPLES_CONFIG = {
     "pageTitle": "Tech Vector — hiring vs macro conditions",
     "title": "Tech sector hiring vs macroeconomic conditions",
-    "source": "Source: Australian Bureau of Statistics, Reserve Bank of Australia ({year}) · tech_jobs_in_australia.csv, abs_unemployment_rate.csv, rba_cash_rate.csv",
+    "source": "Source: Australian Bureau of Statistics, Reserve Bank of Australia ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
     "downloadFilename": "tech_hiring_vs_macro.csv",
     # The caption is a sequence of [text, colorToken] segments — colorToken
     # "muted" uses the ink-muted text color, any other token uses that
@@ -380,7 +380,7 @@ AI_VIBRANCY_CONFIG = {
     "pageTitle": "Tech Vector — Global AI Vibrancy Index",
     "title": "Global AI Vibrancy Index",
     "caption": "Australia is ranked 28 out of 36 countries on AI vibrancy.",
-    "source": "Source: Stanford HAI ({year})",
+    "source": "Source: Stanford HAI ({year}).",  
     "downloadFilename": "global_ai_rankings.csv",
     "nameColumn": "CountryName",
     "regionColumn": "Region",
@@ -406,9 +406,7 @@ RND_CONFIG = {
     "pageTitle": "Tech Vector — R&D spending",
     "title": "R&D",
     "caption": "Australia sits at the median (1.7%) for OECD R&D spending as a percent of GDP.",
-    # Deliberately a fixed year, not "({year})" — this is OECD's actual R&D
-    # data vintage (2021), not the year we last fetched/rebuilt this chart.
-    "source": "Source: OECD (2021)",
+    "source": "Source: OECD (2021).",
     "downloadFilename": "global_r_and_d_rankings.csv",
     "nameColumn": "Category",
     "regionColumn": "Region",
@@ -454,9 +452,8 @@ def load_rnd_data(config=RND_CONFIG, source_file="global_r_and_d_rankings.csv"):
 # =============================================================================
 STACKED_BAR_CONFIG = {
     "pageTitle": "Tech Vector — women in leadership by sector",
-    "title": "Women in Leadership by Sector",
-    "caption": "Per cent of men and women in leadership roles.",
-    "source": "Source: WGEA ({year}) · workplace_leadership_comp_pct.csv",
+    "title": "Per cent of men and women in leadership roles.",
+    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
     "downloadFilename": "workplace_leadership_comp_pct.csv",
     "sectorColumn": "Sector",
     "categoryColumn": "occupation",
@@ -499,13 +496,8 @@ def load_stacked_bar_data(config=STACKED_BAR_CONFIG, source_file="workplace_lead
 # =============================================================================
 STACKED_SMALL_MULTIPLES_CONFIG = {
     "pageTitle": "Tech Vector — women's promotion rates",
-    "title": "Women's Promotion Rates by Managerial Level and Sector",
-    "caption": (
-        "Fewer women are being promoted from early-to-mid stage in their "
-        "careers within tech companies than in all Australian companies who "
-        "report to WGEA."
-    ),
-    "source": "Source: WGEA ({year}) · mgmt_promotions_pct.csv",
+    "title": "Per cent of men & women promoted, moved laterally or hired externally within workplace seniority levels.",
+    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
     "downloadFilename": "mgmt_promotions_pct.csv",
     "panelColumn": "manager_type",
     "panelLabel": "Managerial level",
@@ -549,7 +541,7 @@ TECH_SHARE_LINE_CONFIG = {
     "pageTitle": "Tech Vector — tech roles as a share of the labour force",
     "title": "Tech Roles as a Share of the Total Labour Force",
     "caption": "This proportion indicates how tech employment has grown as a segment of the overall workforce, showing tech's increasing economic importance over time.",
-    "source": "Source: Australian Bureau of Statistics ({year}) · tech_jobs_tech_occupations_as_percent_of_labour_force.csv",
+    "source": "Source: Australian Bureau of Statistics ({year}). Data is aggregated by the Tech Council of Australia.",
     "downloadFilename": "tech_occupations_share_of_labour_force.csv",
     "dateColumn": "date",
     "valueColumn": "% of labour force in tech occupations (smoothed)",
@@ -562,7 +554,7 @@ TOTAL_TECH_EMPLOYMENT_LINE_CONFIG = {
     "pageTitle": "Tech Vector — total employment in the direct tech sector",
     "title": "Total Employment in the Direct Tech Sector",
     "caption": "Total number of people employed by companies in the direct tech sector.",
-    "source": "Source: Australian Bureau of Statistics ({year}) · jobs_in_tech_companies_WIDE.csv",
+    "source": "Source: Australian Bureau of Statistics ({year}). Data is aggregated by the Tech Council of Australia.",
     "downloadFilename": "total_employment_direct_tech_sector.csv",
     "dateColumn": "Date",
     "valueColumn": "Total number of people in the tech sector",
@@ -601,7 +593,7 @@ PERCENTILE_BAR_CONFIG = {
         "positions and identifying high-earning occupations within tech "
         "companies."
     ),
-    "source": "Source: Levels.fyi ({year}) · tech_jobs_pay_within_percentile_level_occupation.csv",
+    "source": "Source: Levels.fyi ({year})",
     "downloadFilename": "tech_jobs_salary_percentiles.csv",
     "jobTitleColumn": "Job Title",
     "levelColumn": "Level",

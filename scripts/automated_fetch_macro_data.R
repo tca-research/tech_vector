@@ -46,7 +46,7 @@ suppressPackageStartupMessages({
   library(readrba)
 })
 
-# Data/ lives alongside Scripts/ at the repo root, not inside Scripts/. Anchor
+# data/ lives alongside scripts/ at the repo root, not inside scripts/. Anchor
 # to this script's own location (via the "--file=" argument Rscript passes)
 # rather than the caller's working directory, so this works regardless of
 # where it's invoked from. Falls back to getwd() if run interactively (no
@@ -58,7 +58,7 @@ script_dir <- function() {
   }
   getwd()
 }
-DATA_INPUT_AUTOMATED_PULL <- file.path(dirname(script_dir()), "Data", "input", "automated_pull")
+DATA_INPUT_AUTOMATED_PULL <- file.path(dirname(script_dir()), "data", "input", "automated_pull")
 
 DEFAULT_EQ08_OUTPUT <- file.path(DATA_INPUT_AUTOMATED_PULL, "abs_eq08_employed_by_occupation.csv")
 DEFAULT_UNEMPLOYMENT_OUTPUT <- file.path(DATA_INPUT_AUTOMATED_PULL, "abs_unemployment_rate.csv")

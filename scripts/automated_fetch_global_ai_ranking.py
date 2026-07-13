@@ -395,7 +395,7 @@ def main():
         ranking.to_csv(args.output, index=False)
         print(f"\nFull ranking written to {args.output}")
 
-    input_dir = Path(__file__).resolve().parent.parent / "Data" / "input" / "automated_pull"
+    input_dir = Path(__file__).resolve().parent.parent / "data" / "input" / "automated_pull"
     input_dir.mkdir(parents=True, exist_ok=True)
     input_path = input_dir / "global_ai_vibrancy_indices.csv"
     ranking.to_csv(input_path, index=False)

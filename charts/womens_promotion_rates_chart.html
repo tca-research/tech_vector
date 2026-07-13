@@ -1,4 +1,4 @@
-<title>Tech Vector — R&D spending</title>
+<title>Tech Vector — women's promotion rates</title>
 <style>
 :root {
   --surface: #ffffff;
@@ -167,14 +167,15 @@ figure.chart-card::after {
 
 </style>
 <div class="page">
-  <figure class="chart-card" id="card-ranked-bar">
+  <figure class="chart-card" id="card-stacked-sm">
     <h3 class="chart-title" id="chart-title"></h3>
     <p class="chart-caption" id="chart-caption"></p>
-    <div class="ranked-bar-row" id="ranked-bar-controls"></div>
-    <div class="chart-mount" id="ranked-bar-chart"></div>
+    <div class="ranked-bar-row" id="stacked-sm-controls"></div>
+    <div class="legend-row" id="stacked-sm-legend"></div>
+    <div class="stacked-sm-panels" id="stacked-sm-panels"></div>
     <div class="chart-footer">
       <span class="chart-source" id="chart-source"></span>
-      <button class="download-btn" data-target="rankedBar"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
+      <button class="download-btn" data-target="stackedSmallMultiples"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
     </div>
   </figure>
 </div>
@@ -182,7 +183,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"rankedBar": {"config": {"pageTitle": "Tech Vector \u2014 R&D spending", "title": "R&D", "caption": "Australia sits at the median (1.7%) for OECD R&D spending as a percent of GDP.", "source": "Source: OECD (2021)", "downloadFilename": "global_r_and_d_rankings.csv", "nameColumn": "Category", "regionColumn": "Region", "defaultValueColumn": "pct_gdp", "valueColumns": [{"key": "pct_gdp", "label": "% of GDP"}], "valueSuffix": "%", "highlightName": "Australia", "highlightColor": "cat-4", "barColor": "cat-3", "lastUpdated": "13 Jul 2026"}, "data": [{"name": "Korea", "region": "APAC", "values": {"pct_gdp": 4.9}}, {"name": "Japan", "region": "APAC", "values": {"pct_gdp": 3.4}}, {"name": "Australia", "region": "APAC", "values": {"pct_gdp": 1.7}}, {"name": "New Zealand", "region": "APAC", "values": {"pct_gdp": 1.5}}, {"name": "United States", "region": "Americas", "values": {"pct_gdp": 3.4}}, {"name": "Canada", "region": "Americas", "values": {"pct_gdp": 1.9}}, {"name": "Costa Rica", "region": "Americas", "values": {"pct_gdp": 0.3}}, {"name": "Israel", "region": "EMEA", "values": {"pct_gdp": 7.0}}, {"name": "Sweden", "region": "EMEA", "values": {"pct_gdp": 3.6}}, {"name": "Austria", "region": "EMEA", "values": {"pct_gdp": 3.2}}, {"name": "Belgium", "region": "EMEA", "values": {"pct_gdp": 3.2}}, {"name": "Germany", "region": "EMEA", "values": {"pct_gdp": 3.1}}]}}
+{"stackedSmallMultiples": {"config": {"pageTitle": "Tech Vector \u2014 women's promotion rates", "title": "Per cent of men & women promoted, moved laterally or hired externally within workplace seniority levels.", "source": "Source: WGEA (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "mgmt_promotions_pct.csv", "panelColumn": "manager_type", "panelLabel": "Managerial level", "panelOrder": ["Mid to entry level management", "Non-managers", "Top level management"], "sectorColumn": "Sector", "sectorOrder": ["Direct Tech Sector Companies", "Australian Average"], "dropdownColumn": "movement_type", "dropdownLabel": "Movement type:", "filterOptions": [{"value": "Promotions", "label": "Promotions"}, {"value": "Internal appointments", "label": "Internal appointments"}, {"value": "External appointments", "label": "External appointments"}], "defaultFilterValue": "Promotions", "series": [{"column": "Men", "label": "Men", "color": "cat-3"}, {"column": "Women", "label": "Women", "color": "cat-1"}], "lastUpdated": "13 Jul 2026"}, "data": [{"panel": "Mid to entry level management", "sector": "Direct Tech Sector Companies", "filter": "Promotions", "Men": 65.6, "Women": 34.4}, {"panel": "Non-managers", "sector": "Direct Tech Sector Companies", "filter": "Promotions", "Men": 64.4, "Women": 35.6}, {"panel": "Top level management", "sector": "Direct Tech Sector Companies", "filter": "Promotions", "Men": 70.0, "Women": 30.0}, {"panel": "Mid to entry level management", "sector": "Direct Tech Sector Companies", "filter": "Internal appointments", "Men": 68.2, "Women": 31.8}, {"panel": "Non-managers", "sector": "Direct Tech Sector Companies", "filter": "Internal appointments", "Men": 63.5, "Women": 36.5}, {"panel": "Top level management", "sector": "Direct Tech Sector Companies", "filter": "Internal appointments", "Men": 68.2, "Women": 31.8}, {"panel": "Mid to entry level management", "sector": "Direct Tech Sector Companies", "filter": "External appointments", "Men": 66.4, "Women": 33.6}, {"panel": "Non-managers", "sector": "Direct Tech Sector Companies", "filter": "External appointments", "Men": 64.2, "Women": 35.8}, {"panel": "Top level management", "sector": "Direct Tech Sector Companies", "filter": "External appointments", "Men": 69.4, "Women": 30.6}, {"panel": "Mid to entry level management", "sector": "Australian Average", "filter": "Promotions", "Men": 52.2, "Women": 47.8}, {"panel": "Non-managers", "sector": "Australian Average", "filter": "Promotions", "Men": 51.4, "Women": 48.6}, {"panel": "Top level management", "sector": "Australian Average", "filter": "Promotions", "Men": 55.2, "Women": 44.8}, {"panel": "Mid to entry level management", "sector": "Australian Average", "filter": "Internal appointments", "Men": 50.7, "Women": 49.3}, {"panel": "Non-managers", "sector": "Australian Average", "filter": "Internal appointments", "Men": 45.2, "Women": 54.8}, {"panel": "Top level management", "sector": "Australian Average", "filter": "Internal appointments", "Men": 55.1, "Women": 44.9}, {"panel": "Mid to entry level management", "sector": "Australian Average", "filter": "External appointments", "Men": 55.8, "Women": 44.2}, {"panel": "Non-managers", "sector": "Australian Average", "filter": "External appointments", "Men": 47.9, "Women": 52.1}, {"panel": "Top level management", "sector": "Australian Average", "filter": "External appointments", "Men": 57.0, "Women": 43.0}]}}
 </script>
 <script>
 (function () {
@@ -438,106 +439,95 @@ function wireDownloadButtons() {
 }
 
 
-// RANKED BAR — countries/entities ranked by value, one highlighted, with an
-// optional dropdown when more than one value column is available. All
-// dataset-specific values come from DATA.rankedBar.config, built in
-// build_charts.py's RANKED_BAR_CONFIG-style configs.
-function renderRankedBar() {
-  const cfg = DATA.rankedBar.config;
-  const data = DATA.rankedBar.data;
+// STACKED BAR SMALL MULTIPLES — one panel per manager_type-style breakdown,
+// each panel showing one 100%-stacked Men/Women bar per sector, with a single
+// dropdown (e.g. movement type) filtering all panels at once. All
+// dataset-specific values come from DATA.stackedSmallMultiples.config, built
+// in build_charts.py's STACKED_SMALL_MULTIPLES_CONFIG-style configs. Reuses
+// drawStackedBarSegments/roundedRectPath from shared.js.
+function renderStackedSmallMultiples() {
+  const cfg = DATA.stackedSmallMultiples.config;
+  const data = DATA.stackedSmallMultiples.data;
   applyChromeConfig(cfg);
 
-  const controls = document.getElementById("ranked-bar-controls");
-  const mount = document.getElementById("ranked-bar-chart");
+  const controls = document.getElementById("stacked-sm-controls");
+  const legend = document.getElementById("stacked-sm-legend");
+  const panelsEl = document.getElementById("stacked-sm-panels");
   controls.innerHTML = "";
+  legend.innerHTML = "";
 
-  let activeKey = cfg.defaultValueColumn || cfg.valueColumns[0].key;
+  cfg.series.forEach((s) => legendItem(legend, colorVar(s.color), s.label));
 
-  if (cfg.valueColumns.length > 1) {
-    const label = document.createElement("label");
-    label.className = "dropdown-label";
-    label.textContent = cfg.dropdownLabel || "Sub-Indicators:";
-    const select = document.createElement("select");
-    select.className = "filter-select";
-    cfg.valueColumns.forEach((c) => {
-      const opt = document.createElement("option");
-      opt.value = c.key;
-      opt.textContent = c.label;
-      select.appendChild(opt);
-    });
-    select.value = activeKey;
-    select.addEventListener("change", () => {
-      activeKey = select.value;
-      draw();
-    });
-    label.appendChild(select);
-    controls.appendChild(label);
-  }
+  let activeFilter = cfg.defaultFilterValue || cfg.filterOptions[0].value;
 
-  const W = 900, labelW = 170, rightPad = 60, topPad = 10, rowH = 30, bottomPad = 34;
+  const label = document.createElement("label");
+  label.className = "dropdown-label";
+  label.textContent = cfg.dropdownLabel || "Filter:";
+  const select = document.createElement("select");
+  select.className = "filter-select";
+  cfg.filterOptions.forEach((o) => {
+    const opt = document.createElement("option");
+    opt.value = o.value;
+    opt.textContent = o.label;
+    select.appendChild(opt);
+  });
+  select.value = activeFilter;
+  select.addEventListener("change", () => {
+    activeFilter = select.value;
+    draw();
+  });
+  label.appendChild(select);
+  controls.appendChild(label);
+
+  const W = 900, labelW = 220, rightPad = 20;
+  const plotW = W - labelW - rightPad;
+  const rowH = 40, barH = 24, topPad = 6, bottomPad = 6;
 
   function draw() {
-    const rows = data
-      .map((d) => ({ name: d.name, region: d.region, value: d.values[activeKey] }))
-      .filter((d) => d.value != null)
-      .sort((a, b) => b.value - a.value);
-
-    const H = topPad + rows.length * rowH + bottomPad;
-    const plotW = W - labelW - rightPad;
-    mount.innerHTML = "";
-    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
-
-    const maxVal = Math.max(...rows.map((d) => d.value));
-    const ticks = niceTicks(0, maxVal * 1.15, 6);
-    const xMax = ticks[ticks.length - 1];
-    const x = (v) => (v / xMax) * plotW;
-    const plotBottom = topPad + rows.length * rowH;
-
-    ticks.forEach((t) => {
-      const gx = labelW + x(t);
-      el("line", { class: "grid-line", x1: gx, x2: gx, y1: topPad - 4, y2: plotBottom }, svg);
-      textEl(gx, plotBottom + 20, Math.round(t * 100) / 100 + (cfg.valueSuffix || ""), { class: "axis-label", "text-anchor": "middle" }, svg);
-    });
-    el("line", { class: "axis-line", x1: labelW, x2: labelW, y1: topPad - 4, y2: plotBottom }, svg);
-
-    const barH = 18;
+    panelsEl.innerHTML = "";
     const tableRows = [];
-    rows.forEach((d, i) => {
-      const rowY = topPad + i * rowH;
-      const isHighlighted = d.name === cfg.highlightName;
-      const color = isHighlighted ? colorVar(cfg.highlightColor) : colorVar(cfg.barColor);
-      textEl(labelW - 10, rowY + barH / 2 + 4, d.name, { "text-anchor": "end", "font-size": "12.5", "font-weight": isHighlighted ? "700" : "400", fill: "var(--ink-primary)" }, svg);
-      const w = Math.max(2, x(d.value));
-      const r = 3;
-      const path = "M " + labelW + " " + rowY +
-        " H " + (labelW + Math.max(w - r, r)) +
-        " A " + r + " " + r + " 0 0 1 " + (labelW + w) + " " + (rowY + r) +
-        " V " + (rowY + barH - r) +
-        " A " + r + " " + r + " 0 0 1 " + (labelW + Math.max(w - r, r)) + " " + (rowY + barH) +
-        " H " + labelW + " Z";
-      const bar = el("path", { d: path, fill: color }, svg);
-      const hit = el("rect", { x: labelW, y: rowY - 2, width: Math.max(w, 6), height: barH + 4, fill: "transparent" }, svg);
-      const valueLabel = (Math.round(d.value * 10) / 10) + (cfg.valueSuffix || "");
-      [bar, hit].forEach((node) => {
-        node.style.cursor = "pointer";
-        node.addEventListener("pointermove", (ev) => {
-          bar.style.filter = "brightness(1.1)";
-          showTooltip(ev.clientX, ev.clientY, ttBox(d.name, [ttRow(color, d.region || "", valueLabel)]));
-        });
-        node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
+
+    cfg.panelOrder.forEach((panelName) => {
+      const panelRows = (cfg.sectorOrder || [])
+        .map((sector) => data.find((d) => d.panel === panelName && d.sector === sector && d.filter === activeFilter))
+        .filter(Boolean);
+      if (!panelRows.length) return;
+
+      const panelDiv = document.createElement("div");
+      panelDiv.className = "stacked-sm-panel";
+      const title = document.createElement("h4");
+      title.className = "sm-panel-title";
+      title.textContent = panelName;
+      panelDiv.appendChild(title);
+
+      const H = topPad + panelRows.length * rowH + bottomPad;
+      const svgHost = document.createElement("div");
+      panelDiv.appendChild(svgHost);
+      const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, svgHost);
+
+      panelRows.forEach((d, i) => {
+        const rowY = topPad + i * rowH;
+        const barY = rowY + (rowH - barH) / 2;
+        textEl(labelW - 14, rowY + rowH / 2 + 4, d.sector, { "text-anchor": "end", "font-size": "12", "font-weight": "600", fill: "var(--ink-primary)" }, svg);
+        const values = drawStackedBarSegments(svg, labelW, barY, plotW, barH, cfg.series, d, panelName + " — " + d.sector);
+        tableRows.push([panelName, d.sector, ...values]);
       });
-      textEl(labelW + w + 6, rowY + barH / 2 + 4, valueLabel, { "font-size": "12", "font-weight": "700", fill: isHighlighted ? colorTextVar(cfg.highlightColor) : "var(--ink-secondary)" }, svg);
-      tableRows.push([d.name, d.region || "", valueLabel]);
+
+      panelsEl.appendChild(panelDiv);
     });
 
-    const activeLabel = (cfg.valueColumns.find((c) => c.key === activeKey) || {}).label || "Value";
-    registerDownload("rankedBar", cfg.downloadFilename, ["Name", "Region", activeLabel], tableRows);
+    registerDownload(
+      "stackedSmallMultiples",
+      cfg.downloadFilename,
+      [cfg.panelLabel || "Panel", "Sector", ...cfg.series.map((s) => s.label)],
+      tableRows
+    );
   }
 
   draw();
 }
 
-renderRankedBar();
+renderStackedSmallMultiples();
 wireDownloadButtons();
 
 })();

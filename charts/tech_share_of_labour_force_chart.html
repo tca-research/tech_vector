@@ -1,4 +1,4 @@
-<title>Tech Vector — pay quartiles</title>
+<title>Tech Vector — tech roles as a share of the labour force</title>
 <style>
 :root {
   --surface: #ffffff;
@@ -167,13 +167,13 @@ figure.chart-card::after {
 
 </style>
 <div class="page">
-  <figure class="chart-card" id="card-bar">
+  <figure class="chart-card" id="card-line">
     <h3 class="chart-title" id="chart-title"></h3>
-    <div class="legend-row" id="bar-legend"></div>
-    <div class="chart-mount" id="bar-chart"></div>
+    <p class="chart-caption" id="chart-caption"></p>
+    <div class="chart-mount" id="line-chart"></div>
     <div class="chart-footer">
       <span class="chart-source" id="chart-source"></span>
-      <button class="download-btn" data-target="bar"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
+      <button class="download-btn" data-target="line"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
     </div>
   </figure>
 </div>
@@ -181,7 +181,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"bar": {"config": {"pageTitle": "Tech Vector \u2014 pay quartiles", "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees)", "source": "Source: WGEA (2026) \u00b7 tech_pay_quartiles.csv", "downloadFilename": "tech_pay_quartiles.csv", "categoryColumn": "WGEA Quartile", "annotationColumn": "TCA Members - Example Roles", "series": [{"column": "TCA Member Remuneration - Average", "label": "TCA Member Remuneration \u2014 Average", "color": "cat-1"}, {"column": "Direct Tech Remuneration - Average", "label": "Direct Tech Remuneration \u2014 Average", "color": "cat-2"}, {"column": "Australian Average Remuneration - Average", "label": "Australian Average Remuneration \u2014 Average", "color": "cat-3"}], "valueFormat": {"prefix": "$", "divisor": 1000, "suffix": "K"}, "lastUpdated": "13 Jul 2026"}, "data": [{"category": "Q1 (Lower quartile)", "TCA Member Remuneration - Average": 126980.0, "Direct Tech Remuneration - Average": 106473.0, "Australian Average Remuneration - Average": 78684.0, "annotation": "Quartile 1 band include, on average, a median entry-level security analyst, a median entry-level product manager, a median entry-level data scientist, or a 25th percentile senior technical program manager."}, {"category": "Q2 (Lower-middle quartile)", "TCA Member Remuneration - Average": 181157.0, "Direct Tech Remuneration - Average": 150699.0, "Australian Average Remuneration - Average": 101484.0, "annotation": "Low-mid quartile roles include, on average, a median senior product designer, a median senior recruiter, a median senior graphic designer, or a 25th percentile senior technical program manager."}, {"category": "Q3 (Upper-middle quartile)", "TCA Member Remuneration - Average": 233373.0, "Direct Tech Remuneration - Average": 192212.0, "Australian Average Remuneration - Average": 125966.0, "annotation": "Mid-upper quartile roles include, on average, a median senior product design manager, a 25th percentile senior sales engineer, a median senior software engineer, or a 90th percentile entry-level product manager."}, {"category": "Q4 (Upper quartile)", "TCA Member Remuneration - Average": 410078.0, "Direct Tech Remuneration - Average": 309832.0, "Australian Average Remuneration - Average": 198785.0, "annotation": "This top-paying quartile would contain high-level leadership roles including C-Suite and Vice President-level executives as well as top-tier technical roles like a 75th percentile senior product design manager, a 90th percentile senior product designer."}, {"category": "Total workforce", "TCA Member Remuneration - Average": 237647.0, "Direct Tech Remuneration - Average": 189373.0, "Australian Average Remuneration - Average": 125999.0, "annotation": ""}]}}
+{"line": {"config": {"pageTitle": "Tech Vector \u2014 tech roles as a share of the labour force", "title": "Tech Roles as a Share of the Total Labour Force", "caption": "This proportion indicates how tech employment has grown as a segment of the overall workforce, showing tech's increasing economic importance over time.", "source": "Source: Australian Bureau of Statistics (2026). Data is aggregated by the Tech Council of Australia.", "downloadFilename": "tech_occupations_share_of_labour_force.csv", "dateColumn": "date", "valueColumn": "% of labour force in tech occupations (smoothed)", "endLabel": "% of labour force in tech occupations (smoothed)", "lineColor": "cat-3", "valueFormat": {"suffix": "%", "decimals": 0}, "lastUpdated": "13 Jul 2026"}, "data": {"dates": ["1986-11-01", "1987-02-01", "1987-05-01", "1987-08-01", "1987-11-01", "1988-02-01", "1988-05-01", "1988-08-01", "1988-11-01", "1989-02-01", "1989-05-01", "1989-08-01", "1989-11-01", "1990-02-01", "1990-05-01", "1990-08-01", "1990-11-01", "1991-02-01", "1991-05-01", "1991-08-01", "1991-11-01", "1992-02-01", "1992-05-01", "1992-08-01", "1992-11-01", "1993-02-01", "1993-05-01", "1993-08-01", "1993-11-01", "1994-02-01", "1994-05-01", "1994-08-01", "1994-11-01", "1995-02-01", "1995-05-01", "1995-08-01", "1995-11-01", "1996-02-01", "1996-05-01", "1996-08-01", "1996-11-01", "1997-02-01", "1997-05-01", "1997-08-01", "1997-11-01", "1998-02-01", "1998-05-01", "1998-08-01", "1998-11-01", "1999-02-01", "1999-05-01", "1999-08-01", "1999-11-01", "2000-02-01", "2000-05-01", "2000-08-01", "2000-11-01", "2001-02-01", "2001-05-01", "2001-08-01", "2001-11-01", "2002-02-01", "2002-05-01", "2002-08-01", "2002-11-01", "2003-02-01", "2003-05-01", "2003-08-01", "2003-11-01", "2004-02-01", "2004-05-01", "2004-08-01", "2004-11-01", "2005-02-01", "2005-05-01", "2005-08-01", "2005-11-01", "2006-02-01", "2006-05-01", "2006-08-01", "2006-11-01", "2007-02-01", "2007-05-01", "2007-08-01", "2007-11-01", "2008-02-01", "2008-05-01", "2008-08-01", "2008-11-01", "2009-02-01", "2009-05-01", "2009-08-01", "2009-11-01", "2010-02-01", "2010-05-01", "2010-08-01", "2010-11-01", "2011-02-01", "2011-05-01", "2011-08-01", "2011-11-01", "2012-02-01", "2012-05-01", "2012-08-01", "2012-11-01", "2013-02-01", "2013-05-01", "2013-08-01", "2013-11-01", "2014-02-01", "2014-05-01", "2014-08-01", "2014-11-01", "2015-02-01", "2015-05-01", "2015-08-01", "2015-11-01", "2016-02-01", "2016-05-01", "2016-08-01", "2016-11-01", "2017-02-01", "2017-05-01", "2017-08-01", "2017-11-01", "2018-02-01", "2018-05-01", "2018-08-01", "2018-11-01", "2019-02-01", "2019-05-01", "2019-08-01", "2019-11-01", "2020-02-01", "2020-05-01", "2020-08-01", "2020-11-01", "2021-02-01", "2021-05-01", "2021-08-01", "2021-11-01", "2022-02-01", "2022-05-01", "2022-08-01", "2022-11-01", "2023-02-01", "2023-05-01", "2023-08-01", "2023-11-01", "2024-02-01", "2024-05-01", "2024-08-01", "2024-11-01", "2025-02-01", "2025-05-01", "2025-08-01", "2025-11-01"], "values": [2.5, 2.5, 2.5, 2.5, 2.6, 2.6, 2.7, 2.6, 2.6, 2.7, 2.7, 2.6, 2.6, 2.6, 2.7, 2.8, 2.9, 2.9, 2.9, 2.9, 3.0, 3.0, 3.0, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 3.0, 3.0, 3.1, 3.1, 3.2, 3.3, 3.3, 3.2, 3.2, 3.3, 3.5, 3.5, 3.5, 3.3, 3.4, 3.4, 3.5, 3.6, 3.5, 3.6, 3.6, 3.6, 3.6, 3.7, 3.8, 3.9, 4.0, 3.9, 3.9, 3.9, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 3.9, 3.9, 3.9, 3.9, 3.9, 4.0, 4.1, 4.1, 4.0, 4.0, 4.0, 4.1, 4.3, 4.3, 4.2, 4.2, 4.2, 4.3, 4.2, 4.2, 4.1, 4.2, 4.2, 4.2, 4.1, 4.2, 4.3, 4.4, 4.3, 4.3, 4.4, 4.5, 4.6, 4.6, 4.6, 4.6, 4.5, 4.4, 4.4, 4.5, 4.6, 4.7, 4.7, 4.7, 4.6, 4.6, 4.6, 4.7, 4.7, 4.6, 4.6, 4.6, 4.6, 4.7, 4.8, 5.0, 5.0, 5.1, 5.1, 5.2, 5.1, 5.1, 5.2, 5.4, 5.5, 5.6, 5.6, 5.5, 5.6, 5.6, 5.7, 5.7, 5.8, 5.8, 5.8, 5.8, 5.8, 5.9, 6.0, 6.0, 5.8, 5.6, 5.6, 5.7, 5.9, 6.0]}}}
 </script>
 <script>
 (function () {
@@ -437,103 +437,122 @@ function wireDownloadButtons() {
 }
 
 
-// BAR CHART — grouped horizontal bars + direct annotations
-// All dataset-specific values (series, colors, labels, formatting) come from
-// DATA.bar.config, built in build_charts.py's BAR_CONFIG — nothing about a
-// particular dataset is hardcoded here.
-function renderBarChart() {
-  const cfg = DATA.bar.config;
-  const data = DATA.bar.data;
+// LINE CHART — a single time series, direct end label, crosshair tooltip.
+// A single series needs no legend (the title already names it). All
+// dataset-specific values (line color, end label, value formatting) come
+// from DATA.line.config, built in build_charts.py's LINE_CONFIG-style
+// configs — point this at any {dates:[...], values:[...]} shape and it works.
+function renderLineChart() {
+  const cfg = DATA.line.config;
+  const data = DATA.line.data;
   applyChromeConfig(cfg);
 
-  const valueDecimals = cfg.valueFormat.decimals || 0;
-  const formatValue = (v) => (cfg.valueFormat.prefix || "") + (v / (cfg.valueFormat.divisor || 1)).toFixed(valueDecimals) + (cfg.valueFormat.suffix || "");
+  const fmt = cfg.valueFormat || {};
+  const formatValue = (v) => {
+    const scaled = v / (fmt.divisor || 1);
+    const decimals = fmt.decimals != null ? fmt.decimals : 0;
+    const text = decimals > 0 ? scaled.toFixed(decimals) : Math.round(scaled).toLocaleString("en-AU");
+    return (fmt.prefix || "") + text + (fmt.suffix || "");
+  };
 
-  const mount = document.getElementById("bar-chart");
-  const legend = document.getElementById("bar-legend");
-  legend.innerHTML = "";
-  const series = cfg.series;
-  series.forEach((s) => legendItem(legend, colorVar(s.color), s.label));
+  const mount = document.getElementById("line-chart");
+  const color = colorVar(cfg.lineColor || "cat-3");
 
-  const hasAnnotations = data.some((d) => d.annotation);
-  const W = 900, labelW = 190, annW = hasAnnotations ? 250 : 0, rightPad = 14;
-  const plotW = W - labelW - annW - rightPad;
-  const rowH = 150, topPad = 14, bottomPad = 34;
-  const H = topPad + data.length * rowH + bottomPad;
+  const W = 900, H = 400, padL = 56, padR = 180, padT = 26, padB = 40;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const dates = data.dates.map((d) => new Date(d));
+  const x = (d) => padL + ((d.getTime() - dates[0].getTime()) / (dates[dates.length - 1].getTime() - dates[0].getTime())) * plotW;
+
+  const vals = data.values.filter((v) => v != null);
+  // Derive yMax from this single niceTicks call's own last tick — calling
+  // niceTicks a second time on that yMax can flip the step size at certain
+  // boundary values (e.g. max/5 lands just under a bucket edge but
+  // yMax/5 lands just over it), producing a coarser top tick that exceeds
+  // the y-scale's actual domain and renders off the top of the chart.
+  const yTicks = niceTicks(0, Math.max(1, ...vals), 5);
+  const yMax = yTicks[yTicks.length - 1];
+  const y = (v) => padT + plotH - (v / yMax) * plotH;
+
   mount.innerHTML = "";
   const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img", "aria-label": cfg.title }, mount);
 
-  const maxVal = Math.max(...data.map((d) => d[series[0].column]));
-  // Pad the domain 10% past the longest bar so its value label (drawn past
-  // the bar's tip) always has clearance before the annotation column —
-  // without this, a bar whose value sits right at the rounded tick max runs
-  // its label straight into the annotation box next to it.
-  const ticks = niceTicks(0, maxVal * 1.1, 6);
-  const xMax = ticks[ticks.length - 1];
-  const x = (v) => (v / xMax) * plotW;
-
-  const plotBottom = topPad + data.length * rowH;
-  ticks.forEach((t) => {
-    const gx = labelW + x(t);
-    el("line", { class: "grid-line", x1: gx, x2: gx, y1: topPad - 6, y2: plotBottom }, svg);
-    textEl(gx, plotBottom + 20, formatValue(t), { class: "axis-label", "text-anchor": "middle" }, svg);
+  yTicks.forEach((t) => {
+    const gy = y(t);
+    el("line", { class: "grid-line", x1: padL, x2: W - padR, y1: gy, y2: gy }, svg);
+    textEl(padL - 8, gy + 4, formatValue(t), { class: "axis-label", "text-anchor": "end" }, svg);
   });
-  el("line", { class: "axis-line", x1: labelW, x2: labelW, y1: topPad - 6, y2: plotBottom }, svg);
+  el("line", { class: "axis-line", x1: padL, x2: padL, y1: padT, y2: padT + plotH }, svg);
 
-  const barH = 22, barGap = 5;
-  const barsBlockH = barH * series.length + barGap * (series.length - 1);
-  const tableRows = [];
-  data.forEach((d, i) => {
-    const rowY = topPad + i * rowH;
-    const barsTop = rowY + (rowH - barsBlockH) / 2;
-    textEl(labelW - 14, rowY + rowH / 2 + 4, d.category, { "text-anchor": "end", "font-size": "13.5", "font-weight": "600", fill: "var(--ink-primary)" }, svg);
+  const yearSpan = dates[dates.length - 1].getFullYear() - dates[0].getFullYear();
+  const tickEvery = Math.max(1, Math.round(yearSpan / 9));
+  for (let yr = dates[0].getFullYear(); yr <= dates[dates.length - 1].getFullYear(); yr += tickEvery) {
+    const gx = x(new Date(yr, 0, 1));
+    if (gx < padL || gx > W - padR) continue;
+    textEl(gx, H - padB + 20, String(yr), { class: "axis-label", "text-anchor": "middle" }, svg);
+  }
 
-    series.forEach((s, si) => {
-      const by = barsTop + si * (barH + barGap);
-      const val = d[s.column];
-      const w = Math.max(2, x(val));
-      const barColor = colorVar(s.color);
-      const r = 4;
-      const path = "M " + labelW + " " + by +
-        " H " + (labelW + Math.max(w - r, r)) +
-        " A " + r + " " + r + " 0 0 1 " + (labelW + w) + " " + (by + r) +
-        " V " + (by + barH - r) +
-        " A " + r + " " + r + " 0 0 1 " + (labelW + Math.max(w - r, r)) + " " + (by + barH) +
-        " H " + labelW + " Z";
-      const bar = el("path", { d: path, fill: barColor, class: "bar-mark" }, svg);
-      bar.style.cursor = "pointer";
-      const hit = el("rect", { x: labelW, y: by - 2, width: Math.max(w, 6), height: barH + 4, fill: "transparent" }, svg);
-      [bar, hit].forEach((node) => {
-        node.addEventListener("pointermove", (ev) => {
-          bar.style.filter = "brightness(1.08)";
-          showTooltip(ev.clientX, ev.clientY, ttBox(d.category, [ttRow(barColor, s.label, formatValue(val))]));
-        });
-        node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
+  let d = "", lastX = null, lastY = null;
+  data.values.forEach((v, i) => {
+    if (v == null) return;
+    const px = x(dates[i]), py = y(v);
+    d += (d ? " L " : "M ") + px + " " + py;
+    lastX = px; lastY = py;
+  });
+  el("path", { d, fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+  if (lastX != null) {
+    el("circle", { cx: lastX, cy: lastY, r: 4, fill: color, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    if (cfg.endLabel) {
+      // Greedy word-wrap to fit the fixed right margin — a direct end label
+      // can be a long axis-style phrase (e.g. "% of labour force in tech
+      // occupations (smoothed)"), not just a short series name.
+      const maxCharsPerLine = Math.max(10, Math.floor((padR - 20) / 6.2));
+      const words = cfg.endLabel.split(" ");
+      const lines = [];
+      let line = "";
+      words.forEach((w) => {
+        const candidate = line ? line + " " + w : w;
+        if (candidate.length > maxCharsPerLine && line) {
+          lines.push(line);
+          line = w;
+        } else {
+          line = candidate;
+        }
       });
-      const textColor = colorTextVar(s.color);
-      textEl(labelW + w + 8, by + barH / 2 + 5, formatValue(val), { "font-size": "13.5", "font-weight": "700", fill: textColor }, svg);
-    });
+      if (line) lines.push(line);
 
-    if (d.annotation) {
-      const fo = el("foreignObject", { x: labelW + plotW + 18, y: rowY + 6, width: annW, height: rowH - 12 }, svg);
-      const div = document.createElement("div");
-      div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-      div.className = "bar-annotation";
-      div.textContent = d.annotation;
-      fo.appendChild(div);
+      const lineHeight = 13;
+      const baseX = lastX + 10;
+      const startY = lastY - ((lines.length - 1) * lineHeight) / 2;
+      const t = el("text", { x: baseX, y: startY, class: "end-label", fill: color }, svg);
+      lines.forEach((l, i) => {
+        el("tspan", { x: baseX, dy: i === 0 ? 0 : lineHeight }, t).textContent = l;
+      });
     }
+  }
 
-    if (i < data.length - 1) {
-      el("line", { x1: 0, x2: W - rightPad, y1: rowY + rowH - 8, y2: rowY + rowH - 8, class: "grid-line" }, svg);
-    }
-
-    tableRows.push([d.category, ...series.map((s) => formatValue(d[s.column]))]);
+  const hit = el("rect", { x: padL, y: padT, width: plotW, height: plotH, fill: "transparent" }, svg);
+  const cross = el("line", { x1: 0, x2: 0, y1: padT, y2: padT + plotH, stroke: "var(--axis)", "stroke-width": 1, opacity: 0 }, svg);
+  hit.addEventListener("pointermove", (ev) => {
+    const rect = svg.getBoundingClientRect();
+    const scale = rect.width / W;
+    const mx = (ev.clientX - rect.left) / scale;
+    let idx = 0, best = Infinity;
+    dates.forEach((dt, i) => { const dx = Math.abs(x(dt) - mx); if (dx < best) { best = dx; idx = i; } });
+    if (data.values[idx] == null) return;
+    cross.setAttribute("x1", x(dates[idx])); cross.setAttribute("x2", x(dates[idx])); cross.setAttribute("opacity", 1);
+    showTooltip(ev.clientX, ev.clientY, ttBox(data.dates[idx], [ttRow(color, cfg.endLabel || cfg.title, formatValue(data.values[idx]))]));
   });
+  hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTooltip(); });
 
-  registerDownload("bar", cfg.downloadFilename, ["Category", ...series.map((s) => s.label)], tableRows);
+  registerDownload(
+    "line",
+    cfg.downloadFilename,
+    ["Date", cfg.endLabel || cfg.title],
+    data.dates.map((dt, i) => [dt, data.values[i] != null ? formatValue(data.values[i]) : ""])
+  );
 }
 
-renderBarChart();
+renderLineChart();
 wireDownloadButtons();
 
 })();

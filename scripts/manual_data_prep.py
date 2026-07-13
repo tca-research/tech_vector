@@ -2,10 +2,10 @@
 """manual_data_prep.py
 
 Usage:
-  python manual_data_prep.py                                # defaults to --dir Data/input/manual_pull/
+  python manual_data_prep.py                                # defaults to --dir data/input/manual_pull/
   python manual_data_prep.py input.csv [output.csv]
   python manual_data_prep.py --inplace input.csv
-  python manual_data_prep.py --dir Data/input/manual_pull/  # process all CSVs in dir
+  python manual_data_prep.py --dir data/input/manual_pull/  # process all CSVs in dir
 
 This script performs the following cleaning steps on CSV files:
 - Remove the ABS TableBuilder header block (leading rows up through the third
@@ -267,7 +267,7 @@ def process_file(path_in: Path, path_out: Path, inplace: bool = False):
     print(f"Wrote cleaned CSV: {out_path} (rows: {len(cleaned)})")
 
 
-DEFAULT_DIR = Path(__file__).resolve().parent.parent / 'Data' / 'input' / 'manual_pull'
+DEFAULT_DIR = Path(__file__).resolve().parent.parent / 'data' / 'input' / 'manual_pull'
 
 
 def main():

@@ -3,11 +3,11 @@
 This document explains how to update the 3 headline "goal" gauges (Tech Jobs, Tech Investment, Tech Sector GDP) shown at the top of the Tech Vector-style chart set.
 
 **Overview**
-- **Purpose:** Keep `Data/input/manual_pull/headline_metrics.csv` current so the gauge chart (`Charts/gauge.html`, built from `Scripts/charts/build_charts.py`'s `GAUGE_CONFIG`) shows up-to-date progress-to-target figures.
+- **Purpose:** Keep `data/input/manual_pull/headline_metrics.csv` current so the gauge chart (`charts/gauge.html`, built from `scripts/charts/build_charts.py`'s `GAUGE_CONFIG`) shows up-to-date progress-to-target figures.
 - **There is no automated source for these** — they're curated headline KPIs, typically sourced from Tech Council research/reports, not a scraped or API-fed dataset.
 
 **File format**
-`Data/input/manual_pull/headline_metrics.csv` has one row per gauge:
+`data/input/manual_pull/headline_metrics.csv` has one row per gauge:
 
 | Column | Meaning |
 |---|---|
@@ -21,8 +21,8 @@ Colors for each gauge are set separately in `GAUGE_CONFIG` in `build_charts.py` 
 
 **Updating a value**
 - Edit the row for the metric you're updating — change `value`, `current_label`, `target_label`, and `description` to match the latest figure.
-- Adding a new gauge: add a new row here, then add a matching entry (by `label`) to `GAUGE_CONFIG["gauges"]` in `Scripts/charts/build_charts.py` specifying its colors.
-- Rebuild with `python3 Scripts/charts/build_charts.py`.
+- Adding a new gauge: add a new row here, then add a matching entry (by `label`) to `GAUGE_CONFIG["gauges"]` in `scripts/charts/build_charts.py` specifying its colors.
+- Rebuild with `python3 scripts/charts/build_charts.py`.
 
 **Where to put files**
-- `Data/input/manual_pull/headline_metrics.csv` — this is the only file to edit for routine updates.
+- `data/input/manual_pull/headline_metrics.csv` — this is the only file to edit for routine updates.

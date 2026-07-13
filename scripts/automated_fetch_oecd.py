@@ -69,8 +69,8 @@ STRUCTURE_URL = (
     "?references=all"
 )
 DATA_BASE_URL = "https://sdmx.oecd.org/public/rest/data"
-# Data/ lives alongside Scripts/ at the repo root, not inside Scripts/.
-DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "Data" / "input" / "automated_pull" / "oecd_msti_data.csv"
+# data/ lives alongside scripts/ at the repo root, not inside scripts/.
+DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "data" / "input" / "automated_pull" / "oecd_msti_data.csv"
 DEFAULT_LATEST_YEAR_COUNTRY = "AUS"
 DEFAULT_METRIC_LABEL = "Gross Domestic Expenditure on R&D"
 DEFAULT_UNIT_LABEL = "Percentage of GDP"

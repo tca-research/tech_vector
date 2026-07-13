@@ -53,8 +53,8 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-# Data/ lives alongside Scripts/ at the repo root, not inside Scripts/.
-DATA_INPUT_AUTOMATED_PULL = Path(__file__).resolve().parent.parent / "Data" / "input" / "automated_pull"
+# data/ lives alongside scripts/ at the repo root, not inside scripts/.
+DATA_INPUT_AUTOMATED_PULL = Path(__file__).resolve().parent.parent / "data" / "input" / "automated_pull"
 
 CURRENT_YEAR = str(datetime.now().year - 1)
 FY_LABEL = f"{int(CURRENT_YEAR) - 1}-{CURRENT_YEAR[2:]}"  # e.g. "2024-25"

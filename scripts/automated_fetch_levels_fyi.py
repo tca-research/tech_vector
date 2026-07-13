@@ -4,8 +4,8 @@ import re
 import csv
 from pathlib import Path
 
-# Data/ lives alongside Scripts/ at the repo root, not inside Scripts/.
-DATA_INPUT_AUTOMATED_PULL = Path(__file__).resolve().parent.parent / "Data" / "input" / "automated_pull"
+# data/ lives alongside scripts/ at the repo root, not inside scripts/.
+DATA_INPUT_AUTOMATED_PULL = Path(__file__).resolve().parent.parent / "data" / "input" / "automated_pull"
 
 HEADERS = {
     "User-Agent": (

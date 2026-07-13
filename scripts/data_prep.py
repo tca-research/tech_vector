@@ -5,12 +5,12 @@ import os
 import time
 from pathlib import Path
 
-# Data/ lives alongside Scripts/ at the repo root, not inside Scripts/ — anchor
+# data/ lives alongside scripts/ at the repo root, not inside scripts/ — anchor
 # to this file's own location so the script works regardless of the caller's
 # current working directory.
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DATA_INPUT = REPO_ROOT / "Data" / "input"
-DATA_OUTPUT = REPO_ROOT / "Data" / "output"
+DATA_INPUT = REPO_ROOT / "data" / "input"
+DATA_OUTPUT = REPO_ROOT / "data" / "output"
 
 # Load datasets for analysis
 try:
