@@ -263,3 +263,18 @@ function wireDownloadButtons() {
     });
   });
 }
+
+// iframe auto-resize — lets a parent page embedding this chart in an
+// <iframe> size that iframe to fit the chart's actual rendered height
+// (figure.chart-card has no min-height, so scrollHeight reflects real
+// content). Sent on load, on window resize, and whenever the rendered
+// height itself changes (dropdown/search interactions, responsive reflow).
+function sendIframeHeight() {
+  if (window.parent === window) return; // not embedded — nothing to do
+  window.parent.postMessage({ type: "iframeHeight", height: document.documentElement.scrollHeight }, "*");
+}
+window.addEventListener("load", sendIframeHeight);
+window.addEventListener("resize", sendIframeHeight);
+if (typeof ResizeObserver !== "undefined") {
+  new ResizeObserver(sendIframeHeight).observe(document.body);
+}

@@ -33,7 +33,6 @@ figure.chart-card {
   background: var(--surface);
   padding: 16px 18px 12px;
   overflow: hidden;
-  min-height: 100vh;
 }
 figure.chart-card::after {
   content: "";
