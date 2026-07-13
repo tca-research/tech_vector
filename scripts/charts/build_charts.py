@@ -176,7 +176,7 @@ def load_tech_sector_gdp_gauge_data(config=GAUGE_CONFIG, source_file="headline_m
 BAR_CONFIG = {
     "pageTitle": "Tech Vector — pay quartiles",
     "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees)",
-    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: WGEA ({year}).",
     "downloadFilename": "tech_pay_quartiles.csv",
     # Which CSV column holds each row's category label (the Y-axis group).
     "categoryColumn": "WGEA Quartile",
@@ -214,7 +214,7 @@ def load_bar_data(config=BAR_CONFIG, source_file="tech_pay_quartiles.csv"):
 WOMENS_PAY_CONFIG = {
     "pageTitle": "Tech Vector — women's pay scales in tech",
     "title": "Quartile pay bands per company",
-    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: WGEA ({year}).",
     "downloadFilename": "tech_pay_quartiles_women.csv",
     "categoryColumn": "WGEA Quartile",
     "annotationColumn": None,
@@ -237,7 +237,7 @@ def load_womens_pay_data(config=WOMENS_PAY_CONFIG, source_file="tech_pay_quartil
 SCATTER_CONFIG = {
     "pageTitle": "Tech Vector — skills readiness vs labour market pressure",
     "title": "Skills-first readiness vs labour market pressure, by region",
-    "source": "Source: OECD ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: OECD ({year}).",
     "downloadFilename": "global_skills_rankings.csv",
     "nameColumn": "Category",
     "xColumn": "Skills-First Readiness and Adoption Index",
@@ -284,7 +284,7 @@ def load_scatter_data(config=SCATTER_CONFIG, source_file="global_skills_rankings
 INTERACTIVE_LINE_CONFIG = {
     "pageTitle": "Tech Vector — employment by occupation",
     "title": "Employed persons by tech occupation, 1986–2025",
-    "source": "Source: Australian Bureau of Statistics ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: Australian Bureau of Statistics ({year}).",
     "downloadFilename": "tech_occupations_over_time.csv",
     # Which column holds the date label, and its strptime format (used only
     # for sorting — the CSV's own row order can't be trusted, see
@@ -334,7 +334,7 @@ def load_interactive_line_data(config=INTERACTIVE_LINE_CONFIG, source_file="tech
 SMALL_MULTIPLES_CONFIG = {
     "pageTitle": "Tech Vector — hiring vs macro conditions",
     "title": "Tech sector hiring vs macroeconomic conditions",
-    "source": "Source: Australian Bureau of Statistics, Reserve Bank of Australia ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: Australian Bureau of Statistics, Reserve Bank of Australia ({year}).",
     "downloadFilename": "tech_hiring_vs_macro.csv",
     # The caption is a sequence of [text, colorToken] segments — colorToken
     # "muted" uses the ink-muted text color, any other token uses that
@@ -519,7 +519,7 @@ def load_rnd_data(config=RND_CONFIG, source_file="global_r_and_d_rankings.csv"):
 STACKED_BAR_CONFIG = {
     "pageTitle": "Tech Vector — women in leadership by sector",
     "title": "Per cent of men and women in leadership roles.",
-    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: WGEA ({year}).",
     "downloadFilename": "workplace_leadership_comp_pct.csv",
     "sectorColumn": "Sector",
     "categoryColumn": "occupation",
@@ -563,7 +563,7 @@ def load_stacked_bar_data(config=STACKED_BAR_CONFIG, source_file="workplace_lead
 STACKED_SMALL_MULTIPLES_CONFIG = {
     "pageTitle": "Tech Vector — women's promotion rates",
     "title": "Per cent of men & women promoted, moved laterally or hired externally within workplace seniority levels.",
-    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: WGEA ({year}).",
     "downloadFilename": "mgmt_promotions_pct.csv",
     "panelColumn": "manager_type",
     "panelLabel": "Managerial level",
@@ -784,7 +784,7 @@ def load_references_data(config, now):
 AVERAGE_REMUNERATION_CONFIG = {
     "pageTitle": "Tech Vector — average remuneration by sector",
     "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees).",
-    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: WGEA ({year}).",
     "downloadFilename": "salaries_comparision.csv",
     "categoryColumn": "Industry",
     "valueColumn": "Average Total Remuneration",
@@ -819,7 +819,7 @@ def load_vertical_bar_data(config=AVERAGE_REMUNERATION_CONFIG, source_file="sala
 TOP_RANKED_DUAL_CONFIG = {
     "pageTitle": "Tech Vector — where tech pays best",
     "title": "Median remuneration for given role ($AUD).",
-    "source": "Source: Levels.fyi ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "source": "Source: Levels.fyi ({year}).",
     "downloadFilename": "tech_jobs_top_company_and_location.csv",
     "jobTitleColumn": "Job Title",
     "levelColumn": "Level",

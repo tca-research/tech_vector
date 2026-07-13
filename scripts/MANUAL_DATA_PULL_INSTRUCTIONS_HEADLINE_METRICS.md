@@ -1,4 +1,4 @@
-**Headline Metrics (Gauge Charts) — Manual Data Pull Instructions**
+**Headline Metrics — Manual Data Pull Instructions**
 
 This document explains how to update the 3 headline "goal" gauges (Tech Jobs, Tech Investment, Tech Sector GDP), each its own standalone page (`charts/tech_jobs_gauge.html`, `charts/tech_investment_gauge.html`, `charts/tech_sector_gdp_gauge.html`), built from `scripts/charts/build_charts.py`'s `GAUGE_CONFIG`.
 
