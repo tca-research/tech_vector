@@ -446,7 +446,7 @@ AI_VIBRANCY_CONFIG = {
     "pageTitle": "Tech Vector — Global AI Vibrancy Index",
     "title": "Global AI Vibrancy Index",
     "caption": "Australia is ranked 28 out of 36 countries on AI vibrancy.",
-    "source": "Source: Stanford HAI ({year}).",  
+    "source": "Source: Stanford HAI ({year}). The top five nations per region (EMEA, APAC, Americas) have been selected for this graph.",  
     "downloadFilename": "global_ai_rankings.csv",
     "nameColumn": "CountryName",
     "regionColumn": "Region",
