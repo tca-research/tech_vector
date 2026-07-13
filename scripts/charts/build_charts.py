@@ -27,7 +27,7 @@ import csv
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import StringIO
 from pathlib import Path
 
@@ -857,6 +857,47 @@ def load_top_ranked_dual_data(config=TOP_RANKED_DUAL_CONFIG, source_file="au_lev
 
 
 # =============================================================================
+# 13. STATUS — "Last updated" / "Next update", from the same 8-week cycle
+#     math as .github/workflows/rebuild-data.yml. Keep CYCLE_ANCHOR_DATE and
+#     CYCLE_LENGTH_DAYS below in sync with that file's env block — there's no
+#     way to share the constant literally across a YAML file and this one.
+# =============================================================================
+STATUS_CONFIG = {
+    "pageTitle": "Tech Vector — dashboard status",
+    "title": "Dashboard Status",
+}
+
+CYCLE_ANCHOR_DATE = datetime(2026, 8, 10)
+CYCLE_LENGTH_DAYS = 56
+
+
+def load_status_data(config=STATUS_CONFIG, now=None):
+    now = now or datetime.now()
+    days_since = (now.date() - CYCLE_ANCHOR_DATE.date()).days
+    if days_since < 0:
+        # The very first cycle hasn't happened yet — "next" is the anchor
+        # itself, and there's no "last successful run" to show.
+        next_update = CYCLE_ANCHOR_DATE
+        last_updated_display = last_updated_display = now.strftime("%d %b %Y")
+    else:
+        next_k = days_since // CYCLE_LENGTH_DAYS + 1
+        next_update = CYCLE_ANCHOR_DATE + timedelta(days=next_k * CYCLE_LENGTH_DAYS)
+        # "Last updated" is simply today, the moment this script actually
+        # runs — not computed from the schedule. build_charts.py is the
+        # final pipeline step, so reaching this line at all means whatever
+        # CI run is executing it has already succeeded up to this point.
+        # If a scheduled run fails earlier (e.g. a scraper gets blocked),
+        # this file is never regenerated that day, so it keeps showing the
+        # last date it truly succeeded — exactly "last successful run",
+        # with no GitHub API call needed to check.
+        last_updated_display = now.strftime("%d %b %Y")
+    return [{
+        "lastUpdated": last_updated_display,
+        "nextUpdate": next_update.strftime("%d %b %Y")
+    }]
+
+
+# =============================================================================
 # HTML assembly
 # =============================================================================
 def read_asset(name):
@@ -1102,6 +1143,14 @@ CHARTS = [
         "config": TOP_RANKED_DUAL_CONFIG,
         "out_file": "where_tech_pays_best_chart.html",
     },
+    {
+        "key": "status",
+        "body_file": "status.html",
+        "js_file": "status.js",
+        "loader": load_status_data,
+        "config": STATUS_CONFIG,
+        "out_file": "dashboard_status.html",
+    },
 ]
 
 
@@ -1143,7 +1192,7 @@ def main():
         print(f"Building {chart['key']}...")
         if chart["key"] == "smallMultiples":
             data = chart["loader"](chart["config"], shared_y_axis=(args.small_multiples_y_axis == "shared"))
-        elif chart["key"] == "references":
+        elif chart["key"] in ("references", "status"):
             data = chart["loader"](chart["config"], now=now)
         else:
             data = chart["loader"](chart["config"])

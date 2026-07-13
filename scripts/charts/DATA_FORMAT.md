@@ -393,6 +393,36 @@ A single time series with a direct end label, no legend/dropdown. Shared by
   `"Top Company"`, leaving `"Top Location"` empty — not something this
   chart can detect or fix, just render gracefully).
 
+### Status (`status.html`/`status.js`) — `key: "status"`, `dashboard_status.html`
+
+```json
+[{ "lastUpdated": "13 Jul 2026", "nextUpdate": "10 Aug 2026" }]
+```
+
+- Not a data chart — a small "Last updated / Next update" card. No download
+  button, no source-line footer; `applyChromeConfig()` only sets the title.
+- Both dates come from `load_status_data()`'s own 8-week cycle arithmetic
+  (`CYCLE_ANCHOR_DATE`, `CYCLE_LENGTH_DAYS` at the top of `build_charts.py`),
+  **not** from the per-chart data-unchanged/freshness mechanism described
+  above — this is the one chart where `main()` always passes `now=` through
+  regardless of the data-unchanged check, since the whole point is to show
+  today's actual date, not a stamp frozen at some prior build.
+- `lastUpdated` doubles as "last successful GitHub Actions run" with no API
+  call: `build_charts.py` is the terminal step of the pipeline, so reaching
+  this loader at all means everything upstream already succeeded that run.
+  It's simply today's date at build time. If a scheduled run fails earlier
+  (e.g. a scraper gets blocked) this file is never regenerated that day, so
+  it keeps showing the last date the pipeline actually completed.
+- `lastUpdated` is `null` before the very first cycle has ever run
+  (`days_since_anchor < 0`) — `status.js` omits that row entirely rather
+  than showing a placeholder. `nextUpdate` is always the next multiple of
+  `CYCLE_LENGTH_DAYS` after `CYCLE_ANCHOR_DATE` strictly in the future
+  (never today itself, even exactly on a rebuild day).
+- Keep `CYCLE_ANCHOR_DATE`/`CYCLE_LENGTH_DAYS` here in sync with the
+  matching `env` block in `.github/workflows/rebuild-data.yml` by hand —
+  there's no way to share the literal constant across a YAML file and this
+  one.
+
 ## Adding a new source column, file, or chart
 
 1. Load it with pandas as usual.

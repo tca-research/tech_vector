@@ -1,4 +1,4 @@
-<title>Tech Vector — women in leadership by sector</title>
+<title>Tech Vector — dashboard status</title>
 <style>
 :root {
   --surface: #ffffff;
@@ -213,23 +213,16 @@ figure.chart-card {
 
 </style>
 <div class="page">
-  <figure class="chart-card" id="card-stacked-bar">
+  <figure class="chart-card" id="card-status">
     <h3 class="chart-title" id="chart-title"></h3>
-    <p class="chart-caption" id="chart-caption"></p>
-    <div class="ranked-bar-row" id="stacked-bar-controls"></div>
-    <div class="legend-row" id="stacked-bar-legend"></div>
-    <div class="chart-mount" id="stacked-bar-chart"></div>
-    <div class="chart-footer">
-      <span class="chart-source" id="chart-source"></span>
-      <button class="download-btn" data-target="stackedBar"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
-    </div>
+    <div class="status-row" id="status-row"></div>
   </figure>
 </div>
 
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"stackedBar": {"config": {"pageTitle": "Tech Vector \u2014 women in leadership by sector", "title": "Per cent of men and women in leadership roles.", "source": "Source: WGEA (2026).", "downloadFilename": "workplace_leadership_comp_pct.csv", "sectorColumn": "Sector", "categoryColumn": "occupation", "categoryOrder": ["CEOs", "Heads of Business", "Other Executives and General Managers", "Senior managers", "Other managers", "Non-managers"], "dropdownLabel": "Sector:", "sectors": [{"value": "TCA Member Companies", "label": "TCA Member Companies"}, {"value": "Direct Tech Sector Companies", "label": "Direct Tech Sector Companies"}, {"value": "Australian Average", "label": "Australian Average"}], "defaultSector": "TCA Member Companies", "series": [{"column": "Men", "label": "Men", "color": "cat-3"}, {"column": "Women", "label": "Women", "color": "cat-1"}], "lastUpdated": "13 Jul 2026", "_sourceTemplate": "Source: WGEA ({year})."}, "data": [{"sector": "TCA Member Companies", "category": "Senior managers", "Men": 70.0, "Women": 30.0}, {"sector": "TCA Member Companies", "category": "Other managers", "Men": 64.4, "Women": 35.6}, {"sector": "TCA Member Companies", "category": "Other Executives and General Managers", "Men": 67.9, "Women": 32.1}, {"sector": "TCA Member Companies", "category": "Non-managers", "Men": 57.2, "Women": 42.8}, {"sector": "TCA Member Companies", "category": "Heads of Business", "Men": 50.0, "Women": 50.0}, {"sector": "TCA Member Companies", "category": "CEOs", "Men": 77.8, "Women": 22.2}, {"sector": "Direct Tech Sector Companies", "category": "Other managers", "Men": 70.2, "Women": 29.8}, {"sector": "Direct Tech Sector Companies", "category": "Senior managers", "Men": 70.5, "Women": 29.5}, {"sector": "Direct Tech Sector Companies", "category": "Other Executives and General Managers", "Men": 70.8, "Women": 29.2}, {"sector": "Direct Tech Sector Companies", "category": "Non-managers", "Men": 67.5, "Women": 32.5}, {"sector": "Direct Tech Sector Companies", "category": "Heads of Business", "Men": 79.9, "Women": 20.1}, {"sector": "Direct Tech Sector Companies", "category": "CEOs", "Men": 87.7, "Women": 12.3}, {"sector": "Australian Average", "category": "Heads of Business", "Men": 69.8, "Women": 30.2}, {"sector": "Australian Average", "category": "Senior managers", "Men": 60.0, "Women": 40.0}, {"sector": "Australian Average", "category": "Other managers", "Men": 55.5, "Women": 44.5}, {"sector": "Australian Average", "category": "Other Executives and General Managers", "Men": 62.6, "Women": 37.4}, {"sector": "Australian Average", "category": "Non-managers", "Men": 47.5, "Women": 52.5}, {"sector": "Australian Average", "category": "CEOs", "Men": 74.2, "Women": 25.8}]}}
+{"status": {"config": {"pageTitle": "Tech Vector \u2014 dashboard status", "title": "Dashboard Status", "lastUpdated": "13 Jul 2026", "_sourceTemplate": null}, "data": [{"lastUpdated": "13 Jul 2026", "nextUpdate": "10 Aug 2026"}]}}
 </script>
 <script>
 (function () {
@@ -518,79 +511,40 @@ if (typeof ResizeObserver !== "undefined") {
 }
 
 
-// STACKED BAR — one 100%-stacked horizontal bar per category, with a sector
-// dropdown swapping the active slice of rows. All dataset-specific values
-// (categories, series/colors, sectors, labels) come from DATA.stackedBar
-// .config, built in build_charts.py's STACKED_BAR_CONFIG-style configs.
-// (roundedRectPath and drawStackedBarRow are shared helpers, defined in shared.js.)
-function renderStackedBar() {
-  const cfg = DATA.stackedBar.config;
-  const data = DATA.stackedBar.data;
+// STATUS — a small "Last updated / Next update" card, dates computed from
+// the same 8-week cycle as .github/workflows/rebuild-data.yml (see
+// build_charts.py's load_status_data). No download button/source line —
+// this chart's only content is the two dates themselves.
+function renderStatus() {
+  const cfg = DATA.status.config;
+  const s = DATA.status.data[0];
   applyChromeConfig(cfg);
 
-  const controls = document.getElementById("stacked-bar-controls");
-  const legend = document.getElementById("stacked-bar-legend");
-  const mount = document.getElementById("stacked-bar-chart");
-  controls.innerHTML = "";
-  legend.innerHTML = "";
+  const row = document.getElementById("status-row");
+  row.innerHTML = "";
 
-  cfg.series.forEach((s) => legendItem(legend, colorVar(s.color), s.label));
-
-  let activeSector = cfg.defaultSector || cfg.sectors[0].value;
-
-  const label = document.createElement("label");
-  label.className = "dropdown-label";
-  label.textContent = cfg.dropdownLabel || "Sector:";
-  const select = document.createElement("select");
-  select.className = "filter-select";
-  cfg.sectors.forEach((s) => {
-    const opt = document.createElement("option");
-    opt.value = s.value;
-    opt.textContent = s.label;
-    select.appendChild(opt);
-  });
-  select.value = activeSector;
-  select.addEventListener("change", () => {
-    activeSector = select.value;
-    draw();
-  });
-  label.appendChild(select);
-  controls.appendChild(label);
-
-  const W = 900, labelW = 270, rightPad = 20;
-  const plotW = W - labelW - rightPad;
-  const rowH = 44, barH = 26, topPad = 10, bottomPad = 10;
-
-  function draw() {
-    const bySector = data.filter((d) => d.sector === activeSector);
-    const byCategory = {};
-    bySector.forEach((d) => { byCategory[d.category] = d; });
-    const rows = (cfg.categoryOrder || Object.keys(byCategory))
-      .map((cat) => byCategory[cat])
-      .filter(Boolean);
-
-    const H = topPad + rows.length * rowH + bottomPad;
-    mount.innerHTML = "";
-    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
-
-    const tableRows = [];
-    rows.forEach((d, i) => {
-      const rowY = topPad + i * rowH;
-      const barY = rowY + (rowH - barH) / 2;
-      textEl(labelW - 14, rowY + rowH / 2 + 4, d.category, { "text-anchor": "end", "font-size": "12", "font-weight": "600", fill: "var(--ink-primary)" }, svg);
-
-      const values = drawStackedBarSegments(svg, labelW, barY, plotW, barH, cfg.series, d, d.category);
-      tableRows.push([d.category, ...values]);
-    });
-
-    registerDownload("stackedBar", cfg.downloadFilename, ["Category", ...cfg.series.map((s) => s.label)], tableRows);
+  function item(label, value) {
+    const wrap = document.createElement("div");
+    wrap.className = "status-item";
+    const labelEl = document.createElement("span");
+    labelEl.className = "status-label";
+    labelEl.textContent = label;
+    const valueEl = document.createElement("span");
+    valueEl.className = "status-value";
+    valueEl.textContent = value;
+    wrap.appendChild(labelEl);
+    wrap.appendChild(valueEl);
+    row.appendChild(wrap);
   }
 
-  draw();
+  if (s.lastUpdated) {
+    item("Last updated", s.lastUpdated);
+  }
+  item("Next update", s.nextUpdate);
+  item("Comments or concerns? Email research@techcouncil.com.au.", "");
 }
 
-renderStackedBar();
-wireDownloadButtons();
+renderStatus();
 
 })();
 </script>
