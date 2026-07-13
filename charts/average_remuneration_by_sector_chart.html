@@ -1,4 +1,4 @@
-<title>Tech Vector — women in leadership by sector</title>
+<title>Tech Vector — average remuneration by sector</title>
 <style>
 :root {
   --surface: #ffffff;
@@ -194,15 +194,13 @@ figure.chart-card::after {
 
 </style>
 <div class="page">
-  <figure class="chart-card" id="card-stacked-bar">
+  <figure class="chart-card" id="card-vertical-bar">
     <h3 class="chart-title" id="chart-title"></h3>
     <p class="chart-caption" id="chart-caption"></p>
-    <div class="ranked-bar-row" id="stacked-bar-controls"></div>
-    <div class="legend-row" id="stacked-bar-legend"></div>
-    <div class="chart-mount" id="stacked-bar-chart"></div>
+    <div class="chart-mount" id="vertical-bar-chart"></div>
     <div class="chart-footer">
       <span class="chart-source" id="chart-source"></span>
-      <button class="download-btn" data-target="stackedBar"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
+      <button class="download-btn" data-target="verticalBar"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
     </div>
   </figure>
 </div>
@@ -210,7 +208,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"stackedBar": {"config": {"pageTitle": "Tech Vector \u2014 women in leadership by sector", "title": "Per cent of men and women in leadership roles.", "source": "Source: WGEA (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "workplace_leadership_comp_pct.csv", "sectorColumn": "Sector", "categoryColumn": "occupation", "categoryOrder": ["CEOs", "Heads of Business", "Other Executives and General Managers", "Senior managers", "Other managers", "Non-managers"], "dropdownLabel": "Sector:", "sectors": [{"value": "TCA Member Companies", "label": "TCA Member Companies"}, {"value": "Direct Tech Sector Companies", "label": "Direct Tech Sector Companies"}, {"value": "Australian Average", "label": "Australian Average"}], "defaultSector": "TCA Member Companies", "series": [{"column": "Men", "label": "Men", "color": "cat-3"}, {"column": "Women", "label": "Women", "color": "cat-1"}], "lastUpdated": "13 Jul 2026"}, "data": [{"sector": "TCA Member Companies", "category": "Senior managers", "Men": 70.0, "Women": 30.0}, {"sector": "TCA Member Companies", "category": "Other managers", "Men": 64.4, "Women": 35.6}, {"sector": "TCA Member Companies", "category": "Other Executives and General Managers", "Men": 67.9, "Women": 32.1}, {"sector": "TCA Member Companies", "category": "Non-managers", "Men": 57.2, "Women": 42.8}, {"sector": "TCA Member Companies", "category": "Heads of Business", "Men": 50.0, "Women": 50.0}, {"sector": "TCA Member Companies", "category": "CEOs", "Men": 77.8, "Women": 22.2}, {"sector": "Direct Tech Sector Companies", "category": "Other managers", "Men": 70.2, "Women": 29.8}, {"sector": "Direct Tech Sector Companies", "category": "Senior managers", "Men": 70.5, "Women": 29.5}, {"sector": "Direct Tech Sector Companies", "category": "Other Executives and General Managers", "Men": 70.8, "Women": 29.2}, {"sector": "Direct Tech Sector Companies", "category": "Non-managers", "Men": 67.5, "Women": 32.5}, {"sector": "Direct Tech Sector Companies", "category": "Heads of Business", "Men": 79.9, "Women": 20.1}, {"sector": "Direct Tech Sector Companies", "category": "CEOs", "Men": 87.7, "Women": 12.3}, {"sector": "Australian Average", "category": "Heads of Business", "Men": 69.8, "Women": 30.2}, {"sector": "Australian Average", "category": "Senior managers", "Men": 60.0, "Women": 40.0}, {"sector": "Australian Average", "category": "Other managers", "Men": 55.5, "Women": 44.5}, {"sector": "Australian Average", "category": "Other Executives and General Managers", "Men": 62.6, "Women": 37.4}, {"sector": "Australian Average", "category": "Non-managers", "Men": 47.5, "Women": 52.5}, {"sector": "Australian Average", "category": "CEOs", "Men": 74.2, "Women": 25.8}]}}
+{"verticalBar": {"config": {"pageTitle": "Tech Vector \u2014 average remuneration by sector", "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees).", "source": "Source: WGEA (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "salaries_comparision.csv", "categoryColumn": "Industry", "valueColumn": "Average Total Remuneration", "colors": ["cat-3", "cat-1", "cat-5"], "valueFormat": {"prefix": "$", "divisor": 1000, "suffix": "K", "decimals": 1}, "lastUpdated": "13 Jul 2026"}, "data": [{"category": "TCA Member Companies", "value": 237647.0, "color": "cat-3"}, {"category": "Direct Tech Sector Companies", "value": 189373.0, "color": "cat-1"}, {"category": "Australian Average", "value": 125999.0, "color": "cat-5"}]}}
 </script>
 <script>
 (function () {
@@ -484,78 +482,75 @@ function wireDownloadButtons() {
 }
 
 
-// STACKED BAR — one 100%-stacked horizontal bar per category, with a sector
-// dropdown swapping the active slice of rows. All dataset-specific values
-// (categories, series/colors, sectors, labels) come from DATA.stackedBar
-// .config, built in build_charts.py's STACKED_BAR_CONFIG-style configs.
-// (roundedRectPath and drawStackedBarRow are shared helpers, defined in shared.js.)
-function renderStackedBar() {
-  const cfg = DATA.stackedBar.config;
-  const data = DATA.stackedBar.data;
+// VERTICAL BAR — a single value per category, drawn as upright bars (one
+// category axis along the bottom, one shared value axis on the left).
+// Reuses roundedRectPath from shared.js. All dataset-specific values come
+// from DATA.verticalBar.config, built in build_charts.py's
+// AVERAGE_REMUNERATION_CONFIG-style configs.
+function renderVerticalBar() {
+  const cfg = DATA.verticalBar.config;
+  const data = DATA.verticalBar.data;
   applyChromeConfig(cfg);
 
-  const controls = document.getElementById("stacked-bar-controls");
-  const legend = document.getElementById("stacked-bar-legend");
-  const mount = document.getElementById("stacked-bar-chart");
-  controls.innerHTML = "";
-  legend.innerHTML = "";
+  const fmt = cfg.valueFormat || {};
+  const formatValue = (v) => {
+    const scaled = v / (fmt.divisor || 1);
+    const decimals = fmt.decimals != null ? fmt.decimals : 0;
+    const text = decimals > 0 ? scaled.toFixed(decimals) : Math.round(scaled).toLocaleString("en-AU");
+    return (fmt.prefix || "") + text + (fmt.suffix || "");
+  };
 
-  cfg.series.forEach((s) => legendItem(legend, colorVar(s.color), s.label));
+  const mount = document.getElementById("vertical-bar-chart");
+  const W = 900, H = 460, padL = 64, padR = 20, padT = 20, padB = 44;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
 
-  let activeSector = cfg.defaultSector || cfg.sectors[0].value;
+  const maxVal = Math.max(...data.map((d) => d.value));
+  const ticks = niceTicks(0, maxVal * 1.15, 5);
+  const yMax = ticks[ticks.length - 1];
+  const y = (v) => padT + plotH - (v / yMax) * plotH;
 
-  const label = document.createElement("label");
-  label.className = "dropdown-label";
-  label.textContent = cfg.dropdownLabel || "Sector:";
-  const select = document.createElement("select");
-  select.className = "filter-select";
-  cfg.sectors.forEach((s) => {
-    const opt = document.createElement("option");
-    opt.value = s.value;
-    opt.textContent = s.label;
-    select.appendChild(opt);
+  mount.innerHTML = "";
+  const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img", "aria-label": cfg.title }, mount);
+
+  ticks.forEach((t) => {
+    const gy = y(t);
+    el("line", { class: "grid-line", x1: padL, x2: W - padR, y1: gy, y2: gy }, svg);
+    textEl(padL - 10, gy + 4, formatValue(t), { class: "axis-label", "text-anchor": "end" }, svg);
   });
-  select.value = activeSector;
-  select.addEventListener("change", () => {
-    activeSector = select.value;
-    draw();
-  });
-  label.appendChild(select);
-  controls.appendChild(label);
+  el("line", { class: "axis-line", x1: padL, x2: padL, y1: padT, y2: padT + plotH }, svg);
 
-  const W = 900, labelW = 270, rightPad = 20;
-  const plotW = W - labelW - rightPad;
-  const rowH = 44, barH = 26, topPad = 10, bottomPad = 10;
+  const slotW = plotW / data.length;
+  const barW = slotW * 0.5;
+  const tableRows = [];
 
-  function draw() {
-    const bySector = data.filter((d) => d.sector === activeSector);
-    const byCategory = {};
-    bySector.forEach((d) => { byCategory[d.category] = d; });
-    const rows = (cfg.categoryOrder || Object.keys(byCategory))
-      .map((cat) => byCategory[cat])
-      .filter(Boolean);
-
-    const H = topPad + rows.length * rowH + bottomPad;
-    mount.innerHTML = "";
-    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
-
-    const tableRows = [];
-    rows.forEach((d, i) => {
-      const rowY = topPad + i * rowH;
-      const barY = rowY + (rowH - barH) / 2;
-      textEl(labelW - 14, rowY + rowH / 2 + 4, d.category, { "text-anchor": "end", "font-size": "12", "font-weight": "600", fill: "var(--ink-primary)" }, svg);
-
-      const values = drawStackedBarSegments(svg, labelW, barY, plotW, barH, cfg.series, d, d.category);
-      tableRows.push([d.category, ...values]);
+  data.forEach((d, i) => {
+    const cx = padL + slotW * (i + 0.5);
+    const barX = cx - barW / 2;
+    const barTop = y(d.value);
+    const barH = padT + plotH - barTop;
+    const color = colorVar(d.color);
+    const r = 6;
+    const path = roundedRectPath(barX, barTop, barW, barH, { tl: r, tr: r, bl: 0, br: 0 });
+    const bar = el("path", { d: path, fill: color }, svg);
+    const hit = el("rect", { x: barX - 4, y: barTop - 2, width: barW + 8, height: barH + 4, fill: "transparent" }, svg);
+    const valueLabel = formatValue(d.value);
+    [bar, hit].forEach((node) => {
+      node.style.cursor = "pointer";
+      node.addEventListener("pointermove", (ev) => {
+        bar.style.filter = "brightness(1.08)";
+        showTooltip(ev.clientX, ev.clientY, ttBox(d.category, [ttRow(color, "Value", valueLabel)]));
+      });
+      node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
     });
+    textEl(cx, barTop + 24, valueLabel, { "text-anchor": "middle", "font-size": "14", "font-weight": "700", fill: "#fff" }, svg);
+    textEl(cx, padT + plotH + 22, d.category, { "text-anchor": "middle", "font-size": "12.5", "font-weight": "600", fill: "var(--ink-primary)" }, svg);
+    tableRows.push([d.category, valueLabel]);
+  });
 
-    registerDownload("stackedBar", cfg.downloadFilename, ["Category", ...cfg.series.map((s) => s.label)], tableRows);
-  }
-
-  draw();
+  registerDownload("verticalBar", cfg.downloadFilename, ["Category", "Value"], tableRows);
 }
 
-renderStackedBar();
+renderVerticalBar();
 wireDownloadButtons();
 
 })();

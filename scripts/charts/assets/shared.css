@@ -51,6 +51,29 @@ figure.chart-card::after {
 .legend-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-secondary); }
 .legend-swatch { width: 11px; height: 11px; border-radius: 50%; flex: none; }
 .legend-swatch.line { width: 16px; height: 3px; border-radius: 2px; }
+.legend-remove {
+  font: inherit; font-size: 14px; line-height: 1; border: none; background: transparent;
+  color: var(--ink-muted); cursor: pointer; padding: 0;
+}
+.legend-remove:hover { color: var(--ink-primary); }
+
+.series-search { position: relative; display: inline-block; width: 100%; max-width: 340px; }
+.series-search-input {
+  font: inherit; font-size: 14px; width: 100%;
+  padding: 9px 12px; border-radius: 10px; border: 1px solid var(--card-border);
+  background: var(--surface-alt); color: var(--ink-primary);
+}
+.series-search-input:focus { outline: 2px solid var(--cat-3); outline-offset: 1px; }
+.series-suggestions {
+  display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 20;
+  max-height: 220px; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--card-border); border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14); padding: 6px;
+}
+.series-suggestions.open { display: block; }
+.series-suggestion { padding: 7px 8px; border-radius: 6px; font-size: 13.5px; color: var(--ink-primary); cursor: pointer; }
+.series-suggestion:hover { background: var(--surface-alt); }
+.series-suggestion.disabled { color: var(--ink-muted); cursor: default; }
 
 .chart-mount { width: 100%; }
 .chart-mount svg { width: 100%; height: auto; display: block; overflow: visible; }
@@ -126,6 +149,10 @@ figure.chart-card::after {
 
 .stacked-sm-panels { display: flex; flex-direction: column; gap: 20px; }
 .stacked-sm-panel svg { display: block; width: 100%; height: auto; }
+
+.dual-panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.dual-panel svg { display: block; width: 100%; height: auto; }
+@media (max-width: 640px) { .dual-panel-grid { grid-template-columns: 1fr; } }
 
 .reference-list { margin: 0; padding-left: 20px; }
 .reference-item { font-size: 13.5px; line-height: 1.6; color: var(--ink-primary); margin-bottom: 10px; }

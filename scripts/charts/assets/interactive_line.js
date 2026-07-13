@@ -145,7 +145,10 @@ function renderInteractiveLine() {
     hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTooltip(); });
 
     legendEl.innerHTML = "";
-    seriesInfo.forEach((s) => legendItem(legendEl, s.color, s.name, true));
+    seriesInfo.forEach((s) => legendItem(
+      legendEl, s.color, s.name, true,
+      cfg.filterMode === "search" ? () => filterMount._removeSeries(s.name) : undefined
+    ));
 
     registerDownload(
       "line",
@@ -262,8 +265,102 @@ function renderInteractiveLine() {
     draw(Array.from(checked));
   }
 
+  // ---------------------------------------------------------------------
+  // Search: a free-text type-ahead ("Enter series to show") — matches the
+  // live Tech Vector site's interaction pattern. Selected series double as
+  // removable legend chips (see the legendItem onRemove hook above) rather
+  // than a separate checkbox list. Same palette cap as multi-select.
+  // ---------------------------------------------------------------------
+  function buildSearchSelect() {
+    filterMount.innerHTML = "";
+    const checked = new Set(cfg.defaultSeries.filter((n) => allSeries.includes(n)).slice(0, palette.length));
+    checked.forEach(assignColor);
+
+    const wrap = document.createElement("div");
+    wrap.className = "series-search";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "series-search-input";
+    input.placeholder = "Enter series to show";
+    input.autocomplete = "off";
+    const suggestions = document.createElement("div");
+    suggestions.className = "series-suggestions";
+
+    function updateNote() {
+      note.textContent = checked.size >= palette.length
+        ? "Showing the maximum of " + palette.length + " series — remove one (×) to add another."
+        : checked.size + " of " + allSeries.length + " series shown.";
+    }
+
+    function renderSuggestions() {
+      suggestions.innerHTML = "";
+      if (checked.size >= palette.length) {
+        const msg = document.createElement("div");
+        msg.className = "series-suggestion disabled";
+        msg.textContent = "Maximum of " + palette.length + " series shown.";
+        suggestions.appendChild(msg);
+        suggestions.classList.add("open");
+        return;
+      }
+      const q = input.value.trim().toLowerCase();
+      const matches = allSeries.filter((n) => !checked.has(n) && (q === "" || n.toLowerCase().includes(q)));
+      if (!matches.length) {
+        suggestions.classList.remove("open");
+        return;
+      }
+      matches.slice(0, 8).forEach((name) => {
+        const item = document.createElement("div");
+        item.className = "series-suggestion";
+        item.textContent = name;
+        // mousedown, not click — fires before the input's blur hides the list
+        item.addEventListener("mousedown", (ev) => { ev.preventDefault(); addSeries(name); });
+        suggestions.appendChild(item);
+      });
+      suggestions.classList.add("open");
+    }
+
+    function addSeries(name) {
+      checked.add(name);
+      assignColor(name);
+      input.value = "";
+      renderSuggestions();
+      updateNote();
+      draw(Array.from(checked));
+    }
+    function removeSeries(name) {
+      checked.delete(name);
+      releaseColor(name);
+      renderSuggestions();
+      updateNote();
+      draw(Array.from(checked));
+    }
+    filterMount._removeSeries = removeSeries;
+
+    input.addEventListener("input", renderSuggestions);
+    input.addEventListener("focus", renderSuggestions);
+    input.addEventListener("blur", () => suggestions.classList.remove("open"));
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key !== "Enter" || checked.size >= palette.length) return;
+      const q = input.value.trim().toLowerCase();
+      if (!q) return;
+      const exact = allSeries.find((n) => !checked.has(n) && n.toLowerCase() === q);
+      const firstMatch = allSeries.find((n) => !checked.has(n) && n.toLowerCase().includes(q));
+      const pick = exact || firstMatch;
+      if (pick) { addSeries(pick); ev.preventDefault(); }
+    });
+
+    wrap.appendChild(input);
+    wrap.appendChild(suggestions);
+    filterMount.appendChild(wrap);
+
+    updateNote();
+    draw(Array.from(checked));
+  }
+
   if (cfg.filterMode === "single") {
     buildSingleSelect();
+  } else if (cfg.filterMode === "search") {
+    buildSearchSelect();
   } else {
     buildMultiSelect();
   }

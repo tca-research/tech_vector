@@ -1,4 +1,4 @@
-<title>Tech Vector — women in leadership by sector</title>
+<title>Tech Vector — where tech pays best</title>
 <style>
 :root {
   --surface: #ffffff;
@@ -194,15 +194,14 @@ figure.chart-card::after {
 
 </style>
 <div class="page">
-  <figure class="chart-card" id="card-stacked-bar">
+  <figure class="chart-card" id="card-top-ranked-dual">
     <h3 class="chart-title" id="chart-title"></h3>
     <p class="chart-caption" id="chart-caption"></p>
-    <div class="ranked-bar-row" id="stacked-bar-controls"></div>
-    <div class="legend-row" id="stacked-bar-legend"></div>
-    <div class="chart-mount" id="stacked-bar-chart"></div>
+    <div class="ranked-bar-row" id="top-ranked-controls"></div>
+    <div class="dual-panel-grid" id="top-ranked-panels"></div>
     <div class="chart-footer">
       <span class="chart-source" id="chart-source"></span>
-      <button class="download-btn" data-target="stackedBar"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
+      <button class="download-btn" data-target="topRankedDual"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
     </div>
   </figure>
 </div>
@@ -210,7 +209,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"stackedBar": {"config": {"pageTitle": "Tech Vector \u2014 women in leadership by sector", "title": "Per cent of men and women in leadership roles.", "source": "Source: WGEA (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "workplace_leadership_comp_pct.csv", "sectorColumn": "Sector", "categoryColumn": "occupation", "categoryOrder": ["CEOs", "Heads of Business", "Other Executives and General Managers", "Senior managers", "Other managers", "Non-managers"], "dropdownLabel": "Sector:", "sectors": [{"value": "TCA Member Companies", "label": "TCA Member Companies"}, {"value": "Direct Tech Sector Companies", "label": "Direct Tech Sector Companies"}, {"value": "Australian Average", "label": "Australian Average"}], "defaultSector": "TCA Member Companies", "series": [{"column": "Men", "label": "Men", "color": "cat-3"}, {"column": "Women", "label": "Women", "color": "cat-1"}], "lastUpdated": "13 Jul 2026"}, "data": [{"sector": "TCA Member Companies", "category": "Senior managers", "Men": 70.0, "Women": 30.0}, {"sector": "TCA Member Companies", "category": "Other managers", "Men": 64.4, "Women": 35.6}, {"sector": "TCA Member Companies", "category": "Other Executives and General Managers", "Men": 67.9, "Women": 32.1}, {"sector": "TCA Member Companies", "category": "Non-managers", "Men": 57.2, "Women": 42.8}, {"sector": "TCA Member Companies", "category": "Heads of Business", "Men": 50.0, "Women": 50.0}, {"sector": "TCA Member Companies", "category": "CEOs", "Men": 77.8, "Women": 22.2}, {"sector": "Direct Tech Sector Companies", "category": "Other managers", "Men": 70.2, "Women": 29.8}, {"sector": "Direct Tech Sector Companies", "category": "Senior managers", "Men": 70.5, "Women": 29.5}, {"sector": "Direct Tech Sector Companies", "category": "Other Executives and General Managers", "Men": 70.8, "Women": 29.2}, {"sector": "Direct Tech Sector Companies", "category": "Non-managers", "Men": 67.5, "Women": 32.5}, {"sector": "Direct Tech Sector Companies", "category": "Heads of Business", "Men": 79.9, "Women": 20.1}, {"sector": "Direct Tech Sector Companies", "category": "CEOs", "Men": 87.7, "Women": 12.3}, {"sector": "Australian Average", "category": "Heads of Business", "Men": 69.8, "Women": 30.2}, {"sector": "Australian Average", "category": "Senior managers", "Men": 60.0, "Women": 40.0}, {"sector": "Australian Average", "category": "Other managers", "Men": 55.5, "Women": 44.5}, {"sector": "Australian Average", "category": "Other Executives and General Managers", "Men": 62.6, "Women": 37.4}, {"sector": "Australian Average", "category": "Non-managers", "Men": 47.5, "Women": 52.5}, {"sector": "Australian Average", "category": "CEOs", "Men": 74.2, "Women": 25.8}]}}
+{"topRankedDual": {"config": {"pageTitle": "Tech Vector \u2014 where tech pays best", "title": "Median remuneration for given role ($AUD).", "source": "Source: Levels.fyi (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "tech_jobs_top_company_and_location.csv", "jobTitleColumn": "Job Title", "levelColumn": "Level", "level": "All", "metricColumn": "Metric", "rankColumn": "Rank Order", "labelColumn": "Label", "valueColumn": "Salary", "dropdownLabel": "Job Title:", "defaultDropdownValue": "Software Engineer", "topN": 3, "panels": [{"panelValue": "Top Company", "title": "Company", "color": "cat-1"}, {"panelValue": "Top Location", "title": "Location", "color": "cat-3"}], "valueFormat": {"prefix": "$", "divisor": 1000, "suffix": "K"}, "lastUpdated": "13 Jul 2026"}, "data": [{"dropdownValue": "Customer Service", "panel": "Top Company", "rank": 1.0, "label": "Woolworths Supermarkets", "value": 69705.0}, {"dropdownValue": "Customer Service", "panel": "Top Company", "rank": 2.0, "label": "Commonwealth Bank", "value": 62625.0}, {"dropdownValue": "Customer Service", "panel": "Top Company", "rank": 3.0, "label": "Coles", "value": 54735.0}, {"dropdownValue": "Data Science Manager", "panel": "Top Company", "rank": 1.0, "label": "Brisbane", "value": 269541.0}, {"dropdownValue": "Data Science Manager", "panel": "Top Company", "rank": 2.0, "label": "Sydney", "value": 172224.0}, {"dropdownValue": "Data Science Manager", "panel": "Top Company", "rank": 3.0, "label": "Melbourne", "value": 172041.0}, {"dropdownValue": "Product Manager", "panel": "Top Company", "rank": 1.0, "label": "Atlassian", "value": 263767.0}, {"dropdownValue": "Product Manager", "panel": "Top Company", "rank": 2.0, "label": "REA Group", "value": 204989.0}, {"dropdownValue": "Product Manager", "panel": "Top Company", "rank": 3.0, "label": "Canva", "value": 195397.0}, {"dropdownValue": "Product Manager", "panel": "Top Location", "rank": 1.0, "label": "Perth", "value": 197499.0}, {"dropdownValue": "Product Manager", "panel": "Top Location", "rank": 2.0, "label": "Sydney", "value": 166986.0}, {"dropdownValue": "Product Manager", "panel": "Top Location", "rank": 3.0, "label": "Melbourne", "value": 153928.0}, {"dropdownValue": "Project Manager", "panel": "Top Company", "rank": 1.0, "label": "Amazon", "value": 261152.0}, {"dropdownValue": "Project Manager", "panel": "Top Company", "rank": 2.0, "label": "NAB", "value": 167142.0}, {"dropdownValue": "Project Manager", "panel": "Top Company", "rank": 3.0, "label": "Commonwealth Bank", "value": 157056.0}, {"dropdownValue": "Software Engineering Manager", "panel": "Top Company", "rank": 1.0, "label": "Atlassian", "value": 424712.0}, {"dropdownValue": "Software Engineering Manager", "panel": "Top Company", "rank": 2.0, "label": "Canva", "value": 356054.0}, {"dropdownValue": "Software Engineering Manager", "panel": "Top Company", "rank": 3.0, "label": "Amazon", "value": 317247.0}, {"dropdownValue": "Software Engineering Manager", "panel": "Top Location", "rank": 1.0, "label": "Sydney", "value": 270256.0}, {"dropdownValue": "Software Engineering Manager", "panel": "Top Location", "rank": 2.0, "label": "Brisbane", "value": 217961.0}, {"dropdownValue": "Software Engineering Manager", "panel": "Top Location", "rank": 3.0, "label": "Melbourne", "value": 196927.0}, {"dropdownValue": "Data Scientist", "panel": "Top Company", "rank": 1.0, "label": "Atlassian", "value": 267080.0}, {"dropdownValue": "Data Scientist", "panel": "Top Company", "rank": 2.0, "label": "Canva", "value": 206221.0}, {"dropdownValue": "Data Scientist", "panel": "Top Company", "rank": 3.0, "label": "Commonwealth Bank", "value": 152758.0}, {"dropdownValue": "Data Scientist", "panel": "Top Location", "rank": 1.0, "label": "Perth", "value": 210140.0}, {"dropdownValue": "Data Scientist", "panel": "Top Location", "rank": 2.0, "label": "Sydney", "value": 152758.0}, {"dropdownValue": "Data Scientist", "panel": "Top Location", "rank": 3.0, "label": "Melbourne", "value": 151326.0}, {"dropdownValue": "Information Technologist", "panel": "Top Company", "rank": 1.0, "label": "Amazon", "value": 138918.0}, {"dropdownValue": "Information Technologist", "panel": "Top Company", "rank": 2.0, "label": "Atlassian", "value": 138909.0}, {"dropdownValue": "Information Technologist", "panel": "Top Company", "rank": 3.0, "label": "Dell Technologies", "value": 109497.0}, {"dropdownValue": "Information Technologist", "panel": "Top Location", "rank": 1.0, "label": "Sydney", "value": 142287.0}, {"dropdownValue": "Information Technologist", "panel": "Top Location", "rank": 2.0, "label": "Perth", "value": 105373.0}, {"dropdownValue": "Information Technologist", "panel": "Top Location", "rank": 3.0, "label": "Melbourne", "value": 101556.0}, {"dropdownValue": "Sales", "panel": "Top Company", "rank": 1.0, "label": "Google", "value": 331177.0}, {"dropdownValue": "Sales", "panel": "Top Company", "rank": 2.0, "label": "Microsoft", "value": 291747.0}, {"dropdownValue": "Sales", "panel": "Top Company", "rank": 3.0, "label": "Salesforce", "value": 254486.0}, {"dropdownValue": "Sales", "panel": "Top Location", "rank": 1.0, "label": "Brisbane", "value": 368793.0}, {"dropdownValue": "Sales", "panel": "Top Location", "rank": 2.0, "label": "Melbourne", "value": 217691.0}, {"dropdownValue": "Sales", "panel": "Top Location", "rank": 3.0, "label": "Gold Coast", "value": 186038.0}, {"dropdownValue": "Technical Program Manager", "panel": "Top Company", "rank": 1.0, "label": "Atlassian", "value": 303145.0}, {"dropdownValue": "Technical Program Manager", "panel": "Top Company", "rank": 2.0, "label": "Amazon", "value": 190001.0}, {"dropdownValue": "Technical Program Manager", "panel": "Top Company", "rank": 3.0, "label": "Microsoft", "value": 169128.0}, {"dropdownValue": "Technical Program Manager", "panel": "Top Location", "rank": 1.0, "label": "Sydney", "value": 198501.0}, {"dropdownValue": "Technical Program Manager", "panel": "Top Location", "rank": 2.0, "label": "Canberra", "value": 190001.0}, {"dropdownValue": "Technical Program Manager", "panel": "Top Location", "rank": 3.0, "label": "Melbourne", "value": 167741.0}, {"dropdownValue": "Product Designer", "panel": "Top Company", "rank": 1.0, "label": "Atlassian", "value": 196265.0}, {"dropdownValue": "Product Designer", "panel": "Top Company", "rank": 2.0, "label": "Canva", "value": 173349.0}, {"dropdownValue": "Product Designer", "panel": "Top Company", "rank": 3.0, "label": "NAB", "value": 167374.0}, {"dropdownValue": "Product Designer", "panel": "Top Location", "rank": 1.0, "label": "Sydney", "value": 138222.0}, {"dropdownValue": "Product Designer", "panel": "Top Location", "rank": 2.0, "label": "Melbourne", "value": 137864.0}, {"dropdownValue": "Product Designer", "panel": "Top Location", "rank": 3.0, "label": "Brisbane", "value": 105054.0}, {"dropdownValue": "Civil Engineer", "panel": "Top Company", "rank": 1.0, "label": "Sydney", "value": 85755.0}, {"dropdownValue": "Civil Engineer", "panel": "Top Company", "rank": 2.0, "label": "Melbourne", "value": 81979.0}, {"dropdownValue": "Civil Engineer", "panel": "Top Company", "rank": 3.0, "label": "Brisbane", "value": 70449.0}, {"dropdownValue": "Solution Architect", "panel": "Top Company", "rank": 1.0, "label": "Red Hat", "value": 259137.0}, {"dropdownValue": "Solution Architect", "panel": "Top Company", "rank": 2.0, "label": "Amazon", "value": 257773.0}, {"dropdownValue": "Solution Architect", "panel": "Top Company", "rank": 3.0, "label": "Salesforce", "value": 246739.0}, {"dropdownValue": "Solution Architect", "panel": "Top Location", "rank": 1.0, "label": "Sydney", "value": 232712.0}, {"dropdownValue": "Solution Architect", "panel": "Top Location", "rank": 2.0, "label": "Canberra", "value": 230420.0}, {"dropdownValue": "Solution Architect", "panel": "Top Location", "rank": 3.0, "label": "Melbourne", "value": 218609.0}, {"dropdownValue": "Software Engineer", "panel": "Top Company", "rank": 1.0, "label": "Block", "value": 254934.0}, {"dropdownValue": "Software Engineer", "panel": "Top Company", "rank": 2.0, "label": "Atlassian", "value": 250144.0}, {"dropdownValue": "Software Engineer", "panel": "Top Company", "rank": 3.0, "label": "Canva", "value": 238543.0}, {"dropdownValue": "Software Engineer", "panel": "Top Location", "rank": 1.0, "label": "Sydney", "value": 175331.0}, {"dropdownValue": "Software Engineer", "panel": "Top Location", "rank": 2.0, "label": "Adelaide", "value": 130888.0}, {"dropdownValue": "Software Engineer", "panel": "Top Location", "rank": 3.0, "label": "Perth", "value": 128142.0}, {"dropdownValue": "Security Analyst", "panel": "Top Company", "rank": 1.0, "label": "Amazon", "value": 342254.0}, {"dropdownValue": "Security Analyst", "panel": "Top Company", "rank": 2.0, "label": "Atlassian", "value": 287374.0}, {"dropdownValue": "Security Analyst", "panel": "Top Company", "rank": 3.0, "label": "Accenture", "value": 163555.0}, {"dropdownValue": "Security Analyst", "panel": "Top Location", "rank": 1.0, "label": "Brisbane", "value": 148480.0}, {"dropdownValue": "Security Analyst", "panel": "Top Location", "rank": 2.0, "label": "Melbourne", "value": 137079.0}, {"dropdownValue": "Security Analyst", "panel": "Top Location", "rank": 3.0, "label": "Sydney", "value": 120546.0}, {"dropdownValue": "Data Analyst", "panel": "Top Company", "rank": 1.0, "label": "Westpac", "value": 122662.0}, {"dropdownValue": "Data Analyst", "panel": "Top Company", "rank": 2.0, "label": "Commonwealth Bank", "value": 115994.0}, {"dropdownValue": "Data Analyst", "panel": "Top Company", "rank": 3.0, "label": "Quantium", "value": 95113.0}, {"dropdownValue": "Data Analyst", "panel": "Top Location", "rank": 1.0, "label": "Perth", "value": 131994.0}, {"dropdownValue": "Data Analyst", "panel": "Top Location", "rank": 2.0, "label": "Melbourne", "value": 117940.0}, {"dropdownValue": "Data Analyst", "panel": "Top Location", "rank": 3.0, "label": "Sydney", "value": 115010.0}, {"dropdownValue": "Business Analyst", "panel": "Top Company", "rank": 1.0, "label": "The University of Sydney", "value": 146294.0}, {"dropdownValue": "Business Analyst", "panel": "Top Company", "rank": 2.0, "label": "Commonwealth Bank", "value": 139841.0}, {"dropdownValue": "Business Analyst", "panel": "Top Company", "rank": 3.0, "label": "Westpac", "value": 109404.0}, {"dropdownValue": "Business Analyst", "panel": "Top Location", "rank": 1.0, "label": "Melbourne", "value": 124102.0}, {"dropdownValue": "Business Analyst", "panel": "Top Location", "rank": 2.0, "label": "Sydney", "value": 123869.0}, {"dropdownValue": "Business Analyst", "panel": "Top Location", "rank": 3.0, "label": "Adelaide", "value": 113563.0}, {"dropdownValue": "Management Consultant", "panel": "Top Company", "rank": 1.0, "label": "Deloitte", "value": 109865.0}, {"dropdownValue": "Management Consultant", "panel": "Top Company", "rank": 2.0, "label": "PwC", "value": 94032.0}, {"dropdownValue": "Management Consultant", "panel": "Top Company", "rank": 3.0, "label": "Ernst & Young", "value": 84281.0}, {"dropdownValue": "Management Consultant", "panel": "Top Location", "rank": 1.0, "label": "Perth", "value": 170966.0}, {"dropdownValue": "Management Consultant", "panel": "Top Location", "rank": 2.0, "label": "Sydney", "value": 116905.0}, {"dropdownValue": "Management Consultant", "panel": "Top Location", "rank": 3.0, "label": "Melbourne", "value": 90813.0}, {"dropdownValue": "Program Manager", "panel": "Top Company", "rank": 1.0, "label": "Atlassian", "value": 362798.0}, {"dropdownValue": "Program Manager", "panel": "Top Company", "rank": 2.0, "label": "Microsoft", "value": 257901.0}, {"dropdownValue": "Program Manager", "panel": "Top Company", "rank": 3.0, "label": "Canva", "value": 173823.0}, {"dropdownValue": "Accountant", "panel": "Top Company", "rank": 1.0, "label": "Sydney", "value": 93080.0}, {"dropdownValue": "Accountant", "panel": "Top Company", "rank": 2.0, "label": "Adelaide", "value": 89601.0}, {"dropdownValue": "Accountant", "panel": "Top Company", "rank": 3.0, "label": "Melbourne", "value": 77399.0}, {"dropdownValue": "Mechanical Engineer", "panel": "Top Company", "rank": 1.0, "label": "Melbourne", "value": 116786.0}, {"dropdownValue": "Mechanical Engineer", "panel": "Top Company", "rank": 2.0, "label": "Perth", "value": 116313.0}, {"dropdownValue": "Mechanical Engineer", "panel": "Top Company", "rank": 3.0, "label": "Sydney", "value": 95724.0}, {"dropdownValue": "Financial Analyst", "panel": "Top Company", "rank": 1.0, "label": "Commonwealth Bank", "value": 115147.0}, {"dropdownValue": "Financial Analyst", "panel": "Top Company", "rank": 2.0, "label": "Macquarie Group", "value": 98640.0}, {"dropdownValue": "Financial Analyst", "panel": "Top Company", "rank": 3.0, "label": "NAB", "value": 91710.0}, {"dropdownValue": "Bizops Manager", "panel": "Top Company", "rank": 1.0, "label": "Amazon", "value": 206770.0}, {"dropdownValue": "Bizops Manager", "panel": "Top Company", "rank": 2.0, "label": "Canva", "value": 194241.0}, {"dropdownValue": "Bizops Manager", "panel": "Top Company", "rank": 3.0, "label": "Uber", "value": 148733.0}, {"dropdownValue": "Marketing", "panel": "Top Company", "rank": 1.0, "label": "Canva", "value": 215259.0}, {"dropdownValue": "Marketing", "panel": "Top Company", "rank": 2.0, "label": "Amazon", "value": 163658.0}, {"dropdownValue": "Marketing", "panel": "Top Company", "rank": 3.0, "label": "SafetyCulture", "value": 133378.0}]}}
 </script>
 <script>
 (function () {
@@ -484,78 +483,125 @@ function wireDownloadButtons() {
 }
 
 
-// STACKED BAR — one 100%-stacked horizontal bar per category, with a sector
-// dropdown swapping the active slice of rows. All dataset-specific values
-// (categories, series/colors, sectors, labels) come from DATA.stackedBar
-// .config, built in build_charts.py's STACKED_BAR_CONFIG-style configs.
-// (roundedRectPath and drawStackedBarRow are shared helpers, defined in shared.js.)
-function renderStackedBar() {
-  const cfg = DATA.stackedBar.config;
-  const data = DATA.stackedBar.data;
+// TOP RANKED DUAL — two side-by-side top-N ranked bar panels (e.g. top
+// companies vs. top locations for a role), sharing one x-scale so bar
+// lengths are directly comparable across panels, filtered by a single
+// dropdown (e.g. Job Title). All dataset-specific values come from
+// DATA.topRankedDual.config, built in build_charts.py's
+// TOP_RANKED_DUAL_CONFIG. Reuses roundedRectPath from shared.js.
+function renderTopRankedDual() {
+  const cfg = DATA.topRankedDual.config;
+  const data = DATA.topRankedDual.data;
   applyChromeConfig(cfg);
 
-  const controls = document.getElementById("stacked-bar-controls");
-  const legend = document.getElementById("stacked-bar-legend");
-  const mount = document.getElementById("stacked-bar-chart");
+  const fmt = cfg.valueFormat || {};
+  const formatValue = (v) => (fmt.prefix || "") + Math.round(v / (fmt.divisor || 1)).toLocaleString("en-AU") + (fmt.suffix || "");
+
+  const controls = document.getElementById("top-ranked-controls");
+  const panelsEl = document.getElementById("top-ranked-panels");
   controls.innerHTML = "";
-  legend.innerHTML = "";
 
-  cfg.series.forEach((s) => legendItem(legend, colorVar(s.color), s.label));
-
-  let activeSector = cfg.defaultSector || cfg.sectors[0].value;
+  const dropdownValues = Array.from(new Set(data.map((d) => d.dropdownValue))).sort();
+  let active = cfg.defaultDropdownValue && dropdownValues.includes(cfg.defaultDropdownValue)
+    ? cfg.defaultDropdownValue
+    : dropdownValues[0];
 
   const label = document.createElement("label");
   label.className = "dropdown-label";
-  label.textContent = cfg.dropdownLabel || "Sector:";
+  label.textContent = cfg.dropdownLabel || "Filter:";
   const select = document.createElement("select");
   select.className = "filter-select";
-  cfg.sectors.forEach((s) => {
+  dropdownValues.forEach((name) => {
     const opt = document.createElement("option");
-    opt.value = s.value;
-    opt.textContent = s.label;
+    opt.value = name;
+    opt.textContent = name;
     select.appendChild(opt);
   });
-  select.value = activeSector;
-  select.addEventListener("change", () => {
-    activeSector = select.value;
-    draw();
-  });
+  select.value = active;
+  select.addEventListener("change", () => { active = select.value; draw(); });
   label.appendChild(select);
   controls.appendChild(label);
 
-  const W = 900, labelW = 270, rightPad = 20;
-  const plotW = W - labelW - rightPad;
-  const rowH = 44, barH = 26, topPad = 10, bottomPad = 10;
+  const topN = cfg.topN || 3;
+  const W = 430, labelW = 110, rightPad = 50, topPad = 8, rowH = 34, bottomPad = 30, barH = 20;
 
   function draw() {
-    const bySector = data.filter((d) => d.sector === activeSector);
-    const byCategory = {};
-    bySector.forEach((d) => { byCategory[d.category] = d; });
-    const rows = (cfg.categoryOrder || Object.keys(byCategory))
-      .map((cat) => byCategory[cat])
-      .filter(Boolean);
+    panelsEl.innerHTML = "";
+    const rowsByPanel = cfg.panels.map((p) => ({
+      ...p,
+      rows: data
+        .filter((d) => d.dropdownValue === active && d.panel === p.panelValue)
+        .sort((a, b) => a.rank - b.rank)
+        .slice(0, topN),
+    }));
 
-    const H = topPad + rows.length * rowH + bottomPad;
-    mount.innerHTML = "";
-    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
+    const allVals = rowsByPanel.flatMap((p) => p.rows.map((r) => r.value));
+    const ticks = niceTicks(0, Math.max(1, ...allVals) * 1.15, 5);
+    const xMax = ticks[ticks.length - 1];
+    const plotW = W - labelW - rightPad;
+    const x = (v) => (v / xMax) * plotW;
 
     const tableRows = [];
-    rows.forEach((d, i) => {
-      const rowY = topPad + i * rowH;
-      const barY = rowY + (rowH - barH) / 2;
-      textEl(labelW - 14, rowY + rowH / 2 + 4, d.category, { "text-anchor": "end", "font-size": "12", "font-weight": "600", fill: "var(--ink-primary)" }, svg);
 
-      const values = drawStackedBarSegments(svg, labelW, barY, plotW, barH, cfg.series, d, d.category);
-      tableRows.push([d.category, ...values]);
+    rowsByPanel.forEach((p) => {
+      const panelDiv = document.createElement("div");
+      panelDiv.className = "dual-panel";
+      const title = document.createElement("h4");
+      title.className = "sm-panel-title";
+      title.textContent = p.title;
+      panelDiv.appendChild(title);
+
+      if (!p.rows.length) {
+        const note = document.createElement("p");
+        note.className = "filter-note";
+        note.textContent = "No " + p.title.toLowerCase() + " breakdown available for this role.";
+        panelDiv.appendChild(note);
+        panelsEl.appendChild(panelDiv);
+        return;
+      }
+
+      const H = topPad + Math.max(p.rows.length, 1) * rowH + bottomPad;
+      const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, panelDiv);
+      const color = colorVar(p.color);
+      const plotBottom = topPad + p.rows.length * rowH;
+
+      ticks.forEach((t) => {
+        const gx = labelW + x(t);
+        el("line", { class: "grid-line", x1: gx, x2: gx, y1: topPad - 4, y2: plotBottom }, svg);
+        textEl(gx, plotBottom + 18, formatValue(t), { class: "axis-label", "text-anchor": "middle" }, svg);
+      });
+      el("line", { class: "axis-line", x1: labelW, x2: labelW, y1: topPad - 4, y2: plotBottom }, svg);
+
+      p.rows.forEach((r, i) => {
+        const rowY = topPad + i * rowH;
+        textEl(labelW - 10, rowY + barH / 2 + 4, r.label, { "text-anchor": "end", "font-size": "12.5", "font-weight": "600", fill: "var(--ink-primary)" }, svg);
+        const w = Math.max(2, x(r.value));
+        const path = roundedRectPath(labelW, rowY, w, barH, { tl: 0, bl: 0, tr: 3, br: 3 });
+        const bar = el("path", { d: path, fill: color }, svg);
+        const hit = el("rect", { x: labelW, y: rowY - 2, width: Math.max(w, 6), height: barH + 4, fill: "transparent" }, svg);
+        const valueLabel = formatValue(r.value);
+        [bar, hit].forEach((node) => {
+          node.style.cursor = "pointer";
+          node.addEventListener("pointermove", (ev) => {
+            bar.style.filter = "brightness(1.1)";
+            showTooltip(ev.clientX, ev.clientY, ttBox(r.label, [ttRow(color, p.title, valueLabel)]));
+          });
+          node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
+        });
+        textEl(labelW + w + 6, rowY + barH / 2 + 4, valueLabel, { "font-size": "12", "font-weight": "700", fill: colorTextVar(p.color) }, svg);
+        tableRows.push([active, p.title, r.label, valueLabel]);
+      });
+
+      panelsEl.appendChild(panelDiv);
     });
 
-    registerDownload("stackedBar", cfg.downloadFilename, ["Category", ...cfg.series.map((s) => s.label)], tableRows);
+    registerDownload("topRankedDual", cfg.downloadFilename, [cfg.dropdownLabel || "Filter", "Panel", "Label", "Value"], tableRows);
   }
 
   draw();
 }
 
-renderStackedBar();
+renderTopRankedDual();
 wireDownloadButtons();
 
 })();

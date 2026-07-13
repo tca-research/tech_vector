@@ -230,12 +230,15 @@ INTERACTIVE_LINE_CONFIG = {
     "dateFormat": "%B %Y",
     # "single": a plain dropdown, exactly one series shown at a time.
     # "multi": a multi-select dropdown (checkbox list); up to len(palette)
-    # series can be shown at once — the palette is CVD-safe only up to that
-    # many concurrent hues, so the UI disables further checkboxes at the cap
-    # rather than silently reusing a color.
-    "filterMode": "multi",
+    # series can be shown at once.
+    # "search": a free-text type-ahead ("Enter series to show"), matching the
+    # live Tech Vector site — selected series become removable legend chips.
+    # All three cap concurrent series at len(palette) — the palette is
+    # CVD-safe only up to that many hues, so the UI blocks further additions
+    # at the cap rather than silently reusing a color.
+    "filterMode": "search",
     # Initial selection. In "single" mode only the first name is used; in
-    # "multi" mode every name here starts checked (capped to len(palette)).
+    # "multi"/"search" modes every name here starts shown (capped to len(palette)).
     "defaultSeries": ["Software Engineers", "Business & Data Analysts", "Hardware Engineers"],
     # Palette assigned to selected series — fixed slots, not selection order,
     # so a series already on screen never changes color when another is
@@ -713,6 +716,84 @@ def load_references_data(config, now):
 
 
 # =============================================================================
+# 11. VERTICAL BAR — one value per category, upright bars
+# =============================================================================
+AVERAGE_REMUNERATION_CONFIG = {
+    "pageTitle": "Tech Vector — average remuneration by sector",
+    "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees).",
+    "source": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "downloadFilename": "salaries_comparision.csv",
+    "categoryColumn": "Industry",
+    "valueColumn": "Average Total Remuneration",
+    # Fixed hue per category row, in CSV order — not cycled/reassigned.
+    "colors": ["cat-3", "cat-1", "cat-5"],
+    "valueFormat": {"prefix": "$", "divisor": 1000, "suffix": "K", "decimals": 1},
+}
+
+
+def load_vertical_bar_data(config=AVERAGE_REMUNERATION_CONFIG, source_file="salaries_comparision.csv"):
+    df = pd.read_csv(DATA_OUTPUT_DIR / source_file)
+    rows = []
+    for i, row in df.iterrows():
+        rows.append({
+            "category": row[config["categoryColumn"]],
+            "value": money_to_float(row[config["valueColumn"]]),
+            "color": config["colors"][i % len(config["colors"])],
+        })
+    return rows
+
+
+# =============================================================================
+# 12. TOP RANKED DUAL — two top-N ranked panels sharing one dropdown filter
+#     and one x-scale (e.g. top companies vs. top locations for a role).
+#     Note: the live site color-codes company bars by TCA Member vs. TCA
+#     Partner status — we don't have a company-name-to-membership-tier
+#     mapping anywhere in this repo (Tech_Council_ABNs.csv is a bare ABN
+#     list with no company names, and au_levelsfyi_detailed_data.csv has no
+#     ABN/membership column), so both panels use a single fixed color
+#     instead of faking a membership split.
+# =============================================================================
+TOP_RANKED_DUAL_CONFIG = {
+    "pageTitle": "Tech Vector — where tech pays best",
+    "title": "Median remuneration for given role ($AUD).",
+    "source": "Source: Levels.fyi ({year}). Data is anonymised and aggregated by the Tech Council of Australia.",
+    "downloadFilename": "tech_jobs_top_company_and_location.csv",
+    "jobTitleColumn": "Job Title",
+    "levelColumn": "Level",
+    "level": "All",
+    "metricColumn": "Metric",
+    "rankColumn": "Rank Order",
+    "labelColumn": "Label",
+    "valueColumn": "Salary",
+    "dropdownLabel": "Job Title:",
+    "defaultDropdownValue": "Software Engineer",
+    "topN": 3,
+    "panels": [
+        {"panelValue": "Top Company", "title": "Company", "color": "cat-1"},
+        {"panelValue": "Top Location", "title": "Location", "color": "cat-3"},
+    ],
+    "valueFormat": {"prefix": "$", "divisor": 1000, "suffix": "K"},
+}
+
+
+def load_top_ranked_dual_data(config=TOP_RANKED_DUAL_CONFIG, source_file="au_levelsfyi_detailed_data.csv"):
+    df = pd.read_csv(PULL_DIR / source_file)
+    df = df[df[config["levelColumn"]] == config["level"]]
+    panel_values = [p["panelValue"] for p in config["panels"]]
+    df = df[df[config["metricColumn"]].isin(panel_values)]
+    rows = []
+    for _, row in df.iterrows():
+        rows.append({
+            "dropdownValue": row[config["jobTitleColumn"]],
+            "panel": row[config["metricColumn"]],
+            "rank": float(row[config["rankColumn"]]),
+            "label": row[config["labelColumn"]],
+            "value": float(row[config["valueColumn"]]),
+        })
+    return rows
+
+
+# =============================================================================
 # HTML assembly
 # =============================================================================
 def read_asset(name):
@@ -872,6 +953,22 @@ CHARTS = [
         "loader": load_references_data,
         "config": REFERENCES_CONFIG,
         "out_file": "references.html",
+    },
+    {
+        "key": "verticalBar",
+        "body_file": "vertical_bar.html",
+        "js_file": "vertical_bar.js",
+        "loader": load_vertical_bar_data,
+        "config": AVERAGE_REMUNERATION_CONFIG,
+        "out_file": "average_remuneration_by_sector_chart.html",
+    },
+    {
+        "key": "topRankedDual",
+        "body_file": "top_ranked_dual.html",
+        "js_file": "top_ranked_dual.js",
+        "loader": load_top_ranked_dual_data,
+        "config": TOP_RANKED_DUAL_CONFIG,
+        "out_file": "where_tech_pays_best_chart.html",
     },
 ]
 

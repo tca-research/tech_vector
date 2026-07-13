@@ -15,9 +15,15 @@ function applyChromeConfig(cfg) {
   if (titleEl) titleEl.textContent = cfg.title || "";
   const sourceEl = document.getElementById("chart-source");
   if (sourceEl) {
-    let text = cfg.source || "";
+    // Strip any trailing period a config's source string already ends with —
+    // whether or not it does is a config-authoring detail, not something
+    // this join logic should have to know about — so "Chart last updated"
+    // never ends up double-punctuated ("Australia.. Chart last updated...").
+    let text = (cfg.source || "").replace(/\.+\s*$/, "");
     if (cfg.lastUpdated) {
       text += (text ? ". " : "") + "Chart last updated on " + cfg.lastUpdated + ".";
+    } else if (text) {
+      text += ".";
     }
     sourceEl.textContent = text;
   }
@@ -150,7 +156,10 @@ function ttBox(titleText, rows) {
   return box;
 }
 
-function legendItem(container, color, label, lineStyle) {
+// onRemove is optional — pass it to turn the legend item into a removable
+// chip (a small × button after the label), used by a searchable series
+// filter where the legend doubles as the "currently shown" list.
+function legendItem(container, color, label, lineStyle, onRemove) {
   const item = document.createElement("div");
   item.className = "legend-item";
   const sw = document.createElement("span");
@@ -160,6 +169,15 @@ function legendItem(container, color, label, lineStyle) {
   const lab = document.createElement("span");
   lab.textContent = label;
   item.appendChild(lab);
+  if (onRemove) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "legend-remove";
+    btn.setAttribute("aria-label", "Remove " + label);
+    btn.textContent = "×";
+    btn.addEventListener("click", onRemove);
+    item.appendChild(btn);
+  }
   container.appendChild(item);
 }
 
