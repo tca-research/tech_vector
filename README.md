@@ -32,6 +32,7 @@ scripts/
 ```
 
 ## Running the full pipeline locally
+Please install Python and R on your system. 
 
 ```bash
 pip install -r requirements.txt
