@@ -586,13 +586,7 @@ def load_total_tech_employment_line_data(config=TOTAL_TECH_EMPLOYMENT_LINE_CONFI
 # =============================================================================
 PERCENTILE_BAR_CONFIG = {
     "pageTitle": "Tech Vector — salary distribution by tech role",
-    "title": "Salary Distribution by Tech Role and Career Stage",
-    "caption": (
-        "Percentile salaries illustrate the range of compensation for each "
-        "role, highlighting differences between entry, mid, and senior-level "
-        "positions and identifying high-earning occupations within tech "
-        "companies."
-    ),
+    "title": "Percentile remuneration per seniority level ($AUD) for common tech roles.",
     "source": "Source: Levels.fyi ({year})",
     "downloadFilename": "tech_jobs_salary_percentiles.csv",
     "jobTitleColumn": "Job Title",
