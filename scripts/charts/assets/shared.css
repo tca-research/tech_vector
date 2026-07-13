@@ -15,12 +15,21 @@
   --cat-5: #D998D0; --cat-5-text: #953F85;
   --cat-5-tint: #F8EEF6;
   --corner-accent: #C93FB0;
+
+  /* Status (not categorical) — reserved for "target met" state, never used
+     for series/identity. */
+  --status-good: #1B7A43;
+  --status-good-bg: #E3F5EA;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: var(--surface-alt);
+  /* Matches figure.chart-card's own background (not --surface-alt) so any
+     leftover space below the card — a browser window or iframe taller than
+     the actual content, e.g. before a parent page applies the postMessage
+     resize height — reads as plain white, not a visibly mismatched grey band. */
+  background: var(--surface);
   color: var(--ink-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -122,11 +131,19 @@ figure.chart-card::after {
 .multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
 .multiselect-option input:disabled { cursor: not-allowed; }
 
-.gauge-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-around; }
-.gauge-item { flex: 1 1 240px; max-width: 320px; text-align: center; }
-.gauge-item svg { width: 100%; height: auto; display: block; }
-.gauge-label { font-size: 15px; font-weight: 700; color: var(--cat-4-text); margin-top: 4px; }
-.gauge-desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.5; margin: 6px 0 0; }
+.kpi-card { max-width: 420px; }
+.kpi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.kpi-icon { flex: none; width: 28px; height: 28px; }
+.kpi-icon svg { width: 100%; height: 100%; display: block; }
+.kpi-title { font-size: 19px; font-weight: 700; color: var(--ink-primary); margin: 0; }
+.kpi-value-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.kpi-value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--ink-primary); }
+.kpi-pill {
+  display: inline-block; font-size: 13px; font-weight: 700; padding: 5px 12px;
+  border-radius: 999px; color: var(--ink-secondary); background: var(--surface-alt);
+}
+.kpi-pill.kpi-pill--good { color: var(--status-good); background: var(--status-good-bg); }
+#kpi-description { max-width: none; }
 
 .ranked-bar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
 .dropdown-label { font-size: 13px; color: var(--ink-secondary); display: flex; align-items: center; gap: 8px; }

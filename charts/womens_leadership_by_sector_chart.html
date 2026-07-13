@@ -17,12 +17,21 @@
   --cat-5: #D998D0; --cat-5-text: #953F85;
   --cat-5-tint: #F8EEF6;
   --corner-accent: #C93FB0;
+
+  /* Status (not categorical) — reserved for "target met" state, never used
+     for series/identity. */
+  --status-good: #1B7A43;
+  --status-good-bg: #E3F5EA;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: var(--surface-alt);
+  /* Matches figure.chart-card's own background (not --surface-alt) so any
+     leftover space below the card — a browser window or iframe taller than
+     the actual content, e.g. before a parent page applies the postMessage
+     resize height — reads as plain white, not a visibly mismatched grey band. */
+  background: var(--surface);
   color: var(--ink-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -124,11 +133,19 @@ figure.chart-card::after {
 .multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
 .multiselect-option input:disabled { cursor: not-allowed; }
 
-.gauge-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-around; }
-.gauge-item { flex: 1 1 240px; max-width: 320px; text-align: center; }
-.gauge-item svg { width: 100%; height: auto; display: block; }
-.gauge-label { font-size: 15px; font-weight: 700; color: var(--cat-4-text); margin-top: 4px; }
-.gauge-desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.5; margin: 6px 0 0; }
+.kpi-card { max-width: 420px; }
+.kpi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.kpi-icon { flex: none; width: 28px; height: 28px; }
+.kpi-icon svg { width: 100%; height: 100%; display: block; }
+.kpi-title { font-size: 19px; font-weight: 700; color: var(--ink-primary); margin: 0; }
+.kpi-value-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.kpi-value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--ink-primary); }
+.kpi-pill {
+  display: inline-block; font-size: 13px; font-weight: 700; padding: 5px 12px;
+  border-radius: 999px; color: var(--ink-secondary); background: var(--surface-alt);
+}
+.kpi-pill.kpi-pill--good { color: var(--status-good); background: var(--status-good-bg); }
+#kpi-description { max-width: none; }
 
 .ranked-bar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
 .dropdown-label { font-size: 13px; color: var(--ink-secondary); display: flex; align-items: center; gap: 8px; }
@@ -209,7 +226,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"stackedBar": {"config": {"pageTitle": "Tech Vector \u2014 women in leadership by sector", "title": "Per cent of men and women in leadership roles.", "source": "Source: WGEA (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "workplace_leadership_comp_pct.csv", "sectorColumn": "Sector", "categoryColumn": "occupation", "categoryOrder": ["CEOs", "Heads of Business", "Other Executives and General Managers", "Senior managers", "Other managers", "Non-managers"], "dropdownLabel": "Sector:", "sectors": [{"value": "TCA Member Companies", "label": "TCA Member Companies"}, {"value": "Direct Tech Sector Companies", "label": "Direct Tech Sector Companies"}, {"value": "Australian Average", "label": "Australian Average"}], "defaultSector": "TCA Member Companies", "series": [{"column": "Men", "label": "Men", "color": "cat-3"}, {"column": "Women", "label": "Women", "color": "cat-1"}], "lastUpdated": "13 Jul 2026"}, "data": [{"sector": "TCA Member Companies", "category": "Senior managers", "Men": 70.0, "Women": 30.0}, {"sector": "TCA Member Companies", "category": "Other managers", "Men": 64.4, "Women": 35.6}, {"sector": "TCA Member Companies", "category": "Other Executives and General Managers", "Men": 67.9, "Women": 32.1}, {"sector": "TCA Member Companies", "category": "Non-managers", "Men": 57.2, "Women": 42.8}, {"sector": "TCA Member Companies", "category": "Heads of Business", "Men": 50.0, "Women": 50.0}, {"sector": "TCA Member Companies", "category": "CEOs", "Men": 77.8, "Women": 22.2}, {"sector": "Direct Tech Sector Companies", "category": "Other managers", "Men": 70.2, "Women": 29.8}, {"sector": "Direct Tech Sector Companies", "category": "Senior managers", "Men": 70.5, "Women": 29.5}, {"sector": "Direct Tech Sector Companies", "category": "Other Executives and General Managers", "Men": 70.8, "Women": 29.2}, {"sector": "Direct Tech Sector Companies", "category": "Non-managers", "Men": 67.5, "Women": 32.5}, {"sector": "Direct Tech Sector Companies", "category": "Heads of Business", "Men": 79.9, "Women": 20.1}, {"sector": "Direct Tech Sector Companies", "category": "CEOs", "Men": 87.7, "Women": 12.3}, {"sector": "Australian Average", "category": "Heads of Business", "Men": 69.8, "Women": 30.2}, {"sector": "Australian Average", "category": "Senior managers", "Men": 60.0, "Women": 40.0}, {"sector": "Australian Average", "category": "Other managers", "Men": 55.5, "Women": 44.5}, {"sector": "Australian Average", "category": "Other Executives and General Managers", "Men": 62.6, "Women": 37.4}, {"sector": "Australian Average", "category": "Non-managers", "Men": 47.5, "Women": 52.5}, {"sector": "Australian Average", "category": "CEOs", "Men": 74.2, "Women": 25.8}]}}
+{"stackedBar": {"config": {"pageTitle": "Tech Vector \u2014 women in leadership by sector", "title": "Per cent of men and women in leadership roles.", "source": "Source: WGEA (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "workplace_leadership_comp_pct.csv", "sectorColumn": "Sector", "categoryColumn": "occupation", "categoryOrder": ["CEOs", "Heads of Business", "Other Executives and General Managers", "Senior managers", "Other managers", "Non-managers"], "dropdownLabel": "Sector:", "sectors": [{"value": "TCA Member Companies", "label": "TCA Member Companies"}, {"value": "Direct Tech Sector Companies", "label": "Direct Tech Sector Companies"}, {"value": "Australian Average", "label": "Australian Average"}], "defaultSector": "TCA Member Companies", "series": [{"column": "Men", "label": "Men", "color": "cat-3"}, {"column": "Women", "label": "Women", "color": "cat-1"}], "lastUpdated": "13 Jul 2026", "_sourceTemplate": "Source: WGEA ({year}). Data is anonymised and aggregated by the Tech Council of Australia."}, "data": [{"sector": "TCA Member Companies", "category": "Senior managers", "Men": 70.0, "Women": 30.0}, {"sector": "TCA Member Companies", "category": "Other managers", "Men": 64.4, "Women": 35.6}, {"sector": "TCA Member Companies", "category": "Other Executives and General Managers", "Men": 67.9, "Women": 32.1}, {"sector": "TCA Member Companies", "category": "Non-managers", "Men": 57.2, "Women": 42.8}, {"sector": "TCA Member Companies", "category": "Heads of Business", "Men": 50.0, "Women": 50.0}, {"sector": "TCA Member Companies", "category": "CEOs", "Men": 77.8, "Women": 22.2}, {"sector": "Direct Tech Sector Companies", "category": "Other managers", "Men": 70.2, "Women": 29.8}, {"sector": "Direct Tech Sector Companies", "category": "Senior managers", "Men": 70.5, "Women": 29.5}, {"sector": "Direct Tech Sector Companies", "category": "Other Executives and General Managers", "Men": 70.8, "Women": 29.2}, {"sector": "Direct Tech Sector Companies", "category": "Non-managers", "Men": 67.5, "Women": 32.5}, {"sector": "Direct Tech Sector Companies", "category": "Heads of Business", "Men": 79.9, "Women": 20.1}, {"sector": "Direct Tech Sector Companies", "category": "CEOs", "Men": 87.7, "Women": 12.3}, {"sector": "Australian Average", "category": "Heads of Business", "Men": 69.8, "Women": 30.2}, {"sector": "Australian Average", "category": "Senior managers", "Men": 60.0, "Women": 40.0}, {"sector": "Australian Average", "category": "Other managers", "Men": 55.5, "Women": 44.5}, {"sector": "Australian Average", "category": "Other Executives and General Managers", "Men": 62.6, "Women": 37.4}, {"sector": "Australian Average", "category": "Non-managers", "Men": 47.5, "Women": 52.5}, {"sector": "Australian Average", "category": "CEOs", "Men": 74.2, "Women": 25.8}]}}
 </script>
 <script>
 (function () {

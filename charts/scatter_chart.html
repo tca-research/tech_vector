@@ -17,12 +17,21 @@
   --cat-5: #D998D0; --cat-5-text: #953F85;
   --cat-5-tint: #F8EEF6;
   --corner-accent: #C93FB0;
+
+  /* Status (not categorical) — reserved for "target met" state, never used
+     for series/identity. */
+  --status-good: #1B7A43;
+  --status-good-bg: #E3F5EA;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: var(--surface-alt);
+  /* Matches figure.chart-card's own background (not --surface-alt) so any
+     leftover space below the card — a browser window or iframe taller than
+     the actual content, e.g. before a parent page applies the postMessage
+     resize height — reads as plain white, not a visibly mismatched grey band. */
+  background: var(--surface);
   color: var(--ink-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -124,11 +133,19 @@ figure.chart-card::after {
 .multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
 .multiselect-option input:disabled { cursor: not-allowed; }
 
-.gauge-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-around; }
-.gauge-item { flex: 1 1 240px; max-width: 320px; text-align: center; }
-.gauge-item svg { width: 100%; height: auto; display: block; }
-.gauge-label { font-size: 15px; font-weight: 700; color: var(--cat-4-text); margin-top: 4px; }
-.gauge-desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.5; margin: 6px 0 0; }
+.kpi-card { max-width: 420px; }
+.kpi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.kpi-icon { flex: none; width: 28px; height: 28px; }
+.kpi-icon svg { width: 100%; height: 100%; display: block; }
+.kpi-title { font-size: 19px; font-weight: 700; color: var(--ink-primary); margin: 0; }
+.kpi-value-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.kpi-value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--ink-primary); }
+.kpi-pill {
+  display: inline-block; font-size: 13px; font-weight: 700; padding: 5px 12px;
+  border-radius: 999px; color: var(--ink-secondary); background: var(--surface-alt);
+}
+.kpi-pill.kpi-pill--good { color: var(--status-good); background: var(--status-good-bg); }
+#kpi-description { max-width: none; }
 
 .ranked-bar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
 .dropdown-label { font-size: 13px; color: var(--ink-secondary); display: flex; align-items: center; gap: 8px; }
@@ -207,7 +224,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"scatter": {"config": {"pageTitle": "Tech Vector \u2014 skills readiness vs labour market pressure", "title": "Skills-first readiness vs labour market pressure, by region", "source": "Source: OECD (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "global_skills_rankings.csv", "nameColumn": "Category", "xColumn": "Skills-First Readiness and Adoption Index", "yColumn": "Labour Market Pressure Index", "groupColumn": "Region", "xAxisLabel": "Skills-First Readiness and Adoption Index", "yAxisLabel": "Labour Market Pressure Index", "groups": [{"value": "Australia", "label": "Australia", "color": "cat-1"}, {"value": "EMEA", "label": "EMEA", "color": "cat-3"}, {"value": "Americas", "label": "Americas", "color": "cat-2"}, {"value": "Global Average", "label": "Global Average", "color": "cat-4"}, {"value": "APAC", "label": "APAC", "color": "cat-5"}], "highlightGroup": "Australia", "quadrantAnnotations": [{"corner": "top-left", "lines": ["\u2191 Greater labour market", "pressure \u2014 and greater benefits", "from timely action"]}, {"corner": "bottom-left", "lines": ["\u2193 Weaker labour market", "pressure \u2014 and fewer benefits", "from timely action"]}], "lastUpdated": "13 Jul 2026"}, "data": [{"name": "Australia", "x": 0.704414164, "y": 0.438553423, "group": "Australia"}, {"name": "Sweden", "x": 0.699748329, "y": 0.341116965, "group": "EMEA"}, {"name": "France", "x": 0.689671217, "y": 0.396039188, "group": "EMEA"}, {"name": "United Kingdom", "x": 0.647904726, "y": 0.445369661, "group": "EMEA"}, {"name": "Belgium", "x": 0.642790532, "y": 0.373349071, "group": "EMEA"}, {"name": "Finland", "x": 0.6280873, "y": 0.312758893, "group": "EMEA"}, {"name": "Czechia", "x": 0.61403539, "y": 0.318339974, "group": "EMEA"}, {"name": "Norway", "x": 0.612036182, "y": 0.450341702, "group": "EMEA"}, {"name": "Latvia", "x": 0.607183109, "y": 0.32123065, "group": "EMEA"}, {"name": "United States", "x": 0.5983154, "y": 0.566761017, "group": "Americas"}, {"name": "Spain", "x": 0.592875242, "y": 0.440267265, "group": "EMEA"}, {"name": "Singapore", "x": 0.585379057, "y": 0.518856704, "group": "EMEA"}, {"name": "Denmark", "x": 0.583790619, "y": 0.313057095, "group": "EMEA"}, {"name": "Portugal", "x": 0.582678024, "y": 0.652433872, "group": "EMEA"}, {"name": "Italy", "x": 0.580265507, "y": 0.507116139, "group": "EMEA"}, {"name": "Lithuania", "x": 0.580240749, "y": 0.256051332, "group": "EMEA"}, {"name": "Average", "x": 0.57917248, "y": 0.445522132, "group": "Global Average"}, {"name": "Poland", "x": 0.576291583, "y": 0.158884302, "group": "EMEA"}, {"name": "Austria", "x": 0.575009712, "y": 0.469525605, "group": "EMEA"}, {"name": "Germany", "x": 0.571100169, "y": 0.49797219, "group": "EMEA"}, {"name": "Switzerland", "x": 0.565127961, "y": 0.504567146, "group": "EMEA"}, {"name": "Netherlands", "x": 0.555256261, "y": 0.526492953, "group": "EMEA"}, {"name": "Canada", "x": 0.548896518, "y": 0.508125424, "group": "Americas"}, {"name": "Slovak Rep.", "x": 0.543534247, "y": 0.294165194, "group": "EMEA"}, {"name": "Slovenia", "x": 0.543235638, "y": 0.421981543, "group": "EMEA"}, {"name": "T\u00fcrkiye", "x": 0.52261126, "y": 0.756761193, "group": "EMEA"}, {"name": "New Zealand", "x": 0.519715272, "y": 0.607887685, "group": "APAC"}, {"name": "Japan", "x": 0.513842531, "y": 0.551632643, "group": "APAC"}, {"name": "Korea", "x": 0.483579574, "y": 0.458720326, "group": "APAC"}, {"name": "Greece", "x": 0.460971719, "y": 0.573704839, "group": "EMEA"}, {"name": "Hungary", "x": 0.446586411, "y": 0.383599967, "group": "EMEA"}]}}
+{"scatter": {"config": {"pageTitle": "Tech Vector \u2014 skills readiness vs labour market pressure", "title": "Skills-first readiness vs labour market pressure, by region", "source": "Source: OECD (2026). Data is anonymised and aggregated by the Tech Council of Australia.", "downloadFilename": "global_skills_rankings.csv", "nameColumn": "Category", "xColumn": "Skills-First Readiness and Adoption Index", "yColumn": "Labour Market Pressure Index", "groupColumn": "Region", "xAxisLabel": "Skills-First Readiness and Adoption Index", "yAxisLabel": "Labour Market Pressure Index", "groups": [{"value": "Australia", "label": "Australia", "color": "cat-1"}, {"value": "EMEA", "label": "EMEA", "color": "cat-3"}, {"value": "Americas", "label": "Americas", "color": "cat-2"}, {"value": "Global Average", "label": "Global Average", "color": "cat-4"}, {"value": "APAC", "label": "APAC", "color": "cat-5"}], "highlightGroup": "Australia", "quadrantAnnotations": [{"corner": "top-left", "lines": ["\u2191 Greater labour market", "pressure \u2014 and greater benefits", "from timely action"]}, {"corner": "bottom-left", "lines": ["\u2193 Weaker labour market", "pressure \u2014 and fewer benefits", "from timely action"]}], "lastUpdated": "13 Jul 2026", "_sourceTemplate": "Source: OECD ({year}). Data is anonymised and aggregated by the Tech Council of Australia."}, "data": [{"name": "Australia", "x": 0.704414164, "y": 0.438553423, "group": "Australia"}, {"name": "Sweden", "x": 0.699748329, "y": 0.341116965, "group": "EMEA"}, {"name": "France", "x": 0.689671217, "y": 0.396039188, "group": "EMEA"}, {"name": "United Kingdom", "x": 0.647904726, "y": 0.445369661, "group": "EMEA"}, {"name": "Belgium", "x": 0.642790532, "y": 0.373349071, "group": "EMEA"}, {"name": "Finland", "x": 0.6280873, "y": 0.312758893, "group": "EMEA"}, {"name": "Czechia", "x": 0.61403539, "y": 0.318339974, "group": "EMEA"}, {"name": "Norway", "x": 0.612036182, "y": 0.450341702, "group": "EMEA"}, {"name": "Latvia", "x": 0.607183109, "y": 0.32123065, "group": "EMEA"}, {"name": "United States", "x": 0.5983154, "y": 0.566761017, "group": "Americas"}, {"name": "Spain", "x": 0.592875242, "y": 0.440267265, "group": "EMEA"}, {"name": "Singapore", "x": 0.585379057, "y": 0.518856704, "group": "EMEA"}, {"name": "Denmark", "x": 0.583790619, "y": 0.313057095, "group": "EMEA"}, {"name": "Portugal", "x": 0.582678024, "y": 0.652433872, "group": "EMEA"}, {"name": "Italy", "x": 0.580265507, "y": 0.507116139, "group": "EMEA"}, {"name": "Lithuania", "x": 0.580240749, "y": 0.256051332, "group": "EMEA"}, {"name": "Average", "x": 0.57917248, "y": 0.445522132, "group": "Global Average"}, {"name": "Poland", "x": 0.576291583, "y": 0.158884302, "group": "EMEA"}, {"name": "Austria", "x": 0.575009712, "y": 0.469525605, "group": "EMEA"}, {"name": "Germany", "x": 0.571100169, "y": 0.49797219, "group": "EMEA"}, {"name": "Switzerland", "x": 0.565127961, "y": 0.504567146, "group": "EMEA"}, {"name": "Netherlands", "x": 0.555256261, "y": 0.526492953, "group": "EMEA"}, {"name": "Canada", "x": 0.548896518, "y": 0.508125424, "group": "Americas"}, {"name": "Slovak Rep.", "x": 0.543534247, "y": 0.294165194, "group": "EMEA"}, {"name": "Slovenia", "x": 0.543235638, "y": 0.421981543, "group": "EMEA"}, {"name": "T\u00fcrkiye", "x": 0.52261126, "y": 0.756761193, "group": "EMEA"}, {"name": "New Zealand", "x": 0.519715272, "y": 0.607887685, "group": "APAC"}, {"name": "Japan", "x": 0.513842531, "y": 0.551632643, "group": "APAC"}, {"name": "Korea", "x": 0.483579574, "y": 0.458720326, "group": "APAC"}, {"name": "Greece", "x": 0.460971719, "y": 0.573704839, "group": "EMEA"}, {"name": "Hungary", "x": 0.446586411, "y": 0.383599967, "group": "EMEA"}]}}
 </script>
 <script>
 (function () {

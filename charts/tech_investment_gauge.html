@@ -17,12 +17,21 @@
   --cat-5: #D998D0; --cat-5-text: #953F85;
   --cat-5-tint: #F8EEF6;
   --corner-accent: #C93FB0;
+
+  /* Status (not categorical) — reserved for "target met" state, never used
+     for series/identity. */
+  --status-good: #1B7A43;
+  --status-good-bg: #E3F5EA;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: var(--surface-alt);
+  /* Matches figure.chart-card's own background (not --surface-alt) so any
+     leftover space below the card — a browser window or iframe taller than
+     the actual content, e.g. before a parent page applies the postMessage
+     resize height — reads as plain white, not a visibly mismatched grey band. */
+  background: var(--surface);
   color: var(--ink-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -124,11 +133,19 @@ figure.chart-card::after {
 .multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
 .multiselect-option input:disabled { cursor: not-allowed; }
 
-.gauge-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-around; }
-.gauge-item { flex: 1 1 240px; max-width: 320px; text-align: center; }
-.gauge-item svg { width: 100%; height: auto; display: block; }
-.gauge-label { font-size: 15px; font-weight: 700; color: var(--cat-4-text); margin-top: 4px; }
-.gauge-desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.5; margin: 6px 0 0; }
+.kpi-card { max-width: 420px; }
+.kpi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.kpi-icon { flex: none; width: 28px; height: 28px; }
+.kpi-icon svg { width: 100%; height: 100%; display: block; }
+.kpi-title { font-size: 19px; font-weight: 700; color: var(--ink-primary); margin: 0; }
+.kpi-value-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.kpi-value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--ink-primary); }
+.kpi-pill {
+  display: inline-block; font-size: 13px; font-weight: 700; padding: 5px 12px;
+  border-radius: 999px; color: var(--ink-secondary); background: var(--surface-alt);
+}
+.kpi-pill.kpi-pill--good { color: var(--status-good); background: var(--status-good-bg); }
+#kpi-description { max-width: none; }
 
 .ranked-bar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
 .dropdown-label { font-size: 13px; color: var(--ink-secondary); display: flex; align-items: center; gap: 8px; }
@@ -194,11 +211,19 @@ figure.chart-card::after {
 </style>
 <div class="page">
   <figure class="chart-card" id="card-gauge">
-    <h3 class="chart-title" id="chart-title"></h3>
-    <div class="gauge-row" id="gauge-row"></div>
+    <div class="kpi-card" id="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-icon" id="kpi-icon"></span>
+        <h3 class="kpi-title" id="kpi-title"></h3>
+      </div>
+      <div class="kpi-value-row">
+        <span class="kpi-value" id="kpi-value"></span>
+        <span class="kpi-pill" id="kpi-pill"></span>
+      </div>
+      <p class="chart-caption" id="kpi-description"></p>
+    </div>
     <div class="chart-footer">
       <span class="chart-source" id="chart-source"></span>
-      <button class="download-btn" data-target="gauge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
     </div>
   </figure>
 </div>
@@ -206,7 +231,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"gauge": {"config": {"pageTitle": "Tech Vector \u2014 headline metrics", "title": "Tech Sector Goals", "source": "Source: Tech Council of Australia research", "downloadFilename": "headline_metrics.csv", "colors": {"Tech Jobs": {"filledColor": "cat-1", "remainingColor": "cat-3", "needleColor": "cat-4", "currentBadgeColor": "cat-3", "targetBadgeColor": "cat-1"}, "Tech Investment": {"filledColor": "cat-3", "remainingColor": "cat-1", "needleColor": "cat-1", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-4"}, "Tech Sector GDP": {"filledColor": "cat-4", "remainingColor": "cat-1", "needleColor": "cat-3", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-1"}}, "defaultColors": {"filledColor": "cat-4", "remainingColor": "cat-5", "needleColor": "cat-3", "currentBadgeColor": "cat-3", "targetBadgeColor": "cat-4"}, "lastUpdated": "13 Jul 2026"}, "data": [{"label": "Tech Jobs", "value": 79.0, "currentLabel": "949k", "targetLabel": "1.2M", "description": "Australia's tech workforce numbers 949,000 \u2013 79% of the way to our 1.2 million jobs target.", "filledColor": "cat-1", "remainingColor": "cat-3", "needleColor": "cat-4", "currentBadgeColor": "cat-3", "targetBadgeColor": "cat-1"}, {"label": "Tech Investment", "value": 85.0, "currentLabel": "3.9%", "targetLabel": "4.6%", "description": "The tech sector contributes 3.9% to Australia's GDP, approaching our 4.6% target.", "filledColor": "cat-3", "remainingColor": "cat-1", "needleColor": "cat-1", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-4"}, {"label": "Tech Sector GDP", "value": 66.0, "currentLabel": "$167B", "targetLabel": "$250B", "description": "Building toward a $250B tech economy \u2013 the sector currently contributes $167B.", "filledColor": "cat-4", "remainingColor": "cat-1", "needleColor": "cat-3", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-1"}]}}
+{"gauge": {"config": {"pageTitle": "Tech Vector \u2014 headline metrics", "colors": {"Tech Jobs": {"filledColor": "cat-1", "remainingColor": "cat-3", "needleColor": "cat-4", "currentBadgeColor": "cat-3", "targetBadgeColor": "cat-1"}, "Tech Investment": {"filledColor": "cat-3", "remainingColor": "cat-1", "needleColor": "cat-1", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-4"}, "Tech Sector GDP": {"filledColor": "cat-4", "remainingColor": "cat-1", "needleColor": "cat-3", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-1"}}, "defaultColors": {"filledColor": "cat-4", "remainingColor": "cat-5", "needleColor": "cat-3", "currentBadgeColor": "cat-3", "targetBadgeColor": "cat-4"}, "lastUpdated": "13 Jul 2026", "_sourceTemplate": null}, "data": [{"label": "Tech Investment", "value": 193.5, "currentLabel": "8.9%", "targetLabel": "4.6%", "description": "The tech sector contributes **8.9%** to Australia's GDP, surpassing our **4.6%** target set in 2021.", "filledColor": "cat-3", "remainingColor": "cat-1", "needleColor": "cat-1", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-4"}]}}
 </script>
 <script>
 (function () {
@@ -495,85 +520,57 @@ if (typeof ResizeObserver !== "undefined") {
 }
 
 
-// GAUGE — semi-circle progress-to-target gauges, one config entry per gauge.
-// All dataset-specific values (label, value, current/target labels, colors,
-// description) come from DATA.gauge.config.gauges, built in build_charts.py's
-// GAUGE_CONFIG.
+// GAUGE — a single KPI card (title, big current value, "Target: X" pill,
+// description) rather than a progress-arc gauge. A semi-circle needle can't
+// meaningfully show a metric that's already met or exceeded its target
+// (needle position would exceed the arc), so this reads the actual
+// current/target values directly instead. All dataset-specific values come
+// from DATA.gauge.config/.data, built in build_charts.py's GAUGE_CONFIG.
+//
+// g.description may use "**bold**" markdown-style emphasis around key
+// figures (e.g. "now contributes **8.9%** of GDP") — parsed below, not
+// treated as literal asterisks.
 function renderGauges() {
   const cfg = DATA.gauge.config;
-  const data = DATA.gauge.data;
+  const g = DATA.gauge.data[0];
   applyChromeConfig(cfg);
 
-  const row = document.getElementById("gauge-row");
-  row.innerHTML = "";
+  document.getElementById("kpi-title").textContent = g.label;
+  document.getElementById("kpi-value").textContent = g.currentLabel;
 
-  function polar(cx, cy, r, angleDeg) {
-    const rad = (angleDeg * Math.PI) / 180;
-    return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
-  }
-  function arcPath(cx, cy, r, a1, a2) {
-    const p1 = polar(cx, cy, r, a1);
-    const p2 = polar(cx, cy, r, a2);
-    const largeArc = Math.abs(a1 - a2) > 180 ? 1 : 0;
-    return "M " + p1.x + " " + p1.y + " A " + r + " " + r + " 0 " + largeArc + " 1 " + p2.x + " " + p2.y;
-  }
-  function badge(svg, cx, cy, text, color) {
-    const w = Math.max(34, text.length * 7.5 + 12);
-    const h = 22;
-    el("rect", { x: cx - w / 2, y: cy - h / 2, width: w, height: h, rx: h / 2, fill: color }, svg);
-    textEl(cx, cy + 4, text, { "text-anchor": "middle", "font-size": "12", "font-weight": "700", fill: "#fff" }, svg);
-  }
+  const icon = document.getElementById("kpi-icon");
+  icon.innerHTML = "";
+  const iconColor = colorVar("cat-4");
+  const svg = el("svg", { viewBox: "0 0 28 28" }, icon);
+  el("circle", { cx: 14, cy: 14, r: 12, fill: "none", stroke: iconColor, "stroke-width": 2 }, svg);
+  el("path", {
+    d: "M9 14.5 L12.5 18 L19 10.5", fill: "none", stroke: iconColor,
+    "stroke-width": 2.2, "stroke-linecap": "round", "stroke-linejoin": "round",
+  }, svg);
 
-  data.forEach((g) => {
-    const wrap = document.createElement("div");
-    wrap.className = "gauge-item";
+  // g.value is progress toward target as a percentage (see build_charts.py)
+  // — >= 100 means the target has actually been met or exceeded, which is
+  // the only case that gets the "good" pill styling.
+  const met = g.value >= 100;
+  const pill = document.getElementById("kpi-pill");
+  pill.textContent = "Target: " + g.targetLabel;
+  pill.className = "kpi-pill" + (met ? " kpi-pill--good" : "");
 
-    const W = 280, H = 165;
-    const cx = W / 2, cy = 148, r = 96;
-    const svg = el("svg", { viewBox: "0 0 " + W + " " + H }, wrap);
-
-    const valueAngle = 180 - (g.value / 100) * 180;
-    el("path", { d: arcPath(cx, cy, r, 180, valueAngle), fill: "none", stroke: colorVar(g.filledColor), "stroke-width": 20, "stroke-linecap": "round" }, svg);
-    el("path", { d: arcPath(cx, cy, r, valueAngle, 0), fill: "none", stroke: colorVar(g.remainingColor), "stroke-width": 20, "stroke-linecap": "round" }, svg);
-
-    const needleTip = polar(cx, cy, r - 32, valueAngle);
-    el("line", { x1: cx, y1: cy, x2: needleTip.x, y2: needleTip.y, stroke: colorVar(g.needleColor), "stroke-width": 6, "stroke-linecap": "round" }, svg);
-    el("circle", { cx, cy, r: 7, fill: colorVar(g.needleColor) }, svg);
-
-    const currentPos = polar(cx, cy, r + 22, valueAngle);
-    badge(svg, currentPos.x, currentPos.y, g.currentLabel, colorVar(g.currentBadgeColor));
-    const targetPos = polar(cx, cy, r + 22, 0);
-    badge(svg, targetPos.x, targetPos.y, g.targetLabel, colorVar(g.targetBadgeColor));
-
-    textEl(cx, cy - 8, Math.round(g.value) + "%", { "text-anchor": "middle", "font-size": "30", "font-weight": "800", fill: "var(--ink-primary)" }, svg);
-
-    wrap.appendChild(svg);
-
-    const label = document.createElement("div");
-    label.className = "gauge-label";
-    label.textContent = g.label;
-    wrap.appendChild(label);
-
-    if (g.description) {
-      const desc = document.createElement("p");
-      desc.className = "gauge-desc";
-      desc.textContent = g.description;
-      wrap.appendChild(desc);
+  const desc = document.getElementById("kpi-description");
+  desc.textContent = "";
+  (g.description || "").split("**").forEach((part, i) => {
+    if (!part) return;
+    if (i % 2 === 1) {
+      const strong = document.createElement("strong");
+      strong.textContent = part;
+      desc.appendChild(strong);
+    } else {
+      desc.appendChild(document.createTextNode(part));
     }
-
-    row.appendChild(wrap);
   });
-
-  registerDownload(
-    "gauge",
-    cfg.downloadFilename,
-    ["Label", "Value (%)", "Current", "Target"],
-    data.map((g) => [g.label, g.value, g.currentLabel, g.targetLabel])
-  );
 }
 
 renderGauges();
-wireDownloadButtons();
 
 })();
 </script>

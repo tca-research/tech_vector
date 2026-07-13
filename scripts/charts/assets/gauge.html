@@ -1,10 +1,18 @@
 <div class="page">
   <figure class="chart-card" id="card-gauge">
-    <h3 class="chart-title" id="chart-title"></h3>
-    <div class="gauge-row" id="gauge-row"></div>
+    <div class="kpi-card" id="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-icon" id="kpi-icon"></span>
+        <h3 class="kpi-title" id="kpi-title"></h3>
+      </div>
+      <div class="kpi-value-row">
+        <span class="kpi-value" id="kpi-value"></span>
+        <span class="kpi-pill" id="kpi-pill"></span>
+      </div>
+      <p class="chart-caption" id="kpi-description"></p>
+    </div>
     <div class="chart-footer">
       <span class="chart-source" id="chart-source"></span>
-      <button class="download-btn" data-target="gauge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
     </div>
   </figure>
 </div>

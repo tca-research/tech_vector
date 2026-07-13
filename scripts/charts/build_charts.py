@@ -51,6 +51,24 @@ def money_to_float(s):
     return float(re.sub(r"[^0-9.\-]", "", str(s)))
 
 
+_METRIC_SUFFIX_MULTIPLIERS = {"k": 1_000, "m": 1_000_000, "b": 1_000_000_000}
+
+
+def parse_metric_value(s):
+    """Parses a formatted metric label ("$248.5B", "979k", "8.9%") into a
+    plain comparable number. Used to compare a gauge's current vs. target
+    label directly, rather than trusting a separately hand-entered
+    "progress" percentage that can silently drift out of sync with them
+    (exactly what happened when a headline_metrics.csv row's current_label
+    was updated to exceed its target_label without updating "value" to
+    match — the old needle-based gauge had no way to show that sanely at
+    all, since a percentage-of-target > 100% doesn't fit on a semi-circle)."""
+    s = str(s).strip()
+    suffix = s[-1].lower() if s and s[-1].lower() in _METRIC_SUFFIX_MULTIPLIERS else None
+    num = money_to_float(s)
+    return num * _METRIC_SUFFIX_MULTIPLIERS[suffix] if suffix else num
+
+
 def assert_iso_date(series, source):
     bad = series[~series.astype(str).str.match(r"^\d{4}-\d{2}(-\d{2})?$")]
     if len(bad):
@@ -69,9 +87,6 @@ def assert_iso_date(series, source):
 # =============================================================================
 GAUGE_CONFIG = {
     "pageTitle": "Tech Vector — headline metrics",
-    "title": "Tech Sector Goals",
-    "source": "Source: Tech Council of Australia research",
-    "downloadFilename": "headline_metrics.csv",
     # Per-gauge colors, matched to data/input/manual_pull/headline_metrics.csv
     # rows by "label" — everything else about a gauge (value, current/target
     # labels, description) lives in that CSV, not here.
@@ -84,20 +99,75 @@ GAUGE_CONFIG = {
 }
 
 
-def load_gauge_data(config=GAUGE_CONFIG, source_file="headline_metrics.csv"):
+def load_gauge_data(config=GAUGE_CONFIG, source_file="headline_metrics.csv", only_label=None):
     df = pd.read_csv(MANUAL_PULL_DIR / source_file)
+    if only_label:
+        df = df[df["label"] == only_label]
     rows = []
     for _, row in df.iterrows():
         colors = config["colors"].get(row["label"], config["defaultColors"])
+        # Progress-toward-target is derived from current_label/target_label
+        # themselves (>= 100 means met/exceeded) rather than a separate
+        # hand-entered percentage — see parse_metric_value.
+        current_num = parse_metric_value(row["current_label"])
+        target_num = parse_metric_value(row["target_label"])
         rows.append({
             "label": row["label"],
-            "value": float(row["value"]),
+            "value": round(current_num / target_num * 100, 1) if target_num else 0.0,
             "currentLabel": row["current_label"],
             "targetLabel": row["target_label"],
             "description": row["description"],
             **colors,
         })
     return rows
+
+
+# Each gauge ships as its own standalone page (one CHARTS entry per label
+# below) rather than the combined 3-up row — same GAUGE_CONFIG/gauge.js,
+# just a loader pre-filtered to a single headline_metrics.csv row.
+
+# The 1.2 million jobs goal is a published Tech Council policy target, not
+# something derivable from any dataset — it stays a fixed constant. Only the
+# "current" side of the gauge (value/percentage/description) is computed
+# live from tech_jobs_in_australia_cleaned.csv, so this gauge never goes
+# stale the way a hand-maintained headline_metrics.csv row would.
+TECH_JOBS_TARGET = 1_200_000
+
+
+def load_tech_jobs_gauge_data(config=GAUGE_CONFIG, source_file="tech_jobs_in_australia_cleaned.csv"):
+    df = pd.read_csv(MANUAL_PULL_DIR / source_file)
+    # "Aug-06"-style dates sort correctly only once actually parsed — the
+    # CSV's own row order can't be trusted (see DATA_FORMAT.md).
+    df = df.assign(_sort_date=pd.to_datetime(df["Date"], format="%b-%y")).sort_values("_sort_date")
+    latest = df.iloc[-1]
+    # The rolling average is the "current" figure, not the raw latest
+    # quarter — a single quarter's count swings by tens of thousands
+    # (e.g. 931k -> 1011k across two quarters in the source data), which
+    # would make a headline KPI jump around on every refresh.
+    current_thousands = latest["Rolling Average"] if pd.notna(latest["Rolling Average"]) else latest["Count"]
+    current = current_thousands * 1000
+    pct = round(current / TECH_JOBS_TARGET * 100)
+    current_label = f"{current / 1_000_000:.1f}M" if current >= 1_000_000 else f"{current / 1000:,.0f}k"
+    colors = config["colors"].get("Tech Jobs", config["defaultColors"])
+    return [{
+        "label": "Tech Jobs",
+        "value": float(pct),
+        "currentLabel": current_label,
+        "targetLabel": "1.2M",
+        "description": (
+            f"Australia's tech workforce numbers **{current:,.0f}** – **{pct}%** "
+            "of the way to our 1.2 million jobs target."
+        ),
+        **colors,
+    }]
+
+
+def load_tech_investment_gauge_data(config=GAUGE_CONFIG, source_file="headline_metrics.csv"):
+    return load_gauge_data(config, source_file, only_label="Tech Investment")
+
+
+def load_tech_sector_gdp_gauge_data(config=GAUGE_CONFIG, source_file="headline_metrics.csv"):
+    return load_gauge_data(config, source_file, only_label="Tech Sector GDP")
 
 
 # =============================================================================
@@ -793,7 +863,43 @@ def read_asset(name):
     return (ASSETS_DIR / name).read_text(encoding="utf-8")
 
 
-def build_html(body_html, chart_js_file, data_key, config, data, last_updated=None, build_year=None):
+_CHART_DATA_RE = re.compile(r'<script type="application/json" id="chart-data">(.*?)</script>', re.S)
+
+
+def read_previous_chart_state(out_path, data_key):
+    """Reads a previously-built chart's own embedded data + lastUpdated/
+    source back out of its HTML, so main() can tell whether this build's
+    freshly computed data actually differs — and only bump the "last
+    updated" date (here and in chart_manifest.csv) and re-resolve any
+    "{year}" in the source line when it does, rather than on every run
+    regardless of whether the underlying source data changed.
+    Returns (previous_data_as_sorted_json_str, previous_last_updated,
+    previous_resolved_source, previous_source_template), or
+    (None, None, None, None) if there's no previous build to compare
+    against or it can't be parsed (e.g. the body_file/data_key changed
+    since).
+    """
+    if not out_path.exists():
+        return None, None, None, None
+    try:
+        match = _CHART_DATA_RE.search(out_path.read_text(encoding="utf-8"))
+        if not match:
+            return None, None, None, None
+        entry = json.loads(match.group(1)).get(data_key)
+        if not entry:
+            return None, None, None, None
+        prev_config = entry.get("config", {})
+        return (
+            json.dumps(entry.get("data"), sort_keys=True, default=str),
+            prev_config.get("lastUpdated"),
+            prev_config.get("source"),
+            prev_config.get("_sourceTemplate"),
+        )
+    except Exception:
+        return None, None, None, None
+
+
+def build_html(body_html, chart_js_file, data_key, config, data, last_updated=None, build_year=None, resolved_source=None):
     css = read_asset("shared.css")
     shared_js = read_asset("shared.js")
     chart_js = read_asset(chart_js_file)
@@ -805,12 +911,24 @@ def build_html(body_html, chart_js_file, data_key, config, data, last_updated=No
     config_payload = dict(config)
     if last_updated:
         config_payload["lastUpdated"] = last_updated
-    # A config's "source" string can carry a "{year}" placeholder for data
-    # that's "current as of last fetch" (WGEA, ABS, etc.) — resolved to the
-    # build year here so it's never manually bumped. A source citing a fixed
-    # historical data vintage (e.g. RND_CONFIG's "OECD (2021)") just omits
-    # the placeholder and stays untouched.
-    if build_year and config_payload.get("source"):
+    # Stashed verbatim (unresolved, "{year}" and all) so the next build can
+    # tell a genuine config/wording edit (source template itself differs)
+    # apart from just another day passing — only the latter should let
+    # resolved_source below carry the old year forward. Not read by the
+    # chart JS; harmless if it ignores unknown config fields.
+    config_payload["_sourceTemplate"] = config.get("source")
+    if resolved_source is not None:
+        # main() found this chart's data AND source template unchanged
+        # since the last build and is carrying forward the exact source
+        # string (year included) from that build, rather than re-resolving
+        # "{year}" against today.
+        config_payload["source"] = resolved_source
+    elif build_year and config_payload.get("source"):
+        # A config's "source" string can carry a "{year}" placeholder for
+        # data that's "current as of last fetch" (WGEA, ABS, etc.) —
+        # resolved to the build year here so it's never manually bumped. A
+        # source citing a fixed historical data vintage (e.g. RND_CONFIG's
+        # "OECD (2021)") just omits the placeholder and stays untouched.
         config_payload["source"] = config_payload["source"].replace("{year}", str(build_year))
     data_json = json.dumps({data_key: {"config": config_payload, "data": data}})
     return f"""<title>{config.get("pageTitle", config.get("title", ""))}</title>
@@ -839,9 +957,30 @@ CHARTS = [
         "key": "gauge",
         "body_file": "gauge.html",
         "js_file": "gauge.js",
-        "loader": load_gauge_data,
+        "loader": load_tech_jobs_gauge_data,
+        # source override only — this gauge's data comes from
+        # tech_jobs_in_australia_cleaned.csv now, not headline_metrics.csv.
+        "config": {
+            **GAUGE_CONFIG,
+            "source": "Source: Australian Bureau of Statistics ({year})",
+        },
+        "out_file": "tech_jobs_gauge.html",
+    },
+    {
+        "key": "gauge",
+        "body_file": "gauge.html",
+        "js_file": "gauge.js",
+        "loader": load_tech_investment_gauge_data,
         "config": GAUGE_CONFIG,
-        "out_file": "gauge.html",
+        "out_file": "tech_investment_gauge.html",
+    },
+    {
+        "key": "gauge",
+        "body_file": "gauge.html",
+        "js_file": "gauge.js",
+        "loader": load_tech_sector_gdp_gauge_data,
+        "config": GAUGE_CONFIG,
+        "out_file": "tech_sector_gdp_gauge.html",
     },
     {
         "key": "bar",
@@ -990,6 +1129,16 @@ def main():
     build_date_display = now.strftime("%d %b %Y")
     manifest_rows = []
 
+    # Read the *previous* run's manifest (if any) before writing anything —
+    # it's the source of the precise timestamp to carry forward for any
+    # chart whose data hasn't actually changed this run.
+    manifest_path = out_dir / "chart_manifest.csv"
+    previous_manifest_times = {}
+    if manifest_path.exists():
+        with manifest_path.open(newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                previous_manifest_times[row["Chart File"]] = row["Last Updated"]
+
     for chart in CHARTS:
         print(f"Building {chart['key']}...")
         if chart["key"] == "smallMultiples":
@@ -998,15 +1147,37 @@ def main():
             data = chart["loader"](chart["config"], now=now)
         else:
             data = chart["loader"](chart["config"])
-        body_html = read_asset(chart["body_file"])
-        html = build_html(body_html, chart["js_file"], chart["key"], chart["config"], data, last_updated=build_date_display, build_year=now.year)
+
         out_path = out_dir / chart["out_file"]
+        prev_data_json, prev_last_updated, prev_source, prev_source_template = read_previous_chart_state(out_path, chart["key"])
+        new_data_json = json.dumps(data, sort_keys=True, default=str)
+        # "Unchanged" requires both the computed data AND the raw source
+        # template to match the previous build — a data-only match would
+        # let a deliberate source-wording edit (or removing it) get
+        # silently clobbered by stale carried-forward text below.
+        data_unchanged = (
+            prev_data_json is not None
+            and prev_data_json == new_data_json
+            and prev_last_updated
+            and prev_source is not None
+            and prev_source_template == chart["config"].get("source")
+        )
+
+        chart_last_updated = prev_last_updated if data_unchanged else build_date_display
+        resolved_source = prev_source if data_unchanged else None
+        manifest_time = (previous_manifest_times.get(chart["out_file"]) if data_unchanged else None) or build_time
+        print("  data unchanged, keeping previous date" if data_unchanged else "  data changed, stamping today's date")
+
+        body_html = read_asset(chart["body_file"])
+        html = build_html(
+            body_html, chart["js_file"], chart["key"], chart["config"], data,
+            last_updated=chart_last_updated, build_year=now.year, resolved_source=resolved_source,
+        )
         out_path.write_text(html, encoding="utf-8")
         print(f"  wrote {out_path}")
         title = chart["config"].get("title") or chart["config"].get("pageTitle", "")
-        manifest_rows.append([chart["out_file"], title, build_time])
+        manifest_rows.append([chart["out_file"], title, manifest_time])
 
-    manifest_path = out_dir / "chart_manifest.csv"
     with manifest_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["Chart File", "Title", "Last Updated"])

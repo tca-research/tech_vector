@@ -17,7 +17,6 @@ function renderInteractiveLine() {
   const allSeries = Object.keys(data.series);
   const palette = cfg.palette.map(colorVar);
   const mount = document.getElementById("line-chart");
-  const legendEl = document.getElementById("line-legend");
   const note = document.getElementById("line-filter-note");
   const filterMount = document.getElementById("line-filter-mount");
 
@@ -95,8 +94,11 @@ function renderInteractiveLine() {
       seriesInfo.push({ name, color, values, lastX, lastY, lastV });
     });
 
-    // direct end labels — only when few enough to avoid collision
-    if (names.length <= 4) {
+    // Direct end labels are this chart's only identity mechanism (no
+    // legend row — it would just duplicate these) — only when few enough
+    // to avoid collision, which in practice is always true since this is
+    // also the max number of series that can ever be concurrently shown.
+    if (names.length <= palette.length) {
       const placed = [];
       seriesInfo
         .filter((s) => s.lastY != null)
@@ -113,16 +115,36 @@ function renderInteractiveLine() {
         });
     }
 
+    // Greedy word-wrap by estimated character width, not word count — a
+    // two-word name can still be too long to fit ("Information Technology"
+    // overflowed past the card edge under the old ">2 words" rule, and with
+    // no legend row as a fallback, a clipped label means that series has no
+    // identity at all).
     function wrapEndLabel(textNode, str, maxWidth) {
+      const maxCharsPerLine = Math.max(8, Math.floor(maxWidth / 6.2));
+      if (str.length <= maxCharsPerLine) return;
       const words = str.split(" ");
-      if (words.length <= 2) return;
-      const mid = Math.ceil(words.length / 2);
-      const line1 = words.slice(0, mid).join(" "), line2 = words.slice(mid).join(" ");
+      const lines = [];
+      let line = "";
+      words.forEach((w) => {
+        const candidate = line ? line + " " + w : w;
+        if (candidate.length > maxCharsPerLine && line) {
+          lines.push(line);
+          line = w;
+        } else {
+          line = candidate;
+        }
+      });
+      if (line) lines.push(line);
+      if (lines.length <= 1) return;
+
       textNode.textContent = "";
       const baseX = textNode.getAttribute("x"), baseY = +textNode.getAttribute("y");
-      const t1 = el("tspan", { x: baseX, dy: 0 }, textNode); t1.textContent = line1;
-      const t2 = el("tspan", { x: baseX, dy: 14 }, textNode); t2.textContent = line2;
-      textNode.setAttribute("y", baseY - 7);
+      const lineHeight = 14;
+      lines.forEach((l, i) => {
+        el("tspan", { x: baseX, dy: i === 0 ? 0 : lineHeight }, textNode).textContent = l;
+      });
+      textNode.setAttribute("y", baseY - (lineHeight * (lines.length - 1)) / 2);
     }
 
     // hover crosshair + shared tooltip
@@ -143,12 +165,6 @@ function renderInteractiveLine() {
       }
     });
     hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTooltip(); });
-
-    legendEl.innerHTML = "";
-    seriesInfo.forEach((s) => legendItem(
-      legendEl, s.color, s.name, true,
-      cfg.filterMode === "search" ? () => filterMount._removeSeries(s.name) : undefined
-    ));
 
     registerDownload(
       "line",
@@ -267,9 +283,12 @@ function renderInteractiveLine() {
 
   // ---------------------------------------------------------------------
   // Search: a free-text type-ahead ("Enter series to show") — matches the
-  // live Tech Vector site's interaction pattern. Selected series double as
-  // removable legend chips (see the legendItem onRemove hook above) rather
-  // than a separate checkbox list. Same palette cap as multi-select.
+  // live Tech Vector site's interaction pattern. Selected series were meant
+  // to double as removable legend chips, but this chart has no legend row
+  // (direct end-of-line labels are its only identity mechanism, so a legend
+  // would just duplicate them) — _removeSeries below is currently dead code
+  // as a result. Re-add a chip UI (or otherwise call filterMount
+  // ._removeSeries) if this filterMode is ever turned back on.
   // ---------------------------------------------------------------------
   function buildSearchSelect() {
     filterMount.innerHTML = "";

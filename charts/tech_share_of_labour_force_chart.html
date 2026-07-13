@@ -17,12 +17,21 @@
   --cat-5: #D998D0; --cat-5-text: #953F85;
   --cat-5-tint: #F8EEF6;
   --corner-accent: #C93FB0;
+
+  /* Status (not categorical) — reserved for "target met" state, never used
+     for series/identity. */
+  --status-good: #1B7A43;
+  --status-good-bg: #E3F5EA;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: var(--surface-alt);
+  /* Matches figure.chart-card's own background (not --surface-alt) so any
+     leftover space below the card — a browser window or iframe taller than
+     the actual content, e.g. before a parent page applies the postMessage
+     resize height — reads as plain white, not a visibly mismatched grey band. */
+  background: var(--surface);
   color: var(--ink-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -124,11 +133,19 @@ figure.chart-card::after {
 .multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
 .multiselect-option input:disabled { cursor: not-allowed; }
 
-.gauge-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-around; }
-.gauge-item { flex: 1 1 240px; max-width: 320px; text-align: center; }
-.gauge-item svg { width: 100%; height: auto; display: block; }
-.gauge-label { font-size: 15px; font-weight: 700; color: var(--cat-4-text); margin-top: 4px; }
-.gauge-desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.5; margin: 6px 0 0; }
+.kpi-card { max-width: 420px; }
+.kpi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.kpi-icon { flex: none; width: 28px; height: 28px; }
+.kpi-icon svg { width: 100%; height: 100%; display: block; }
+.kpi-title { font-size: 19px; font-weight: 700; color: var(--ink-primary); margin: 0; }
+.kpi-value-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.kpi-value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--ink-primary); }
+.kpi-pill {
+  display: inline-block; font-size: 13px; font-weight: 700; padding: 5px 12px;
+  border-radius: 999px; color: var(--ink-secondary); background: var(--surface-alt);
+}
+.kpi-pill.kpi-pill--good { color: var(--status-good); background: var(--status-good-bg); }
+#kpi-description { max-width: none; }
 
 .ranked-bar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
 .dropdown-label { font-size: 13px; color: var(--ink-secondary); display: flex; align-items: center; gap: 8px; }
@@ -207,7 +224,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"line": {"config": {"pageTitle": "Tech Vector \u2014 tech roles as a share of the labour force", "title": "Tech Roles as a Share of the Total Labour Force", "caption": "This proportion indicates how tech employment has grown as a segment of the overall workforce, showing tech's increasing economic importance over time.", "source": "Source: Australian Bureau of Statistics (2026). Data is aggregated by the Tech Council of Australia.", "downloadFilename": "tech_occupations_share_of_labour_force.csv", "dateColumn": "date", "valueColumn": "% of labour force in tech occupations (smoothed)", "endLabel": "% of labour force in tech occupations (smoothed)", "lineColor": "cat-3", "valueFormat": {"suffix": "%", "decimals": 0}, "lastUpdated": "13 Jul 2026"}, "data": {"dates": ["1986-11-01", "1987-02-01", "1987-05-01", "1987-08-01", "1987-11-01", "1988-02-01", "1988-05-01", "1988-08-01", "1988-11-01", "1989-02-01", "1989-05-01", "1989-08-01", "1989-11-01", "1990-02-01", "1990-05-01", "1990-08-01", "1990-11-01", "1991-02-01", "1991-05-01", "1991-08-01", "1991-11-01", "1992-02-01", "1992-05-01", "1992-08-01", "1992-11-01", "1993-02-01", "1993-05-01", "1993-08-01", "1993-11-01", "1994-02-01", "1994-05-01", "1994-08-01", "1994-11-01", "1995-02-01", "1995-05-01", "1995-08-01", "1995-11-01", "1996-02-01", "1996-05-01", "1996-08-01", "1996-11-01", "1997-02-01", "1997-05-01", "1997-08-01", "1997-11-01", "1998-02-01", "1998-05-01", "1998-08-01", "1998-11-01", "1999-02-01", "1999-05-01", "1999-08-01", "1999-11-01", "2000-02-01", "2000-05-01", "2000-08-01", "2000-11-01", "2001-02-01", "2001-05-01", "2001-08-01", "2001-11-01", "2002-02-01", "2002-05-01", "2002-08-01", "2002-11-01", "2003-02-01", "2003-05-01", "2003-08-01", "2003-11-01", "2004-02-01", "2004-05-01", "2004-08-01", "2004-11-01", "2005-02-01", "2005-05-01", "2005-08-01", "2005-11-01", "2006-02-01", "2006-05-01", "2006-08-01", "2006-11-01", "2007-02-01", "2007-05-01", "2007-08-01", "2007-11-01", "2008-02-01", "2008-05-01", "2008-08-01", "2008-11-01", "2009-02-01", "2009-05-01", "2009-08-01", "2009-11-01", "2010-02-01", "2010-05-01", "2010-08-01", "2010-11-01", "2011-02-01", "2011-05-01", "2011-08-01", "2011-11-01", "2012-02-01", "2012-05-01", "2012-08-01", "2012-11-01", "2013-02-01", "2013-05-01", "2013-08-01", "2013-11-01", "2014-02-01", "2014-05-01", "2014-08-01", "2014-11-01", "2015-02-01", "2015-05-01", "2015-08-01", "2015-11-01", "2016-02-01", "2016-05-01", "2016-08-01", "2016-11-01", "2017-02-01", "2017-05-01", "2017-08-01", "2017-11-01", "2018-02-01", "2018-05-01", "2018-08-01", "2018-11-01", "2019-02-01", "2019-05-01", "2019-08-01", "2019-11-01", "2020-02-01", "2020-05-01", "2020-08-01", "2020-11-01", "2021-02-01", "2021-05-01", "2021-08-01", "2021-11-01", "2022-02-01", "2022-05-01", "2022-08-01", "2022-11-01", "2023-02-01", "2023-05-01", "2023-08-01", "2023-11-01", "2024-02-01", "2024-05-01", "2024-08-01", "2024-11-01", "2025-02-01", "2025-05-01", "2025-08-01", "2025-11-01"], "values": [2.5, 2.5, 2.5, 2.5, 2.6, 2.6, 2.7, 2.6, 2.6, 2.7, 2.7, 2.6, 2.6, 2.6, 2.7, 2.8, 2.9, 2.9, 2.9, 2.9, 3.0, 3.0, 3.0, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 3.0, 3.0, 3.1, 3.1, 3.2, 3.3, 3.3, 3.2, 3.2, 3.3, 3.5, 3.5, 3.5, 3.3, 3.4, 3.4, 3.5, 3.6, 3.5, 3.6, 3.6, 3.6, 3.6, 3.7, 3.8, 3.9, 4.0, 3.9, 3.9, 3.9, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 3.9, 3.9, 3.9, 3.9, 3.9, 4.0, 4.1, 4.1, 4.0, 4.0, 4.0, 4.1, 4.3, 4.3, 4.2, 4.2, 4.2, 4.3, 4.2, 4.2, 4.1, 4.2, 4.2, 4.2, 4.1, 4.2, 4.3, 4.4, 4.3, 4.3, 4.4, 4.5, 4.6, 4.6, 4.6, 4.6, 4.5, 4.4, 4.4, 4.5, 4.6, 4.7, 4.7, 4.7, 4.6, 4.6, 4.6, 4.7, 4.7, 4.6, 4.6, 4.6, 4.6, 4.7, 4.8, 5.0, 5.0, 5.1, 5.1, 5.2, 5.1, 5.1, 5.2, 5.4, 5.5, 5.6, 5.6, 5.5, 5.6, 5.6, 5.7, 5.7, 5.8, 5.8, 5.8, 5.8, 5.8, 5.9, 6.0, 6.0, 5.8, 5.6, 5.6, 5.7, 5.9, 6.0]}}}
+{"line": {"config": {"pageTitle": "Tech Vector \u2014 tech roles as a share of the labour force", "title": "Tech Roles as a Share of the Total Labour Force", "caption": "This proportion indicates how tech employment has grown as a segment of the overall workforce, showing tech's increasing economic importance over time.", "source": "Source: Australian Bureau of Statistics (2026). Data is aggregated by the Tech Council of Australia.", "downloadFilename": "tech_occupations_share_of_labour_force.csv", "dateColumn": "date", "valueColumn": "% of labour force in tech occupations (smoothed)", "endLabel": "% of labour force in tech occupations (smoothed)", "lineColor": "cat-3", "valueFormat": {"suffix": "%", "decimals": 0}, "lastUpdated": "13 Jul 2026", "_sourceTemplate": "Source: Australian Bureau of Statistics ({year}). Data is aggregated by the Tech Council of Australia."}, "data": {"dates": ["1986-11-01", "1987-02-01", "1987-05-01", "1987-08-01", "1987-11-01", "1988-02-01", "1988-05-01", "1988-08-01", "1988-11-01", "1989-02-01", "1989-05-01", "1989-08-01", "1989-11-01", "1990-02-01", "1990-05-01", "1990-08-01", "1990-11-01", "1991-02-01", "1991-05-01", "1991-08-01", "1991-11-01", "1992-02-01", "1992-05-01", "1992-08-01", "1992-11-01", "1993-02-01", "1993-05-01", "1993-08-01", "1993-11-01", "1994-02-01", "1994-05-01", "1994-08-01", "1994-11-01", "1995-02-01", "1995-05-01", "1995-08-01", "1995-11-01", "1996-02-01", "1996-05-01", "1996-08-01", "1996-11-01", "1997-02-01", "1997-05-01", "1997-08-01", "1997-11-01", "1998-02-01", "1998-05-01", "1998-08-01", "1998-11-01", "1999-02-01", "1999-05-01", "1999-08-01", "1999-11-01", "2000-02-01", "2000-05-01", "2000-08-01", "2000-11-01", "2001-02-01", "2001-05-01", "2001-08-01", "2001-11-01", "2002-02-01", "2002-05-01", "2002-08-01", "2002-11-01", "2003-02-01", "2003-05-01", "2003-08-01", "2003-11-01", "2004-02-01", "2004-05-01", "2004-08-01", "2004-11-01", "2005-02-01", "2005-05-01", "2005-08-01", "2005-11-01", "2006-02-01", "2006-05-01", "2006-08-01", "2006-11-01", "2007-02-01", "2007-05-01", "2007-08-01", "2007-11-01", "2008-02-01", "2008-05-01", "2008-08-01", "2008-11-01", "2009-02-01", "2009-05-01", "2009-08-01", "2009-11-01", "2010-02-01", "2010-05-01", "2010-08-01", "2010-11-01", "2011-02-01", "2011-05-01", "2011-08-01", "2011-11-01", "2012-02-01", "2012-05-01", "2012-08-01", "2012-11-01", "2013-02-01", "2013-05-01", "2013-08-01", "2013-11-01", "2014-02-01", "2014-05-01", "2014-08-01", "2014-11-01", "2015-02-01", "2015-05-01", "2015-08-01", "2015-11-01", "2016-02-01", "2016-05-01", "2016-08-01", "2016-11-01", "2017-02-01", "2017-05-01", "2017-08-01", "2017-11-01", "2018-02-01", "2018-05-01", "2018-08-01", "2018-11-01", "2019-02-01", "2019-05-01", "2019-08-01", "2019-11-01", "2020-02-01", "2020-05-01", "2020-08-01", "2020-11-01", "2021-02-01", "2021-05-01", "2021-08-01", "2021-11-01", "2022-02-01", "2022-05-01", "2022-08-01", "2022-11-01", "2023-02-01", "2023-05-01", "2023-08-01", "2023-11-01", "2024-02-01", "2024-05-01", "2024-08-01", "2024-11-01", "2025-02-01", "2025-05-01", "2025-08-01", "2025-11-01"], "values": [2.5, 2.5, 2.5, 2.5, 2.6, 2.6, 2.7, 2.6, 2.6, 2.7, 2.7, 2.6, 2.6, 2.6, 2.7, 2.8, 2.9, 2.9, 2.9, 2.9, 3.0, 3.0, 3.0, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 2.9, 3.0, 3.0, 3.1, 3.1, 3.2, 3.3, 3.3, 3.2, 3.2, 3.3, 3.5, 3.5, 3.5, 3.3, 3.4, 3.4, 3.5, 3.6, 3.5, 3.6, 3.6, 3.6, 3.6, 3.7, 3.8, 3.9, 4.0, 3.9, 3.9, 3.9, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 3.9, 3.9, 3.9, 3.9, 3.9, 4.0, 4.1, 4.1, 4.0, 4.0, 4.0, 4.1, 4.3, 4.3, 4.2, 4.2, 4.2, 4.3, 4.2, 4.2, 4.1, 4.2, 4.2, 4.2, 4.1, 4.2, 4.3, 4.4, 4.3, 4.3, 4.4, 4.5, 4.6, 4.6, 4.6, 4.6, 4.5, 4.4, 4.4, 4.5, 4.6, 4.7, 4.7, 4.7, 4.6, 4.6, 4.6, 4.7, 4.7, 4.6, 4.6, 4.6, 4.6, 4.7, 4.8, 5.0, 5.0, 5.1, 5.1, 5.2, 5.1, 5.1, 5.2, 5.4, 5.5, 5.6, 5.6, 5.5, 5.6, 5.6, 5.7, 5.7, 5.8, 5.8, 5.8, 5.8, 5.8, 5.9, 6.0, 6.0, 5.8, 5.6, 5.6, 5.7, 5.9, 6.0]}}}
 </script>
 <script>
 (function () {

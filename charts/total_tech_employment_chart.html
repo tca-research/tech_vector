@@ -17,12 +17,21 @@
   --cat-5: #D998D0; --cat-5-text: #953F85;
   --cat-5-tint: #F8EEF6;
   --corner-accent: #C93FB0;
+
+  /* Status (not categorical) — reserved for "target met" state, never used
+     for series/identity. */
+  --status-good: #1B7A43;
+  --status-good-bg: #E3F5EA;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: var(--surface-alt);
+  /* Matches figure.chart-card's own background (not --surface-alt) so any
+     leftover space below the card — a browser window or iframe taller than
+     the actual content, e.g. before a parent page applies the postMessage
+     resize height — reads as plain white, not a visibly mismatched grey band. */
+  background: var(--surface);
   color: var(--ink-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -124,11 +133,19 @@ figure.chart-card::after {
 .multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
 .multiselect-option input:disabled { cursor: not-allowed; }
 
-.gauge-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-around; }
-.gauge-item { flex: 1 1 240px; max-width: 320px; text-align: center; }
-.gauge-item svg { width: 100%; height: auto; display: block; }
-.gauge-label { font-size: 15px; font-weight: 700; color: var(--cat-4-text); margin-top: 4px; }
-.gauge-desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.5; margin: 6px 0 0; }
+.kpi-card { max-width: 420px; }
+.kpi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.kpi-icon { flex: none; width: 28px; height: 28px; }
+.kpi-icon svg { width: 100%; height: 100%; display: block; }
+.kpi-title { font-size: 19px; font-weight: 700; color: var(--ink-primary); margin: 0; }
+.kpi-value-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.kpi-value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--ink-primary); }
+.kpi-pill {
+  display: inline-block; font-size: 13px; font-weight: 700; padding: 5px 12px;
+  border-radius: 999px; color: var(--ink-secondary); background: var(--surface-alt);
+}
+.kpi-pill.kpi-pill--good { color: var(--status-good); background: var(--status-good-bg); }
+#kpi-description { max-width: none; }
 
 .ranked-bar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
 .dropdown-label { font-size: 13px; color: var(--ink-secondary); display: flex; align-items: center; gap: 8px; }
@@ -207,7 +224,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"line": {"config": {"pageTitle": "Tech Vector \u2014 total employment in the direct tech sector", "title": "Total Employment in the Direct Tech Sector", "caption": "Total number of people employed by companies in the direct tech sector.", "source": "Source: Australian Bureau of Statistics (2026). Data is aggregated by the Tech Council of Australia.", "downloadFilename": "total_employment_direct_tech_sector.csv", "dateColumn": "Date", "valueColumn": "Total number of people in the tech sector", "endLabel": "Total number of people in the tech sector", "lineColor": "cat-3", "valueFormat": {"decimals": 0}, "lastUpdated": "13 Jul 2026"}, "data": {"dates": ["2006-08-01", "2006-11-01", "2007-02-01", "2007-05-01", "2007-08-01", "2007-11-01", "2008-02-01", "2008-05-01", "2008-08-01", "2008-11-01", "2009-02-01", "2009-05-01", "2009-08-01", "2009-11-01", "2010-02-01", "2010-05-01", "2010-08-01", "2010-11-01", "2011-02-01", "2011-05-01", "2011-08-01", "2011-11-01", "2012-02-01", "2012-05-01", "2012-08-01", "2012-11-01", "2013-02-01", "2013-05-01", "2013-08-01", "2013-11-01", "2014-02-01", "2014-05-01", "2014-08-01", "2014-11-01", "2015-02-01", "2015-05-01", "2015-08-01", "2015-11-01", "2016-02-01", "2016-05-01", "2016-08-01", "2016-11-01", "2017-02-01", "2017-05-01", "2017-08-01", "2017-11-01", "2018-02-01", "2018-05-01", "2018-08-01", "2018-11-01", "2019-02-01", "2019-05-01", "2019-08-01", "2019-11-01", "2020-02-01", "2020-05-01", "2020-08-01", "2020-11-01", "2021-02-01", "2021-05-01", "2021-08-01", "2021-11-01", "2022-02-01", "2022-05-01", "2022-08-01", "2022-11-01", "2023-02-01", "2023-05-01", "2023-08-01", "2023-11-01", "2024-02-01", "2024-05-01", "2024-08-01", "2024-11-01", "2025-02-01", "2025-05-01", "2025-08-01", "2025-11-01"], "values": [147700.0, 137800.0, 131300.0, 146600.0, 155000.0, 155400.0, 151100.0, 147400.0, 164100.0, 146100.0, 142500.0, 149500.0, 155000.0, 160000.0, 166600.0, 159800.0, 163800.0, 157200.0, 174900.0, 168600.0, 166000.0, 170400.0, 165600.0, 175800.0, 184700.0, 185400.0, 174600.0, 185100.0, 182000.0, 164700.0, 179000.0, 190800.0, 215800.0, 188600.0, 189000.0, 209700.0, 207600.0, 196600.0, 200000.0, 202500.0, 202700.0, 207300.0, 206600.0, 218600.0, 216900.0, 216200.0, 238500.0, 251100.0, 259100.0, 230500.0, 241200.0, 233300.0, 237800.0, 230200.0, 264600.0, 254000.0, 253400.0, 271900.0, 282700.0, 257700.0, 246600.0, 270500.0, 289100.0, 290000.0, 298500.0, 308600.0, 286000.0, 280400.0, 301800.0, 291600.0, 302700.0, 323200.0, 307000.0, 285300.0, 272600.0, 303000.0, 296600.0, 318100.0]}}}
+{"line": {"config": {"pageTitle": "Tech Vector \u2014 total employment in the direct tech sector", "title": "Total Employment in the Direct Tech Sector", "caption": "Total number of people employed by companies in the direct tech sector.", "source": "Source: Australian Bureau of Statistics (2026). Data is aggregated by the Tech Council of Australia.", "downloadFilename": "total_employment_direct_tech_sector.csv", "dateColumn": "Date", "valueColumn": "Total number of people in the tech sector", "endLabel": "Total number of people in the tech sector", "lineColor": "cat-3", "valueFormat": {"decimals": 0}, "lastUpdated": "13 Jul 2026", "_sourceTemplate": "Source: Australian Bureau of Statistics ({year}). Data is aggregated by the Tech Council of Australia."}, "data": {"dates": ["2006-08-01", "2006-11-01", "2007-02-01", "2007-05-01", "2007-08-01", "2007-11-01", "2008-02-01", "2008-05-01", "2008-08-01", "2008-11-01", "2009-02-01", "2009-05-01", "2009-08-01", "2009-11-01", "2010-02-01", "2010-05-01", "2010-08-01", "2010-11-01", "2011-02-01", "2011-05-01", "2011-08-01", "2011-11-01", "2012-02-01", "2012-05-01", "2012-08-01", "2012-11-01", "2013-02-01", "2013-05-01", "2013-08-01", "2013-11-01", "2014-02-01", "2014-05-01", "2014-08-01", "2014-11-01", "2015-02-01", "2015-05-01", "2015-08-01", "2015-11-01", "2016-02-01", "2016-05-01", "2016-08-01", "2016-11-01", "2017-02-01", "2017-05-01", "2017-08-01", "2017-11-01", "2018-02-01", "2018-05-01", "2018-08-01", "2018-11-01", "2019-02-01", "2019-05-01", "2019-08-01", "2019-11-01", "2020-02-01", "2020-05-01", "2020-08-01", "2020-11-01", "2021-02-01", "2021-05-01", "2021-08-01", "2021-11-01", "2022-02-01", "2022-05-01", "2022-08-01", "2022-11-01", "2023-02-01", "2023-05-01", "2023-08-01", "2023-11-01", "2024-02-01", "2024-05-01", "2024-08-01", "2024-11-01", "2025-02-01", "2025-05-01", "2025-08-01", "2025-11-01"], "values": [147700.0, 137800.0, 131300.0, 146600.0, 155000.0, 155400.0, 151100.0, 147400.0, 164100.0, 146100.0, 142500.0, 149500.0, 155000.0, 160000.0, 166600.0, 159800.0, 163800.0, 157200.0, 174900.0, 168600.0, 166000.0, 170400.0, 165600.0, 175800.0, 184700.0, 185400.0, 174600.0, 185100.0, 182000.0, 164700.0, 179000.0, 190800.0, 215800.0, 188600.0, 189000.0, 209700.0, 207600.0, 196600.0, 200000.0, 202500.0, 202700.0, 207300.0, 206600.0, 218600.0, 216900.0, 216200.0, 238500.0, 251100.0, 259100.0, 230500.0, 241200.0, 233300.0, 237800.0, 230200.0, 264600.0, 254000.0, 253400.0, 271900.0, 282700.0, 257700.0, 246600.0, 270500.0, 289100.0, 290000.0, 298500.0, 308600.0, 286000.0, 280400.0, 301800.0, 291600.0, 302700.0, 323200.0, 307000.0, 285300.0, 272600.0, 303000.0, 296600.0, 318100.0]}}}
 </script>
 <script>
 (function () {
