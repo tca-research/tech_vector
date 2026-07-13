@@ -120,9 +120,13 @@ function renderSmallMultiples() {
       const byDate = new Map(data.macro[s.key].map((d) => [d.date, d.value]));
       return dates.map((d) => (byDate.has(d) ? byDate.get(d) : null));
     });
-    const yMax = niceTicks(0, Math.max(...seriesValues.flat().filter((v) => v != null)), 4).slice(-1)[0];
+    // Single niceTicks call — see line_chart.js for why calling it twice
+    // (once on the raw max, again on that result) can flip the step size at
+    // certain boundary values and render a tick off the top of the chart.
+    const macroTicks = niceTicks(0, Math.max(...seriesValues.flat().filter((v) => v != null)), 4);
+    const yMax = macroTicks[macroTicks.length - 1];
     const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
-    drawAxes(svg, dates, niceTicks(0, yMax, 4), yMax, (v) => v);
+    drawAxes(svg, dates, macroTicks, yMax, (v) => v);
     macroCfg.series.forEach((s, i) => linePath(svg, dates, seriesValues[i], yMax, colorVar(s.color), 2, null));
     hoverLayer(svg, dates, macroCfg.series.map((s, i) => ({
       label: s.label,

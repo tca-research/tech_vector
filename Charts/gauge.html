@@ -1,4 +1,4 @@
-<title>Tech Vector — pay quartiles</title>
+<title>Tech Vector — headline metrics</title>
 <style>
 :root {
   --surface: #ffffff;
@@ -167,13 +167,12 @@ figure.chart-card::after {
 
 </style>
 <div class="page">
-  <figure class="chart-card" id="card-bar">
+  <figure class="chart-card" id="card-gauge">
     <h3 class="chart-title" id="chart-title"></h3>
-    <div class="legend-row" id="bar-legend"></div>
-    <div class="chart-mount" id="bar-chart"></div>
+    <div class="gauge-row" id="gauge-row"></div>
     <div class="chart-footer">
       <span class="chart-source" id="chart-source"></span>
-      <button class="download-btn" data-target="bar"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
+      <button class="download-btn" data-target="gauge"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5v8m0 0 3-3m-3 3-3-3M2 12.5v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download data</button>
     </div>
   </figure>
 </div>
@@ -181,7 +180,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"bar": {"config": {"pageTitle": "Tech Vector \u2014 pay quartiles", "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees)", "source": "Source: WGEA (2026) \u00b7 tech_pay_quartiles.csv", "downloadFilename": "tech_pay_quartiles.csv", "categoryColumn": "WGEA Quartile", "annotationColumn": "TCA Members - Example Roles", "series": [{"column": "TCA Member Remuneration - Average", "label": "TCA Member Remuneration \u2014 Average", "color": "cat-1"}, {"column": "Direct Tech Remuneration - Average", "label": "Direct Tech Remuneration \u2014 Average", "color": "cat-2"}, {"column": "Australian Average Remuneration - Average", "label": "Australian Average Remuneration \u2014 Average", "color": "cat-3"}], "valueFormat": {"prefix": "$", "divisor": 1000, "suffix": "K"}, "lastUpdated": "13 Jul 2026"}, "data": [{"category": "Q1 (Lower quartile)", "TCA Member Remuneration - Average": 126980.0, "Direct Tech Remuneration - Average": 106473.0, "Australian Average Remuneration - Average": 78684.0, "annotation": "Quartile 1 band include, on average, a median entry-level security analyst, a median entry-level product manager, a median entry-level data scientist, or a 25th percentile senior technical program manager."}, {"category": "Q2 (Lower-middle quartile)", "TCA Member Remuneration - Average": 181157.0, "Direct Tech Remuneration - Average": 150699.0, "Australian Average Remuneration - Average": 101484.0, "annotation": "Low-mid quartile roles include, on average, a median senior product designer, a median senior recruiter, a median senior graphic designer, or a 25th percentile senior technical program manager."}, {"category": "Q3 (Upper-middle quartile)", "TCA Member Remuneration - Average": 233373.0, "Direct Tech Remuneration - Average": 192212.0, "Australian Average Remuneration - Average": 125966.0, "annotation": "Mid-upper quartile roles include, on average, a median senior product design manager, a 25th percentile senior sales engineer, a median senior software engineer, or a 90th percentile entry-level product manager."}, {"category": "Q4 (Upper quartile)", "TCA Member Remuneration - Average": 410078.0, "Direct Tech Remuneration - Average": 309832.0, "Australian Average Remuneration - Average": 198785.0, "annotation": "This top-paying quartile would contain high-level leadership roles including C-Suite and Vice President-level executives as well as top-tier technical roles like a 75th percentile senior product design manager, a 90th percentile senior product designer."}, {"category": "Total workforce", "TCA Member Remuneration - Average": 237647.0, "Direct Tech Remuneration - Average": 189373.0, "Australian Average Remuneration - Average": 125999.0, "annotation": ""}]}}
+{"gauge": {"config": {"pageTitle": "Tech Vector \u2014 headline metrics", "title": "Tech Sector Goals", "source": "Source: Tech Council of Australia research", "downloadFilename": "headline_metrics.csv", "colors": {"Tech Jobs": {"filledColor": "cat-1", "remainingColor": "cat-3", "needleColor": "cat-4", "currentBadgeColor": "cat-3", "targetBadgeColor": "cat-1"}, "Tech Investment": {"filledColor": "cat-3", "remainingColor": "cat-1", "needleColor": "cat-1", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-4"}, "Tech Sector GDP": {"filledColor": "cat-4", "remainingColor": "cat-1", "needleColor": "cat-3", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-1"}}, "defaultColors": {"filledColor": "cat-4", "remainingColor": "cat-5", "needleColor": "cat-3", "currentBadgeColor": "cat-3", "targetBadgeColor": "cat-4"}, "lastUpdated": "13 Jul 2026"}, "data": [{"label": "Tech Jobs", "value": 79.0, "currentLabel": "949k", "targetLabel": "1.2M", "description": "Australia's tech workforce numbers 949,000 \u2013 79% of the way to our 1.2 million jobs target.", "filledColor": "cat-1", "remainingColor": "cat-3", "needleColor": "cat-4", "currentBadgeColor": "cat-3", "targetBadgeColor": "cat-1"}, {"label": "Tech Investment", "value": 85.0, "currentLabel": "3.9%", "targetLabel": "4.6%", "description": "The tech sector contributes 3.9% to Australia's GDP, approaching our 4.6% target.", "filledColor": "cat-3", "remainingColor": "cat-1", "needleColor": "cat-1", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-4"}, {"label": "Tech Sector GDP", "value": 66.0, "currentLabel": "$167B", "targetLabel": "$250B", "description": "Building toward a $250B tech economy \u2013 the sector currently contributes $167B.", "filledColor": "cat-4", "remainingColor": "cat-1", "needleColor": "cat-3", "currentBadgeColor": "cat-1", "targetBadgeColor": "cat-1"}]}}
 </script>
 <script>
 (function () {
@@ -437,103 +436,84 @@ function wireDownloadButtons() {
 }
 
 
-// BAR CHART — grouped horizontal bars + direct annotations
-// All dataset-specific values (series, colors, labels, formatting) come from
-// DATA.bar.config, built in build_charts.py's BAR_CONFIG — nothing about a
-// particular dataset is hardcoded here.
-function renderBarChart() {
-  const cfg = DATA.bar.config;
-  const data = DATA.bar.data;
+// GAUGE — semi-circle progress-to-target gauges, one config entry per gauge.
+// All dataset-specific values (label, value, current/target labels, colors,
+// description) come from DATA.gauge.config.gauges, built in build_charts.py's
+// GAUGE_CONFIG.
+function renderGauges() {
+  const cfg = DATA.gauge.config;
+  const data = DATA.gauge.data;
   applyChromeConfig(cfg);
 
-  const valueDecimals = cfg.valueFormat.decimals || 0;
-  const formatValue = (v) => (cfg.valueFormat.prefix || "") + (v / (cfg.valueFormat.divisor || 1)).toFixed(valueDecimals) + (cfg.valueFormat.suffix || "");
+  const row = document.getElementById("gauge-row");
+  row.innerHTML = "";
 
-  const mount = document.getElementById("bar-chart");
-  const legend = document.getElementById("bar-legend");
-  legend.innerHTML = "";
-  const series = cfg.series;
-  series.forEach((s) => legendItem(legend, colorVar(s.color), s.label));
+  function polar(cx, cy, r, angleDeg) {
+    const rad = (angleDeg * Math.PI) / 180;
+    return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
+  }
+  function arcPath(cx, cy, r, a1, a2) {
+    const p1 = polar(cx, cy, r, a1);
+    const p2 = polar(cx, cy, r, a2);
+    const largeArc = Math.abs(a1 - a2) > 180 ? 1 : 0;
+    return "M " + p1.x + " " + p1.y + " A " + r + " " + r + " 0 " + largeArc + " 1 " + p2.x + " " + p2.y;
+  }
+  function badge(svg, cx, cy, text, color) {
+    const w = Math.max(34, text.length * 7.5 + 12);
+    const h = 22;
+    el("rect", { x: cx - w / 2, y: cy - h / 2, width: w, height: h, rx: h / 2, fill: color }, svg);
+    textEl(cx, cy + 4, text, { "text-anchor": "middle", "font-size": "12", "font-weight": "700", fill: "#fff" }, svg);
+  }
 
-  const hasAnnotations = data.some((d) => d.annotation);
-  const W = 900, labelW = 190, annW = hasAnnotations ? 250 : 0, rightPad = 14;
-  const plotW = W - labelW - annW - rightPad;
-  const rowH = 150, topPad = 14, bottomPad = 34;
-  const H = topPad + data.length * rowH + bottomPad;
-  mount.innerHTML = "";
-  const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img", "aria-label": cfg.title }, mount);
+  data.forEach((g) => {
+    const wrap = document.createElement("div");
+    wrap.className = "gauge-item";
 
-  const maxVal = Math.max(...data.map((d) => d[series[0].column]));
-  // Pad the domain 10% past the longest bar so its value label (drawn past
-  // the bar's tip) always has clearance before the annotation column —
-  // without this, a bar whose value sits right at the rounded tick max runs
-  // its label straight into the annotation box next to it.
-  const ticks = niceTicks(0, maxVal * 1.1, 6);
-  const xMax = ticks[ticks.length - 1];
-  const x = (v) => (v / xMax) * plotW;
+    const W = 280, H = 165;
+    const cx = W / 2, cy = 148, r = 96;
+    const svg = el("svg", { viewBox: "0 0 " + W + " " + H }, wrap);
 
-  const plotBottom = topPad + data.length * rowH;
-  ticks.forEach((t) => {
-    const gx = labelW + x(t);
-    el("line", { class: "grid-line", x1: gx, x2: gx, y1: topPad - 6, y2: plotBottom }, svg);
-    textEl(gx, plotBottom + 20, formatValue(t), { class: "axis-label", "text-anchor": "middle" }, svg);
-  });
-  el("line", { class: "axis-line", x1: labelW, x2: labelW, y1: topPad - 6, y2: plotBottom }, svg);
+    const valueAngle = 180 - (g.value / 100) * 180;
+    el("path", { d: arcPath(cx, cy, r, 180, valueAngle), fill: "none", stroke: colorVar(g.filledColor), "stroke-width": 20, "stroke-linecap": "round" }, svg);
+    el("path", { d: arcPath(cx, cy, r, valueAngle, 0), fill: "none", stroke: colorVar(g.remainingColor), "stroke-width": 20, "stroke-linecap": "round" }, svg);
 
-  const barH = 22, barGap = 5;
-  const barsBlockH = barH * series.length + barGap * (series.length - 1);
-  const tableRows = [];
-  data.forEach((d, i) => {
-    const rowY = topPad + i * rowH;
-    const barsTop = rowY + (rowH - barsBlockH) / 2;
-    textEl(labelW - 14, rowY + rowH / 2 + 4, d.category, { "text-anchor": "end", "font-size": "13.5", "font-weight": "600", fill: "var(--ink-primary)" }, svg);
+    const needleTip = polar(cx, cy, r - 32, valueAngle);
+    el("line", { x1: cx, y1: cy, x2: needleTip.x, y2: needleTip.y, stroke: colorVar(g.needleColor), "stroke-width": 6, "stroke-linecap": "round" }, svg);
+    el("circle", { cx, cy, r: 7, fill: colorVar(g.needleColor) }, svg);
 
-    series.forEach((s, si) => {
-      const by = barsTop + si * (barH + barGap);
-      const val = d[s.column];
-      const w = Math.max(2, x(val));
-      const barColor = colorVar(s.color);
-      const r = 4;
-      const path = "M " + labelW + " " + by +
-        " H " + (labelW + Math.max(w - r, r)) +
-        " A " + r + " " + r + " 0 0 1 " + (labelW + w) + " " + (by + r) +
-        " V " + (by + barH - r) +
-        " A " + r + " " + r + " 0 0 1 " + (labelW + Math.max(w - r, r)) + " " + (by + barH) +
-        " H " + labelW + " Z";
-      const bar = el("path", { d: path, fill: barColor, class: "bar-mark" }, svg);
-      bar.style.cursor = "pointer";
-      const hit = el("rect", { x: labelW, y: by - 2, width: Math.max(w, 6), height: barH + 4, fill: "transparent" }, svg);
-      [bar, hit].forEach((node) => {
-        node.addEventListener("pointermove", (ev) => {
-          bar.style.filter = "brightness(1.08)";
-          showTooltip(ev.clientX, ev.clientY, ttBox(d.category, [ttRow(barColor, s.label, formatValue(val))]));
-        });
-        node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
-      });
-      const textColor = colorTextVar(s.color);
-      textEl(labelW + w + 8, by + barH / 2 + 5, formatValue(val), { "font-size": "13.5", "font-weight": "700", fill: textColor }, svg);
-    });
+    const currentPos = polar(cx, cy, r + 22, valueAngle);
+    badge(svg, currentPos.x, currentPos.y, g.currentLabel, colorVar(g.currentBadgeColor));
+    const targetPos = polar(cx, cy, r + 22, 0);
+    badge(svg, targetPos.x, targetPos.y, g.targetLabel, colorVar(g.targetBadgeColor));
 
-    if (d.annotation) {
-      const fo = el("foreignObject", { x: labelW + plotW + 18, y: rowY + 6, width: annW, height: rowH - 12 }, svg);
-      const div = document.createElement("div");
-      div.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-      div.className = "bar-annotation";
-      div.textContent = d.annotation;
-      fo.appendChild(div);
+    textEl(cx, cy - 8, Math.round(g.value) + "%", { "text-anchor": "middle", "font-size": "30", "font-weight": "800", fill: "var(--ink-primary)" }, svg);
+
+    wrap.appendChild(svg);
+
+    const label = document.createElement("div");
+    label.className = "gauge-label";
+    label.textContent = g.label;
+    wrap.appendChild(label);
+
+    if (g.description) {
+      const desc = document.createElement("p");
+      desc.className = "gauge-desc";
+      desc.textContent = g.description;
+      wrap.appendChild(desc);
     }
 
-    if (i < data.length - 1) {
-      el("line", { x1: 0, x2: W - rightPad, y1: rowY + rowH - 8, y2: rowY + rowH - 8, class: "grid-line" }, svg);
-    }
-
-    tableRows.push([d.category, ...series.map((s) => formatValue(d[s.column]))]);
+    row.appendChild(wrap);
   });
 
-  registerDownload("bar", cfg.downloadFilename, ["Category", ...series.map((s) => s.label)], tableRows);
+  registerDownload(
+    "gauge",
+    cfg.downloadFilename,
+    ["Label", "Value (%)", "Current", "Target"],
+    data.map((g) => [g.label, g.value, g.currentLabel, g.targetLabel])
+  );
 }
 
-renderBarChart();
+renderGauges();
 wireDownloadButtons();
 
 })();

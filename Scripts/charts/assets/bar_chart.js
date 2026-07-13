@@ -7,7 +7,8 @@ function renderBarChart() {
   const data = DATA.bar.data;
   applyChromeConfig(cfg);
 
-  const formatValue = (v) => (cfg.valueFormat.prefix || "") + Math.round(v / (cfg.valueFormat.divisor || 1)) + (cfg.valueFormat.suffix || "");
+  const valueDecimals = cfg.valueFormat.decimals || 0;
+  const formatValue = (v) => (cfg.valueFormat.prefix || "") + (v / (cfg.valueFormat.divisor || 1)).toFixed(valueDecimals) + (cfg.valueFormat.suffix || "");
 
   const mount = document.getElementById("bar-chart");
   const legend = document.getElementById("bar-legend");
@@ -15,7 +16,8 @@ function renderBarChart() {
   const series = cfg.series;
   series.forEach((s) => legendItem(legend, colorVar(s.color), s.label));
 
-  const W = 900, labelW = 190, annW = 250, rightPad = 14;
+  const hasAnnotations = data.some((d) => d.annotation);
+  const W = 900, labelW = 190, annW = hasAnnotations ? 250 : 0, rightPad = 14;
   const plotW = W - labelW - annW - rightPad;
   const rowH = 150, topPad = 14, bottomPad = 34;
   const H = topPad + data.length * rowH + bottomPad;

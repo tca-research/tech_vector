@@ -102,37 +102,12 @@ figure.chart-card::after {
 .multiselect-option:has(input:disabled) { color: var(--ink-muted); cursor: not-allowed; }
 .multiselect-option input:disabled { cursor: not-allowed; }
 
-.gauge-row { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-around; }
-.gauge-item { flex: 1 1 240px; max-width: 320px; text-align: center; }
-.gauge-item svg { width: 100%; height: auto; display: block; }
-.gauge-label { font-size: 15px; font-weight: 700; color: var(--cat-4-text); margin-top: 4px; }
-.gauge-desc { font-size: 13px; color: var(--ink-secondary); line-height: 1.5; margin: 6px 0 0; }
-
-.ranked-bar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
-.dropdown-label { font-size: 13px; color: var(--ink-secondary); display: flex; align-items: center; gap: 8px; }
-
-.tab-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
-.tab-btn {
-  font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
-  padding: 10px 18px; border-radius: 999px; border: 1px solid var(--cat-4);
-  background: var(--surface); color: var(--cat-4-text);
-}
-.tab-btn.active { background: var(--cat-4); color: #fff; border-color: var(--cat-4); }
-
 .small-multiples-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 22px 18px;
 }
 .sm-panel-title { font-size: 13px; font-weight: 700; margin: 0 0 6px; }
-
-.stacked-sm-panels { display: flex; flex-direction: column; gap: 20px; }
-.stacked-sm-panel svg { display: block; width: 100%; height: auto; }
-
-.reference-list { margin: 0; padding-left: 20px; }
-.reference-item { font-size: 13.5px; line-height: 1.6; color: var(--ink-primary); margin-bottom: 10px; }
-.reference-item em { font-style: italic; }
-.reference-item a { color: var(--cat-4-text); }
 
 .tooltip {
   position: fixed; pointer-events: none; z-index: 50;
@@ -181,7 +156,7 @@ figure.chart-card::after {
 <div class="tooltip" id="tooltip"></div>
 
 <script type="application/json" id="chart-data">
-{"bar": {"config": {"pageTitle": "Tech Vector \u2014 pay quartiles", "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees)", "source": "Source: WGEA (2026) \u00b7 tech_pay_quartiles.csv", "downloadFilename": "tech_pay_quartiles.csv", "categoryColumn": "WGEA Quartile", "annotationColumn": "TCA Members - Example Roles", "series": [{"column": "TCA Member Remuneration - Average", "label": "TCA Member Remuneration \u2014 Average", "color": "cat-1"}, {"column": "Direct Tech Remuneration - Average", "label": "Direct Tech Remuneration \u2014 Average", "color": "cat-2"}, {"column": "Australian Average Remuneration - Average", "label": "Australian Average Remuneration \u2014 Average", "color": "cat-3"}], "valueFormat": {"prefix": "$", "divisor": 1000, "suffix": "K"}, "lastUpdated": "13 Jul 2026"}, "data": [{"category": "Q1 (Lower quartile)", "TCA Member Remuneration - Average": 126980.0, "Direct Tech Remuneration - Average": 106473.0, "Australian Average Remuneration - Average": 78684.0, "annotation": "Quartile 1 band include, on average, a median entry-level security analyst, a median entry-level product manager, a median entry-level data scientist, or a 25th percentile senior technical program manager."}, {"category": "Q2 (Lower-middle quartile)", "TCA Member Remuneration - Average": 181157.0, "Direct Tech Remuneration - Average": 150699.0, "Australian Average Remuneration - Average": 101484.0, "annotation": "Low-mid quartile roles include, on average, a median senior product designer, a median senior recruiter, a median senior graphic designer, or a 25th percentile senior technical program manager."}, {"category": "Q3 (Upper-middle quartile)", "TCA Member Remuneration - Average": 233373.0, "Direct Tech Remuneration - Average": 192212.0, "Australian Average Remuneration - Average": 125966.0, "annotation": "Mid-upper quartile roles include, on average, a median senior product design manager, a 25th percentile senior sales engineer, a median senior software engineer, or a 90th percentile entry-level product manager."}, {"category": "Q4 (Upper quartile)", "TCA Member Remuneration - Average": 410078.0, "Direct Tech Remuneration - Average": 309832.0, "Australian Average Remuneration - Average": 198785.0, "annotation": "This top-paying quartile would contain high-level leadership roles including C-Suite and Vice President-level executives as well as top-tier technical roles like a 75th percentile senior product design manager, a 90th percentile senior product designer."}, {"category": "Total workforce", "TCA Member Remuneration - Average": 237647.0, "Direct Tech Remuneration - Average": 189373.0, "Australian Average Remuneration - Average": 125999.0, "annotation": ""}]}}
+{"bar": {"config": {"pageTitle": "Tech Vector \u2014 pay quartiles", "title": "Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees)", "source": "Source: WGEA (2025) \u00b7 tech_pay_quartiles.csv", "downloadFilename": "tech_pay_quartiles.csv", "categoryColumn": "WGEA Quartile", "annotationColumn": "TCA Members - Example Roles", "series": [{"column": "TCA Member Remuneration - Average", "label": "TCA Member Remuneration \u2014 Average", "color": "cat-1"}, {"column": "Direct Tech Remuneration - Average", "label": "Direct Tech Remuneration \u2014 Average", "color": "cat-2"}, {"column": "Australian Average Remuneration - Average", "label": "Australian Average Remuneration \u2014 Average", "color": "cat-3"}], "valueFormat": {"prefix": "$", "divisor": 1000, "suffix": "K"}}, "data": [{"category": "Q1 (Lower quartile)", "TCA Member Remuneration - Average": 126980.0, "Direct Tech Remuneration - Average": 106473.0, "Australian Average Remuneration - Average": 78684.0, "annotation": "Quartile 1 band include, on average, a median entry-level software engineer, a median entry-level hardware engineer, a median entry-level business development, or a median senior hardware engineer."}, {"category": "Q2 (Lower-middle quartile)", "TCA Member Remuneration - Average": 181157.0, "Direct Tech Remuneration - Average": 150699.0, "Australian Average Remuneration - Average": 101484.0, "annotation": "Low-mid quartile roles include, on average, a median senior recruiter, a median entry-level sales engineer, a median senior data science manager, or a median senior hardware engineer."}, {"category": "Q3 (Upper-middle quartile)", "TCA Member Remuneration - Average": 233373.0, "Direct Tech Remuneration - Average": 192212.0, "Australian Average Remuneration - Average": 125966.0, "annotation": "Mid-upper quartile roles include, on average, an 75th percentile senior recruiter, a median senior data scientist, a 75th percentile senior product designer, or a median senior product design manager."}, {"category": "Q4 (Upper quartile)", "TCA Member Remuneration - Average": 410078.0, "Direct Tech Remuneration - Average": 309832.0, "Australian Average Remuneration - Average": 198785.0, "annotation": "This top-paying quartile would contain high-level leadership roles including C-Suite and Vice President-level executives as well as top-tier technical roles like a 75th percentile senior security analyst, a 75th percentile senior ux researcher."}, {"category": "Total workforce", "TCA Member Remuneration - Average": 237647.0, "Direct Tech Remuneration - Average": 189373.0, "Australian Average Remuneration - Average": 125999.0, "annotation": ""}]}}
 </script>
 <script>
 (function () {
@@ -204,13 +179,7 @@ function applyChromeConfig(cfg) {
   const titleEl = document.getElementById("chart-title");
   if (titleEl) titleEl.textContent = cfg.title || "";
   const sourceEl = document.getElementById("chart-source");
-  if (sourceEl) {
-    let text = cfg.source || "";
-    if (cfg.lastUpdated) {
-      text += (text ? ". " : "") + "Chart last updated on " + cfg.lastUpdated + ".";
-    }
-    sourceEl.textContent = text;
-  }
+  if (sourceEl) sourceEl.textContent = cfg.source || "";
   const captionEl = document.getElementById("chart-caption");
   if (captionEl && cfg.caption) captionEl.textContent = cfg.caption;
 }
@@ -353,61 +322,6 @@ function legendItem(container, color, label, lineStyle) {
   container.appendChild(item);
 }
 
-// ---------- stacked-bar helpers (used by stacked_bar.js and any small-
-// multiples variant that stacks the same Men/Women-style segments) --------
-function roundedRectPath(x, y, w, h, r) {
-  return "M " + (x + r.tl) + " " + y +
-    " H " + (x + w - r.tr) +
-    " A " + r.tr + " " + r.tr + " 0 0 1 " + (x + w) + " " + (y + r.tr) +
-    " V " + (y + h - r.br) +
-    " A " + r.br + " " + r.br + " 0 0 1 " + (x + w - r.br) + " " + (y + h) +
-    " H " + (x + r.bl) +
-    " A " + r.bl + " " + r.bl + " 0 0 1 " + x + " " + (y + h - r.bl) +
-    " V " + (y + r.tl) +
-    " A " + r.tl + " " + r.tl + " 0 0 1 " + (x + r.tl) + " " + y +
-    " Z";
-}
-// Draws one 100%-stacked row of `series` segments (each { column, label,
-// color }) sized from `values[column]` (0-100), from x0 to x0+plotW. Returns
-// the row's formatted values, in series order, for CSV export.
-function drawStackedBarSegments(svg, x0, y, plotW, barH, series, values, tooltipTitle) {
-  let cursor = x0;
-  const tableRow = [];
-  series.forEach((s, si) => {
-    const val = values[s.column];
-    const w = (val / 100) * plotW;
-    const isFirst = si === 0;
-    const isLast = si === series.length - 1;
-    const r = 4;
-    const radii = { tl: isFirst ? r : 0, bl: isFirst ? r : 0, tr: isLast ? r : 0, br: isLast ? r : 0 };
-    const color = colorVar(s.color);
-    if (w > 0.5) {
-      const path = roundedRectPath(cursor, y, w, barH, radii);
-      const seg = el("path", { d: path, fill: color }, svg);
-      const hit = el("rect", { x: cursor, y: y - 2, width: w, height: barH + 4, fill: "transparent" }, svg);
-      const valueLabel = (Math.round(val * 10) / 10) + "%";
-      [seg, hit].forEach((node) => {
-        node.style.cursor = "pointer";
-        node.addEventListener("pointermove", (ev) => {
-          seg.style.filter = "brightness(1.08)";
-          showTooltip(ev.clientX, ev.clientY, ttBox(tooltipTitle, [ttRow(color, s.label, valueLabel)]));
-        });
-        node.addEventListener("pointerleave", () => { seg.style.filter = ""; hideTooltip(); });
-      });
-      if (w > 36) {
-        textEl(cursor + w / 2, y + barH / 2 + 4, valueLabel, { "text-anchor": "middle", "font-size": "12", "font-weight": "700", fill: "#fff" }, svg);
-      } else {
-        textEl(cursor + w + 6, y + barH / 2 + 4, valueLabel, { "font-size": "12", "font-weight": "700", fill: colorTextVar(s.color) }, svg);
-      }
-      tableRow.push(valueLabel);
-    } else {
-      tableRow.push("0%");
-    }
-    cursor += w;
-  });
-  return tableRow;
-}
-
 // csv download — replaces the table-view toggle with a direct data export
 const downloadRegistry = {};
 function csvCell(v) {
@@ -446,8 +360,7 @@ function renderBarChart() {
   const data = DATA.bar.data;
   applyChromeConfig(cfg);
 
-  const valueDecimals = cfg.valueFormat.decimals || 0;
-  const formatValue = (v) => (cfg.valueFormat.prefix || "") + (v / (cfg.valueFormat.divisor || 1)).toFixed(valueDecimals) + (cfg.valueFormat.suffix || "");
+  const formatValue = (v) => (cfg.valueFormat.prefix || "") + Math.round(v / (cfg.valueFormat.divisor || 1)) + (cfg.valueFormat.suffix || "");
 
   const mount = document.getElementById("bar-chart");
   const legend = document.getElementById("bar-legend");
@@ -455,8 +368,7 @@ function renderBarChart() {
   const series = cfg.series;
   series.forEach((s) => legendItem(legend, colorVar(s.color), s.label));
 
-  const hasAnnotations = data.some((d) => d.annotation);
-  const W = 900, labelW = 190, annW = hasAnnotations ? 250 : 0, rightPad = 14;
+  const W = 900, labelW = 190, annW = 250, rightPad = 14;
   const plotW = W - labelW - annW - rightPad;
   const rowH = 150, topPad = 14, bottomPad = 34;
   const H = topPad + data.length * rowH + bottomPad;

@@ -190,10 +190,16 @@ for col in salary_columns:
     tech_council_wgea_salary_df[col] = tech_council_wgea_salary_df[col].replace({'\$': '', ',': ''}, regex=True).astype(float)
 
 for col in percentage_columns:
+    # wgea_salary_data.csv already stores these as 0-1 fractions (0.60 = 60%
+    # women), not "60%" strings — the .replace() is a no-op safeguard for any
+    # future export that does use "%" strings. Do NOT divide by 100 here:
+    # that turns an already-correct fraction into a value 100x too small
+    # (0.60 -> 0.006), which silently produced <1% "% women" figures
+    # throughout tech_pay_quartiles.csv and salaries_comparision.csv.
     wgea_salary_df[col] = wgea_salary_df[col].replace({'%': ''}, regex=True)
-    wgea_salary_df[col] = pd.to_numeric(wgea_salary_df[col], errors='coerce') / 100
+    wgea_salary_df[col] = pd.to_numeric(wgea_salary_df[col], errors='coerce')
     tech_council_wgea_salary_df[col] = tech_council_wgea_salary_df[col].replace({'%': ''}, regex=True)
-    tech_council_wgea_salary_df[col] = pd.to_numeric(tech_council_wgea_salary_df[col], errors='coerce') / 100
+    tech_council_wgea_salary_df[col] = pd.to_numeric(tech_council_wgea_salary_df[col], errors='coerce')
 
 # Define the other sectors of interest
 other_sectors_df = wgea_salary_df

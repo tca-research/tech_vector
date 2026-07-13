@@ -14,7 +14,13 @@ function applyChromeConfig(cfg) {
   const titleEl = document.getElementById("chart-title");
   if (titleEl) titleEl.textContent = cfg.title || "";
   const sourceEl = document.getElementById("chart-source");
-  if (sourceEl) sourceEl.textContent = cfg.source || "";
+  if (sourceEl) {
+    let text = cfg.source || "";
+    if (cfg.lastUpdated) {
+      text += (text ? ". " : "") + "Chart last updated on " + cfg.lastUpdated + ".";
+    }
+    sourceEl.textContent = text;
+  }
   const captionEl = document.getElementById("chart-caption");
   if (captionEl && cfg.caption) captionEl.textContent = cfg.caption;
 }
@@ -155,6 +161,61 @@ function legendItem(container, color, label, lineStyle) {
   lab.textContent = label;
   item.appendChild(lab);
   container.appendChild(item);
+}
+
+// ---------- stacked-bar helpers (used by stacked_bar.js and any small-
+// multiples variant that stacks the same Men/Women-style segments) --------
+function roundedRectPath(x, y, w, h, r) {
+  return "M " + (x + r.tl) + " " + y +
+    " H " + (x + w - r.tr) +
+    " A " + r.tr + " " + r.tr + " 0 0 1 " + (x + w) + " " + (y + r.tr) +
+    " V " + (y + h - r.br) +
+    " A " + r.br + " " + r.br + " 0 0 1 " + (x + w - r.br) + " " + (y + h) +
+    " H " + (x + r.bl) +
+    " A " + r.bl + " " + r.bl + " 0 0 1 " + x + " " + (y + h - r.bl) +
+    " V " + (y + r.tl) +
+    " A " + r.tl + " " + r.tl + " 0 0 1 " + (x + r.tl) + " " + y +
+    " Z";
+}
+// Draws one 100%-stacked row of `series` segments (each { column, label,
+// color }) sized from `values[column]` (0-100), from x0 to x0+plotW. Returns
+// the row's formatted values, in series order, for CSV export.
+function drawStackedBarSegments(svg, x0, y, plotW, barH, series, values, tooltipTitle) {
+  let cursor = x0;
+  const tableRow = [];
+  series.forEach((s, si) => {
+    const val = values[s.column];
+    const w = (val / 100) * plotW;
+    const isFirst = si === 0;
+    const isLast = si === series.length - 1;
+    const r = 4;
+    const radii = { tl: isFirst ? r : 0, bl: isFirst ? r : 0, tr: isLast ? r : 0, br: isLast ? r : 0 };
+    const color = colorVar(s.color);
+    if (w > 0.5) {
+      const path = roundedRectPath(cursor, y, w, barH, radii);
+      const seg = el("path", { d: path, fill: color }, svg);
+      const hit = el("rect", { x: cursor, y: y - 2, width: w, height: barH + 4, fill: "transparent" }, svg);
+      const valueLabel = (Math.round(val * 10) / 10) + "%";
+      [seg, hit].forEach((node) => {
+        node.style.cursor = "pointer";
+        node.addEventListener("pointermove", (ev) => {
+          seg.style.filter = "brightness(1.08)";
+          showTooltip(ev.clientX, ev.clientY, ttBox(tooltipTitle, [ttRow(color, s.label, valueLabel)]));
+        });
+        node.addEventListener("pointerleave", () => { seg.style.filter = ""; hideTooltip(); });
+      });
+      if (w > 36) {
+        textEl(cursor + w / 2, y + barH / 2 + 4, valueLabel, { "text-anchor": "middle", "font-size": "12", "font-weight": "700", fill: "#fff" }, svg);
+      } else {
+        textEl(cursor + w + 6, y + barH / 2 + 4, valueLabel, { "font-size": "12", "font-weight": "700", fill: colorTextVar(s.color) }, svg);
+      }
+      tableRow.push(valueLabel);
+    } else {
+      tableRow.push("0%");
+    }
+    cursor += w;
+  });
+  return tableRow;
 }
 
 // csv download — replaces the table-view toggle with a direct data export

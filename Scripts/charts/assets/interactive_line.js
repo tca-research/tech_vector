@@ -50,8 +50,11 @@ function renderInteractiveLine() {
     const names = allSeries.filter((n) => selection.includes(n));
 
     const allVals = names.flatMap((n) => data.series[n].filter((v) => v != null));
-    const yMax = niceTicks(0, Math.max(1, ...allVals), 5).slice(-1)[0];
-    const yTicks = niceTicks(0, yMax, 5);
+    // Derive yMax from this single niceTicks call's own last tick — see
+    // line_chart.js for why calling niceTicks twice can flip the step size
+    // at certain boundary values and render a tick off the top of the chart.
+    const yTicks = niceTicks(0, Math.max(1, ...allVals), 5);
+    const yMax = yTicks[yTicks.length - 1];
     const y = (v) => padT + plotH - (v / yMax) * plotH;
 
     mount.innerHTML = "";
