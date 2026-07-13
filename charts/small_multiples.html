@@ -22,6 +22,10 @@
      for series/identity. */
   --status-good: #1B7A43;
   --status-good-bg: #E3F5EA;
+
+  /* KPI card (gauge) title/value brand colors. */
+  --kpi-title: #DC389D;
+  --kpi-value: #7D01E4;
 }
 
 * { box-sizing: border-box; }
@@ -137,9 +141,9 @@ figure.chart-card::after {
 .kpi-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .kpi-icon { flex: none; width: 28px; height: 28px; }
 .kpi-icon svg { width: 100%; height: 100%; display: block; }
-.kpi-title { font-size: 19px; font-weight: 700; color: var(--ink-primary); margin: 0; }
+.kpi-title { font-size: 19px; font-weight: 700; color: var(--kpi-title); margin: 0; }
 .kpi-value-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-.kpi-value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--ink-primary); }
+.kpi-value { font-size: 52px; font-weight: 800; line-height: 1; color: var(--kpi-value); }
 .kpi-pill {
   display: inline-block; font-size: 13px; font-weight: 700; padding: 5px 12px;
   border-radius: 999px; color: var(--ink-secondary); background: var(--surface-alt);
