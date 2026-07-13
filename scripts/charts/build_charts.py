@@ -236,7 +236,7 @@ INTERACTIVE_LINE_CONFIG = {
     # All three cap concurrent series at len(palette) — the palette is
     # CVD-safe only up to that many hues, so the UI blocks further additions
     # at the cap rather than silently reusing a color.
-    "filterMode": "search",
+    "filterMode": "multi",
     # Initial selection. In "single" mode only the first name is used; in
     # "multi"/"search" modes every name here starts shown (capped to len(palette)).
     "defaultSeries": ["Software Engineers", "Business & Data Analysts", "Hardware Engineers"],
