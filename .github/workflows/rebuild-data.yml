@@ -1,0 +1,106 @@
+name: Rebuild data and charts
+
+# GitHub Actions cron can't express "every 8 weeks" directly, so this runs
+# weekly and gates itself on a day-count-since-anchor check below. Anchor:
+# 2026-08-10 (a Monday) is day 0; every 56 days after that is a rebuild.
+on:
+  schedule:
+    - cron: '0 20 * * 1'   # Monday 20:00 UTC — same weekday as the anchor date
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Run the full rebuild regardless of the 8-week cycle gate'
+        type: boolean
+        default: false
+
+concurrency:
+  group: rebuild-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # to commit regenerated data/chart files back to main
+
+env:
+  CYCLE_ANCHOR_DATE: '2026-08-10'
+  CYCLE_LENGTH_DAYS: '56'
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check whether this is a rebuild week
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force }}" = "true" ]; then
+            echo "Manual force run — bypassing the cycle gate."
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          today=$(date -u +%Y-%m-%d)
+          days_since=$(( ( $(date -u -d "$today" +%s) - $(date -u -d "$CYCLE_ANCHOR_DATE" +%s) ) / 86400 ))
+          echo "Today (UTC): $today; days since anchor ($CYCLE_ANCHOR_DATE): $days_since"
+          if [ "$days_since" -ge 0 ] && [ $(( days_since % CYCLE_LENGTH_DAYS )) -eq 0 ]; then
+            echo "Rebuild week — proceeding."
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Not a rebuild week — skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Python
+        if: steps.gate.outputs.should_run == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up R
+        if: steps.gate.outputs.should_run == 'true'
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+
+      - name: Install Python dependencies
+        if: steps.gate.outputs.should_run == 'true'
+        run: pip install -r requirements.txt
+
+      - name: Install R dependencies
+        if: steps.gate.outputs.should_run == 'true'
+        run: Rscript -e 'install.packages(c("readabs", "readrba"), repos = "https://cloud.r-project.org")'
+
+      - name: Fetch all source data
+        if: steps.gate.outputs.should_run == 'true'
+        run: python3 scripts/automated_fetch_all_data.py
+
+      - name: Clean manual-pull CSVs
+        if: steps.gate.outputs.should_run == 'true'
+        run: python3 scripts/manual_data_prep.py --dir data/input/manual_pull/
+
+      - name: Aggregate data
+        if: steps.gate.outputs.should_run == 'true'
+        run: |
+          set -o pipefail
+          python3 scripts/automated_data_prep.py 2>&1 | tee /tmp/data_prep.log
+          if grep -q '^Error:' /tmp/data_prep.log; then
+            echo "::error::automated_data_prep.py reported an Error line — failing explicitly."
+            exit 1
+          fi
+
+      - name: Build charts
+        if: steps.gate.outputs.should_run == 'true'
+        run: python3 scripts/charts/build_charts.py
+
+      - name: Commit regenerated files back to main
+        if: steps.gate.outputs.should_run == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/output/*.csv data/input/manual_pull/*_cleaned.csv charts/*.html charts/chart_manifest.csv
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Automated data refresh + chart rebuild ($(date -u +%Y-%m-%d))"
+            git push origin HEAD:main
+          fi

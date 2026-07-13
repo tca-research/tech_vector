@@ -1,6 +1,6 @@
 **Tech Council ABNs — Manual Data Pull Instructions**
 
-This document explains how to get the current list of Tech Council of Australia member ABNs into this repository so `scripts/data_prep.py` can identify which WGEA-reporting companies are Tech Council members.
+This document explains how to get the current list of Tech Council of Australia member ABNs into this repository so `scripts/automated_data_prep.py` can identify which WGEA-reporting companies are Tech Council members.
 
 **Overview**
 - **Purpose:** Obtain the latest list of Tech Council member ABNs and place it in the repository at `data/input/manual_pull/Tech_Council_ABNs.csv`, with a column named `ABN`, so the data prep pipeline can match it against WGEA data.
@@ -11,7 +11,7 @@ This document explains how to get the current list of Tech Council of Australia 
 
 **Step 2: Save as CSV**
 - **Save the list as a CSV file** (not Excel).
-- **Column name:** The file must have a column named exactly `ABN` (case-sensitive) containing each member company's ABN. `scripts/data_prep.py` reads this column by name — a different name or casing will raise a `KeyError` when the script runs.
+- **Column name:** The file must have a column named exactly `ABN` (case-sensitive) containing each member company's ABN. `scripts/automated_data_prep.py` reads this column by name — a different name or casing will raise a `KeyError` when the script runs.
 - **No stray index column:** Save with just the `ABN` column (and any other columns the membership team provides) — don't let a spreadsheet tool add an unnamed leading index column when exporting.
 - **Filename:** Save the file as `Tech_Council_ABNs.csv` (exact filename expected by the automation).
 

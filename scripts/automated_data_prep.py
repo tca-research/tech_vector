@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import random
 import os
+import sys
 import time
 from pathlib import Path
 
@@ -27,7 +28,10 @@ try:
     labour_market_pressure_index = pd.read_csv(DATA_INPUT / "automated_pull" / "skills_readiness_labour_market_pressure_oecd.csv", skiprows=1)
 except FileNotFoundError as e:
     print(f"Error: {e}. Please ensure all data files are in the correct directories.")
-    exit()
+    # Bare exit() raises SystemExit(None), which Python treats as exit code
+    # 0 (success) — a CI step running this script would show green even
+    # though the aggregation never happened. sys.exit(1) actually fails.
+    sys.exit(1)
 
 # TECH ROLES & TALENT
 #--------------------#
