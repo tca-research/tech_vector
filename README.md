@@ -33,10 +33,12 @@ scripts/
     assets/              # shared CSS/JS + each chart's own HTML/JS template
   MANUAL_DATA_PULL_INSTRUCTIONS_*.md  # how to refresh each manually-curated input
 tests/                  # pytest suite — see tests/README.md
-.github/workflows/
-  rebuild-data.yml           # scheduled 8-week rebuild, see below
-  sync-zoho-abn-webhook.yml  # event-driven ABN sync, see below
-  test.yml                   # runs tests/ on every push/PR
+.github/
+  DEPLOY_KEY_SETUP.md        # provisioning the deploy key rebuild-data.yml/sync-zoho-abn-webhook.yml push with
+  workflows/
+    rebuild-data.yml           # scheduled 8-week rebuild, see below
+    sync-zoho-abn-webhook.yml  # event-driven ABN sync, see below
+    test.yml                   # runs tests/ on every push/PR
 ```
 
 ## Running the full pipeline locally
@@ -72,6 +74,13 @@ and cannot refresh the manually-curated inputs (see below). There is still
 no deployment step (e.g. GitHub Pages) — scoped out for now; the workflow
 has a clean seam to add a `deploy` job onto if that's revisited.
 
+Before committing, it runs the full test suite (`tests/`, see below)
+against the charts it just rebuilt — a failure stops the push, so a bad
+automated pull can't silently land a broken chart on `main`. It checks the
+repo out with a deploy key rather than the default token, so it can keep
+pushing straight to `main` even once branch protection requires PRs for
+everyone else — see `.github/DEPLOY_KEY_SETUP.md`.
+
 ## Zoho CRM webhook (event-driven ABN sync)
 
 `data/input/automated_pull/Tech_Council_ABNs.csv` is kept current by
@@ -84,7 +93,10 @@ than applying an incremental diff. No Zoho credentials live in this repo;
 see `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`'s payload
 contract section for the exact shape and known data-quality caveats
 (ABNs need whitespace stripped, a handful of accounts have blank/invalid
-ABNs upstream).
+ABNs upstream). It runs `tests/test_zoho_webhook.py` before applying a
+sync (not the full suite — this workflow never touches charts), and pushes
+via the same deploy key as `rebuild-data.yml` — see
+`.github/DEPLOY_KEY_SETUP.md`.
 
 ## Manually-curated data
 
