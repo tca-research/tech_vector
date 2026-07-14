@@ -1,7 +1,7 @@
 # Chart data format
 
-`build_charts.py` generates standalone HTML files, one per chart (18 files
-across 13 loader functions, registered in the `CHARTS` list at the bottom of
+`build_charts.py` generates standalone HTML files, one per chart (19 files
+across 14 chart types, registered in the `CHARTS` list at the bottom of
 the file). Each chart's JS expects its input JSON in a specific shape. This
 is the contract — if you change what feeds a chart (a new source CSV, a
 different aggregation), match this shape or the chart will render with no
