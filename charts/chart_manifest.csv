@@ -1,11 +1,11 @@
 Chart File,Title,Last Updated
 tech_jobs_gauge.html,Tech Vector — headline metrics,2026-07-13 14:06:13
-tech_investment_gauge.html,Tech Vector — headline metrics,2026-07-15 08:00:31
-tech_sector_gdp_gauge.html,Tech Vector — headline metrics,2026-07-15 08:00:31
+tech_investment_gauge.html,Tech Vector — headline metrics,2026-07-15 08:09:46
+tech_sector_gdp_gauge.html,Tech Vector — headline metrics,2026-07-15 08:09:46
 bar_chart.html,Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees),2026-07-13 15:44:52
 womens_pay_scales_chart.html,Quartile pay bands per company,2026-07-13 15:44:52
 small_multiples.html,Tech sector hiring vs macroeconomic conditions,2026-07-13 15:44:52
-interactive_line_chart.html,"Employed persons by tech occupation, 1986–{year}",2026-07-13 15:44:52
+interactive_line_chart.html,"Employed persons by tech occupation, 1986–2026",2026-07-13 15:44:52
 scatter_chart.html,"Skills-first readiness vs labour market pressure, by region",2026-07-13 15:44:52
 ai_vibrancy_chart.html,Global AI Vibrancy Index,2026-07-13 20:45:04
 rnd_chart.html,R&D,2026-07-13 13:51:15
@@ -14,7 +14,7 @@ womens_promotion_rates_chart.html,"Per cent of men & women promoted, moved later
 tech_share_of_labour_force_chart.html,Tech Vector — tech roles as a share of the labour force,2026-07-13 13:51:15
 total_tech_employment_chart.html,Tech Vector — total employment in the direct tech sector,2026-07-13 13:51:15
 salary_percentiles_chart.html,Percentile remuneration per seniority level ($AUD) for common tech roles.,2026-07-13 13:51:15
-references.html,References,2026-07-15 08:00:31
+references.html,References,2026-07-15 08:09:46
 average_remuneration_by_sector_chart.html,Average total remuneration ($AUD) per company among WGEA-reporting organisations (100+ employees).,2026-07-13 15:44:52
 where_tech_pays_best_chart.html,Median remuneration for given role ($AUD).,2026-07-13 15:44:52
-dashboard_status.html,Dashboard Status,2026-07-15 08:00:31
+dashboard_status.html,Dashboard Status,2026-07-15 08:09:46

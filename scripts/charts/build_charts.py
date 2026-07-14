@@ -938,7 +938,7 @@ def read_previous_chart_state(out_path, data_key):
         return None, None, None, None
 
 
-def build_html(body_html, chart_js_file, data_key, config, data, last_updated=None, build_year=None, resolved_source=None):
+def build_html(body_html, chart_js_file, data_key, config, data, last_updated=None, build_year=None, resolved_source=None, title_year=None):
     css = read_asset("shared.css")
     shared_js = read_asset("shared.js")
     chart_js = read_asset(chart_js_file)
@@ -969,6 +969,14 @@ def build_html(body_html, chart_js_file, data_key, config, data, last_updated=No
         # source citing a fixed historical data vintage (e.g. RND_CONFIG's
         # "OECD (2021)") just omits the placeholder and stays untouched.
         config_payload["source"] = config_payload["source"].replace("{year}", str(build_year))
+    if title_year and config_payload.get("title"):
+        # Unlike "source" above, a title's "{year}" describes the date range
+        # actually covered by this chart's data (e.g. "1986–{year}"), not
+        # when the chart was last built — those can diverge (a rebuild
+        # today doesn't mean the underlying ABS release caught up to
+        # today's year), so it's resolved from the data's own latest year,
+        # supplied by the caller, rather than build_year.
+        config_payload["title"] = config_payload["title"].replace("{year}", str(title_year))
     data_json = json.dumps({data_key: {"config": config_payload, "data": data}})
     return f"""<title>{config.get("pageTitle", config.get("title", ""))}</title>
 <style>
@@ -1215,14 +1223,26 @@ def main():
         manifest_time = (previous_manifest_times.get(chart["out_file"]) if data_unchanged else None) or build_time
         print("  data unchanged, keeping previous date" if data_unchanged else "  data changed, stamping today's date")
 
+        # A config's "title" can carry a "{year}" placeholder too (currently
+        # only INTERACTIVE_LINE_CONFIG) — resolved from this chart's own
+        # data rather than build_year (see build_html's title_year comment).
+        # dateFormat is per-config since each chart's date-label column can
+        # use a different strptime format.
+        title_year = None
+        if chart["key"] == "interactiveLine" and data.get("dates") and chart["config"].get("dateFormat"):
+            title_year = datetime.strptime(data["dates"][-1], chart["config"]["dateFormat"]).year
+
         body_html = read_asset(chart["body_file"])
         html = build_html(
             body_html, chart["js_file"], chart["key"], chart["config"], data,
             last_updated=chart_last_updated, build_year=now.year, resolved_source=resolved_source,
+            title_year=title_year,
         )
         out_path.write_text(html, encoding="utf-8")
         print(f"  wrote {out_path}")
         title = chart["config"].get("title") or chart["config"].get("pageTitle", "")
+        if title_year:
+            title = title.replace("{year}", str(title_year))
         manifest_rows.append([chart["out_file"], title, manifest_time])
 
     with manifest_path.open("w", newline="", encoding="utf-8") as f:

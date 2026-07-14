@@ -678,7 +678,12 @@ function renderLineChart() {
     dates.forEach((dt, i) => { const dx = Math.abs(x(dt) - mx); if (dx < best) { best = dx; idx = i; } });
     if (data.values[idx] == null) return;
     cross.setAttribute("x1", x(dates[idx])); cross.setAttribute("x2", x(dates[idx])); cross.setAttribute("opacity", 1);
-    showTooltip(ev.clientX, ev.clientY, ttBox(data.dates[idx], [ttRow(color, cfg.endLabel || cfg.title, formatValue(data.values[idx]))]));
+    // data.dates entries are ISO ("YYYY-MM-DD"/"YYYY-MM") per DATA_FORMAT.md,
+    // not a display string — unlike interactive_line.js's "Month Year" dates,
+    // which are already human-readable. Format for display here instead of
+    // showing the raw ISO string in the tooltip title.
+    const dateLabel = new Date(dates[idx]).toLocaleDateString("en-AU", { year: "numeric", month: "long" });
+    showTooltip(ev.clientX, ev.clientY, ttBox(dateLabel, [ttRow(color, cfg.endLabel || cfg.title, formatValue(data.values[idx]))]));
   }, () => { cross.setAttribute("opacity", 0); hideTooltip(); });
 
   registerDownload(

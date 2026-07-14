@@ -113,6 +113,20 @@ differently only when its underlying figures change (most of them), you get
 that behavior for free from the `data_unchanged` mechanism — no extra work
 needed.
 
+**A config's `title` does *not* share the source line's `{year}` machinery
+automatically** — `{year}` there resolves against `build_year` (today's
+build date), which is the wrong value for a title describing the date range
+a chart's *data* actually covers (e.g. `INTERACTIVE_LINE_CONFIG`'s
+`"Employed persons by tech occupation, 1986–{year}"`): the data can lag
+behind the build date (a rebuild in the new year doesn't mean the ABS
+release caught up to it), so using `build_year` would silently overstate the
+range. Instead, `main()` computes `title_year` from that chart's own loaded
+data (currently: `interactiveLine`'s last `dates` entry, parsed with its
+`dateFormat`) and passes it to `build_html()`, which resolves `{year}` in
+`title` from that instead. A chart adding `{year}` to its own `title` needs
+the equivalent of that `title_year` computation added to its branch in
+`main()`'s build loop — it isn't automatic the way the source line is.
+
 ## Per-chart data contracts
 
 Each entry below is the shape of the list/dict a loader function returns —
