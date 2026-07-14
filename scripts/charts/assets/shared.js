@@ -153,6 +153,7 @@ function ttRow(color, label, value) {
     row.appendChild(key);
   }
   const lab = document.createElement("span");
+  lab.className = "tt-label";
   lab.textContent = label;
   row.appendChild(lab);
   if (value !== undefined) {

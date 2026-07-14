@@ -202,11 +202,18 @@ figure.chart-card {
   padding: 8px 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);
   opacity: 0; transform: translate(-9999px, -9999px);
   transition: opacity 0.08s ease-out;
-  max-width: 240px;
+  max-width: 280px;
 }
 .tooltip.visible { opacity: 1; }
-.tooltip .tt-value { font-weight: 700; }
-.tooltip .tt-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+/* Labels wrap and values never do — not the other way around. A blanket
+   nowrap on .tt-row (the old rule) means a long label + its value can't
+   both fit inside max-width, and since flex items refuse to shrink below
+   their own content size by default, the value (pushed right by
+   margin-left:auto) rendered outside the tooltip's dark background instead
+   of wrapping or being clipped, e.g. "Business & Data Analysts". */
+.tooltip .tt-value { font-weight: 700; white-space: nowrap; flex: none; }
+.tooltip .tt-row { display: flex; align-items: center; gap: 6px; }
+.tooltip .tt-label { flex: 1 1 auto; min-width: 0; overflow-wrap: break-word; }
 .tooltip .tt-key { width: 10px; height: 2px; border-radius: 1px; flex: none; }
 .tooltip .tt-title { font-weight: 700; margin-bottom: 4px; opacity: 0.85; }
 

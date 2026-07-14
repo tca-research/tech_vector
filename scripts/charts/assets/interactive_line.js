@@ -68,12 +68,23 @@ function renderInteractiveLine() {
 
     const yearSpan = dates[dates.length - 1].getFullYear() - dates[0].getFullYear();
     const tickEvery = Math.max(1, Math.round(yearSpan / 9));
+    const yearTicks = [];
     for (let yr = dates[0].getFullYear(); yr <= dates[dates.length - 1].getFullYear(); yr += tickEvery) {
       const gx = x(new Date(yr, 0, 1));
       if (gx < padL || gx > W - padR) continue;
-      const t = textEl(gx, H - padB + 16, "Jan " + yr, { class: "axis-label", "text-anchor": "end" }, svg);
-      t.setAttribute("transform", "rotate(-30 " + gx + " " + (H - padB + 16) + ")");
+      yearTicks.push({ yr, gx });
     }
+    // Only angle these labels when they'd actually collide unrotated — a
+    // 4-digit year at this font size needs ~35 SVG units, and this chart's
+    // ticks are rarely packed that tight, so a needless tilt would just make
+    // the axis harder to read than the plain horizontal labels every other
+    // chart uses.
+    const tickGap = yearTicks.length > 1 ? yearTicks[1].gx - yearTicks[0].gx : Infinity;
+    const rotateLabels = tickGap < 35;
+    yearTicks.forEach(({ yr, gx }) => {
+      const t = textEl(gx, H - padB + 16, String(yr), { class: "axis-label", "text-anchor": rotateLabels ? "end" : "middle" }, svg);
+      if (rotateLabels) t.setAttribute("transform", "rotate(-30 " + gx + " " + (H - padB + 16) + ")");
+    });
 
     const seriesInfo = [];
     names.forEach((name) => {
