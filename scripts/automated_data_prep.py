@@ -18,7 +18,7 @@ try:
     wgea_salary_df = pd.read_csv(DATA_INPUT / "automated_pull" / "wgea_salary_data.csv")
     wgea_workforce_composition = pd.read_csv(DATA_INPUT / "automated_pull" / "wgea_workforce_composition.csv")
     wgea_mgmt = pd.read_csv(DATA_INPUT / "automated_pull" / "wgea_workforce_management_statistics.csv")
-    abn_df = pd.read_csv(DATA_INPUT / "manual_pull" / "Tech_Council_ABNs.csv")
+    abn_df = pd.read_csv(DATA_INPUT / "automated_pull" / "Tech_Council_ABNs.csv")
     jobs_per_industry = pd.read_csv(DATA_INPUT / "manual_pull" / "tech_roles_in_tech_subsector_cleaned.csv")
     levels_fyi_salaries_df = pd.read_csv(DATA_INPUT / "automated_pull" / "au_levelsfyi_detailed_data.csv")
     lfs = pd.read_csv(DATA_INPUT / "automated_pull" / "abs_eq08_employed_by_occupation.csv", parse_dates=['date'])

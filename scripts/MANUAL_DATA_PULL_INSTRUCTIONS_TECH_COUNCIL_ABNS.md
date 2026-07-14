@@ -1,10 +1,12 @@
-**Tech Council ABNs — Manual Data Pull Instructions**
+**Tech Council ABNs — Manual Data Pull Instructions (superseded — now automated)**
+
+**This process is now automated.** `scripts/automated_fetch_zoho_abns.py` pulls the current member ABN list directly from Zoho CRM on every scheduled rebuild, writing `data/input/automated_pull/Tech_Council_ABNs.csv` — nobody needs to ask the membership team for a CSV or upload one by hand anymore. The steps below are kept as an **explicit fallback**: if the Zoho automation ever breaks (expired credentials, a CRM field renamed, etc.), follow this doc to get a manual CSV into the repo at `data/input/manual_pull/Tech_Council_ABNs.csv` instead, and temporarily point `scripts/automated_data_prep.py`'s read path back at `manual_pull` until the automation is fixed.
 
 This document explains how to get the current list of Tech Council of Australia member ABNs into this repository so `scripts/automated_data_prep.py` can identify which WGEA-reporting companies are Tech Council members.
 
 **Overview**
 - **Purpose:** Obtain the latest list of Tech Council member ABNs and place it in the repository at `data/input/manual_pull/Tech_Council_ABNs.csv`, with a column named `ABN`, so the data prep pipeline can match it against WGEA data.
-- **There is no automated source for this yet** — see "Future automation" below.
+- **This is now automated** — see the banner above and "Future automation" below.
 
 **Step 1: Request the ABNs**
 - **Ask the membership team** for a copy of the latest Tech Council ABNs (the current list of Tech Council of Australia member companies and their Australian Business Numbers).
@@ -48,9 +50,9 @@ git push -u origin update_tca_abns
 - **Column name:** `ABN`, exact spelling and casing.
 - **File must be a CSV, not an Excel file.**
 
-**Future automation**
-- This may be automated down the line using Zoho Flow, pulling directly from the TCA CRM — but that integration hasn't been configured yet, so for now this is a manual pull.
-- **Once that automation is set up:** move the file from `data/input/manual_pull/Tech_Council_ABNs.csv` to `data/input/automated_pull/Tech_Council_ABNs.csv`, and update the read path in `scripts/data_prep.py` (currently `DATA_INPUT / "manual_pull" / "Tech_Council_ABNs.csv"`) to point at `automated_pull` instead. Search the repo for `Tech_Council_ABNs.csv` to make sure no other file references the old `manual_pull` path.
+**Future automation — done**
+- This is now automated via `scripts/automated_fetch_zoho_abns.py`, pulling directly from the TCA Zoho CRM (Accounts module) on every scheduled rebuild — see that script's docstring for the exact auth/field-mapping details and its two unconfirmed placeholders (`ZOHO_ABN_FIELD`, `ZOHO_MEMBER_CRITERIA`).
+- `scripts/automated_data_prep.py` now reads `data/input/automated_pull/Tech_Council_ABNs.csv` by default. **If you're using this doc's fallback steps**, temporarily change that read path back to `DATA_INPUT / "manual_pull" / "Tech_Council_ABNs.csv"` until the Zoho automation is working again, and revert once fixed.
 
-**Where to put files**
-- Place the CSV in `data/input/manual_pull/` in the repository. This is the folder `scripts/data_prep.py` currently reads `Tech_Council_ABNs.csv` from.
+**Where to put files (fallback only)**
+- Place the CSV in `data/input/manual_pull/` in the repository. This is the folder `scripts/automated_data_prep.py` reads `Tech_Council_ABNs.csv` from **only** when temporarily reverted to the fallback path described above — normally it reads from `automated_pull/` instead.

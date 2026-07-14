@@ -33,9 +33,10 @@ this file — invoke them rather than re-deriving the steps:
 
 - **add-chart** — adding a new chart type or a new dataset in an existing
   chart shape.
-- **refresh-manual-data** — updating one of the 3 manually-curated data
-  sources (headline gauge figures, Tech Council member ABNs, ABS
-  TableBuilder exports) that nothing in this repo can fetch automatically.
+- **refresh-manual-data** — updating one of the 2 manually-curated data
+  sources (headline gauge figures, ABS TableBuilder exports) that nothing
+  in this repo can fetch automatically. (Tech Council member ABNs used to
+  be a 3rd manual source — now automated via Zoho CRM, see below.)
 - **run-pipeline** — running the full local pipeline and verifying charts
   render correctly (the headless-Chrome console-error sweep + screenshot
   method used throughout this project).
@@ -70,6 +71,20 @@ this file — invoke them rather than re-deriving the steps:
 - **`automated_data_prep.py`'s pay-quartiles example-role text uses
   unseeded `random.sample()`** — running it purely to verify produces a
   spurious diff each time, not a real data change. Don't commit that noise.
+- **Zoho's Self-Client OAuth refresh tokens don't expire** except on manual
+  revocation or exceeding 20 active tokens for one client — but every API
+  call still needs a fresh 1-hour access token exchanged from it first (see
+  `scripts/automated_fetch_zoho_abns.py`'s `get_access_token()`). Always use
+  the `api_domain` returned in that token response for CRM calls — never a
+  hardcoded Zoho domain; this org's data lives on the AU data center
+  (`zohoapis.com.au`), not the default.
+- **Two placeholders in `automated_fetch_zoho_abns.py` are unconfirmed
+  guesses**, not verified values: `ZOHO_ABN_FIELD` (the ABN custom field's
+  API name) and `ZOHO_MEMBER_CRITERIA` (the filter distinguishing active
+  Tech Council members from other Accounts). Don't treat the ABN pull as
+  fully working until these are confirmed with whoever administers the
+  CRM — the script hard-fails loudly if they're wrong, but the placeholder
+  values themselves were never verified against a live CRM.
 
 ## GitHub Actions automation
 
@@ -82,10 +97,30 @@ bypasses the gate for manual testing.
 This automation **only handles the automated-pull sources** — it commits
 regenerated `data/output/*.csv`, cleaned manual-pull CSVs, and
 `charts/*.html`/`chart_manifest.csv` back to `main`. It does not refresh
-the 3 manually-curated inputs (see the `refresh-manual-data` skill) and
-does not deploy anywhere or send notifications — both were deliberately
-scoped out for now (not forgotten); the workflow has a clean seam to add a
-`notify`/`deploy` job later if that's revisited.
+the 2 remaining manually-curated inputs (see the `refresh-manual-data`
+skill). It does not deploy anywhere — still scoped out for now; the
+workflow has a clean seam to add a `deploy` job later if that's revisited.
+
+Two more jobs in the same workflow file, both calling the Zoho Mail API
+directly (not a no-code Zoho Flow/Workflow-Rule alternative, which was
+researched and would need zero shared secrets — the code-based approach
+was chosen deliberately anyway):
+- **`send-reminder`** — fires exactly 7 days before a rebuild (its own
+  gate, checking `days_since_anchor % 56 == 49` after normalizing bash's
+  truncating `%` into a true mod), emailing `research@techcouncil.com.au`
+  to check the 2 manual sources first.
+- **`send-completion-notice`** — fires right after `rebuild` actually
+  succeeds (`needs: rebuild`, gated on both `did_rebuild == 'true'` and
+  `result == 'success'` — a rebuild that fails partway through must NOT
+  trigger "the dashboard has been updated"), prompting a Briefly update.
+
+All three jobs (`rebuild`'s fetch step, `send-reminder`, `send-completion-notice`)
+share the same 3 secrets: `ZOHO_CLIENT_ID`/`ZOHO_CLIENT_SECRET`/
+`ZOHO_REFRESH_TOKEN` — this assumes one Zoho Self-Client app was authorized
+for both a CRM read scope and a Mail send scope together. If that
+assumption turns out wrong (a Zoho admin issues two separate Self Clients
+instead), the fix is localized to the two email scripts' env-var names, not
+a redesign.
 
 `charts/dashboard_status.html` (the `status` chart in `build_charts.py`)
 shows "Last updated" / "Next update" using the same cycle-anchor math as
