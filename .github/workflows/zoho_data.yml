@@ -15,7 +15,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
+      - name: Process JSON to CSV
+        env:
+          ACCOUNTS_DATA: ${{ toJson(github.event.client_payload.accounts_data) }}
+        shell: python
+        run: |
+          import os
+          import json
+          import csv
       - name: Process JSON to CSV
         shell: python
         env:
