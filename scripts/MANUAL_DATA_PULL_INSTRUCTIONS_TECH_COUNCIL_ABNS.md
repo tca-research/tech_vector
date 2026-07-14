@@ -8,7 +8,7 @@ Three Workflow Rules on the **Accounts** module in Zoho CRM, each with a **Webho
 
 1. **Join/update** — trigger: Create or Edit, criteria `Membership_Status equals Active`. Webhook body:
    ```json
-   {"event_type": "zoho-abn-sync", "client_payload": {"action": "upsert", "abn": "${Accounts.ABN}", "account_name": "${Accounts.Account_Name}"}}
+   {"event_type": "tech_vector_export", "client_payload": {"action": "upsert", "abn": "${Accounts.ABN}", "account_name": "${Accounts.Account_Name}"}}
    ```
 2. **Departure (status change)** — trigger: Edit, criteria `Membership_Status is not Active`. Webhook body: same shape with `"action": "remove"`. Zoho workflow rules only fire on a false→true criteria transition, never true→false, so a rule scoped to "Active" alone will never catch a company *leaving* — this second, oppositely-scoped rule is what catches it. It will also re-fire on every subsequent edit to an already-inactive record, not just the moment it left; that's expected and harmless, since `sync_zoho_abn_webhook.py` treats removing an already-absent ABN as a no-op.
 3. **Departure (record deleted)** — trigger: Delete. Webhook body: same `"action": "remove"` shape. **Not fully verified**: Zoho's own docs confirm Delete triggers support Webhook actions, but don't confirm whether `${Accounts.ABN}`/`${Accounts.Account_Name}` merge fields still resolve once the record is being deleted. Test this explicitly when setting up (create a test Account, delete it, confirm the webhook fires with real values) — if merge fields don't resolve, drop this rule and rely on rule 2 instead (mark an Account Inactive before removing/archiving it, rather than hard-deleting).
