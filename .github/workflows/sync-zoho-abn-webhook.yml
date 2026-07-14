@@ -10,7 +10,7 @@ name: Sync Zoho ABN webhook
 # Zoho's own webhook action, not here.
 on:
   repository_dispatch:
-    types: [zoho-abn-sync]
+    types: [tech_vector_export]
 
 concurrency:
   group: sync-zoho-abn
