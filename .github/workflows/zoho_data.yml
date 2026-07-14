@@ -1,64 +1,69 @@
 name: Handle Zoho CRM Tech Vector Data
 
 on:
-  repository_dispatch:
-    types: [tech_vector_export]
+  repository_dispatch:
+    types:
+      - tech_vector_export
 
-# CRITICAL: Gives GitHub Actions permission to write/commit files back into your repo
 permissions:
-  contents: write
+  contents: write
 
 jobs:
-  convert-to-csv:
-    runs-on: ubuntu-latest
+  convert-to-csv:
+    runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Process JSON to CSV
-        env:
-          ACCOUNTS_DATA: ${{ toJson(github.event.client_payload.accounts_data) }}
-        shell: python
-        run: |
-          import os
-          import json
-          import csv
+      - name: Process JSON to CSV
+        shell: python
+        env:
+          ACCOUNTS_DATA: ${{ toJson(github.event.client_payload.accounts_data) }}
+        run: |
+          import os
+          import json
+          import csv
 
-          # Read raw string from environment variable and parse JSON array
-          raw_data = os.environ.get("ACCOUNTS_DATA", "[]")
-          accounts = json.loads(raw_data)
+          raw_data = os.environ.get("ACCOUNTS_DATA", "[]")
 
-          # Designate file target path
-          csv_filename = "active_memberships.csv"
+          try:
+              accounts = json.loads(raw_data)
+          except json.JSONDecodeError:
+              print(f"Unable to decode JSON: {raw_data}")
+              raise
 
-          # Write the data into standard CSV format with headers
-          with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
-              writer = csv.writer(file)
+          csv_filename = "active_memberships.csv"
 
-              # Set your CSV headers matching the keys generated in Deluge
-              writer.writerow(["Account ID", "Company Name", "ABN"])
+          with open(csv_filename, "w", newline="", encoding="utf-8") as f:
+              writer = csv.writer(f)
 
-              for account in accounts:
-                  writer.writerow([
-                      account.get("account_id", ""),
-                      account.get("company_name", ""),
-                      account.get("abn", "")
-                  ])
+              writer.writerow([
+                  "Account ID",
+                  "Company Name",
+                  "ABN"
+              ])
 
-          print(f"Successfully compiled {len(accounts)} rows into {csv_filename}")
+              for account in accounts:
+                  writer.writerow([
+                      account.get("account_id", ""),
+                      account.get("company_name", ""),
+                      account.get("abn", "")
+                  ])
 
-      - name: Commit and Push CSV changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          print(f"Wrote {len(accounts)} rows to {csv_filename}")
 
-          git add active_memberships.csv
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Only commit and push if the data actually changed, avoiding workflow loops/errors
-          if git diff --staged --quiet; then
-            echo "No data adjustments detected. Skipping commit execution."
-          else
-            git commit -m "Automated Sync: Updated active_memberships.csv from Zoho CRM"
-            git push
-          fi
+          git add active_memberships.csv
+
+          if git diff --cached --quiet; then
+            echo "No changes detected."
+            exit 0
+          fi
+
+          git commit -m "Update active_memberships.csv from Zoho CRM"
+          git push
