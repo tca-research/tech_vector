@@ -40,16 +40,29 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      # ssh-key: see rebuild-data.yml's Checkout step for why — same reason,
+      # same deploy key, same DEPLOY_KEY_SETUP.md.
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install pandas
-        run: pip install "pandas>=2.0"
+      - name: Install pandas and pytest
+        run: pip install "pandas>=2.0" pytest
+
+      # Only this script's own unit tests — this workflow never touches
+      # charts/build_charts.py, so the rest of the suite would just be
+      # testing code this run can't have affected. Runs before the sync
+      # itself so a regression here (e.g. in normalize_abn/extract_abns)
+      # fails the workflow before it ever touches the real payload or the
+      # CSV, not after.
+      - name: Run sync_zoho_abn_webhook.py's own tests
+        run: python -m pytest tests/test_zoho_webhook.py
 
       - name: Apply full ABN sync from webhook payload
         id: sync

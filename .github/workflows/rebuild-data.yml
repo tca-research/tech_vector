@@ -28,8 +28,16 @@ jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
+      # ssh-key checks the repo out with a deploy key instead of the default
+      # GITHUB_TOKEN — needed once main requires PRs, since the built-in
+      # github-actions[bot] identity can't be added to a ruleset's bypass
+      # list (it's a system account, not an installable App or deploy key)
+      # and this workflow needs to keep pushing straight to main. See
+      # DEPLOY_KEY_SETUP.md for how the key itself is provisioned.
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Check whether this is a rebuild week
         id: gate
@@ -91,6 +99,26 @@ jobs:
       - name: Build charts
         if: steps.gate.outputs.should_run == 'true'
         run: python3 scripts/charts/build_charts.py
+
+      # Self-gates this workflow against exactly the failure mode that
+      # motivated it: a bad automated pull silently producing a broken
+      # chart (wrong axis units, a console error, a mangled date). Running
+      # the full suite — including the Playwright checks against the
+      # charts/*.html this run just regenerated — here, before the commit
+      # step, means a failure stops the push from ever happening, which is
+      # stronger than gating a PR's merge (nothing bad reaches main either
+      # way, but this doesn't depend on how branch protection is set up).
+      - name: Install test dependencies
+        if: steps.gate.outputs.should_run == 'true'
+        run: pip install -r requirements-dev.txt
+
+      - name: Install Playwright's Chromium browser
+        if: steps.gate.outputs.should_run == 'true'
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run tests against the freshly-built charts
+        if: steps.gate.outputs.should_run == 'true'
+        run: python -m pytest
 
       - name: Commit regenerated files back to main
         if: steps.gate.outputs.should_run == 'true'
