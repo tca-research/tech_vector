@@ -7,6 +7,11 @@ Runs all five data-pull scripts in one go:
     - automated_fetch_macro_data.R           (Macro data - ABS unemployment rate, RBA cash
                                      rate, ABS EQ08 employed by occupation)
 
+Tech Council member ABNs are NOT fetched here -- that source is
+event-driven via a Zoho CRM webhook, not a scheduled pull. See
+scripts/sync_zoho_abn_webhook.py and .github/workflows/
+sync-zoho-abn-webhook.yml.
+
 Each script is fully standalone with its own sensible defaults (no required
 arguments), so this just calls each one in turn and reports what happened -
 it doesn't duplicate any of their logic.

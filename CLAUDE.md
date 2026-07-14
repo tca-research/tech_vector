@@ -33,9 +33,10 @@ this file — invoke them rather than re-deriving the steps:
 
 - **add-chart** — adding a new chart type or a new dataset in an existing
   chart shape.
-- **refresh-manual-data** — updating one of the 3 manually-curated data
-  sources (headline gauge figures, Tech Council member ABNs, ABS
-  TableBuilder exports) that nothing in this repo can fetch automatically.
+- **refresh-manual-data** — updating one of the 2 manually-curated data
+  sources (headline gauge figures, ABS TableBuilder exports) that nothing
+  in this repo can fetch automatically. (Tech Council member ABNs used to
+  be a 3rd manual source — now automated via a Zoho CRM webhook, see below.)
 - **run-pipeline** — running the full local pipeline and verifying charts
   render correctly (the headless-Chrome console-error sweep + screenshot
   method used throughout this project).
@@ -70,6 +71,22 @@ this file — invoke them rather than re-deriving the steps:
 - **`automated_data_prep.py`'s pay-quartiles example-role text uses
   unseeded `random.sample()`** — running it purely to verify produces a
   spurious diff each time, not a real data change. Don't commit that noise.
+- **Zoho CRM workflow rules only fire on a false→true criteria transition,
+  never true→false.** A rule scoped to "Membership_Status = Active" catches
+  a company joining but will never catch one leaving — that needs a second,
+  oppositely-scoped rule (see `sync-zoho-abn-webhook.yml`'s design in
+  `MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`). That second rule
+  then re-fires on every subsequent edit to an already-non-matching record,
+  not just the transition moment — `sync_zoho_abn_webhook.py` has to be
+  idempotent (remove-if-present, upsert-if-absent) specifically because of
+  this, not as a general defensive habit.
+- **The Zoho ABN webhook has no periodic reconciliation.** Zoho retries a
+  failed webhook delivery once, ~15 minutes later, then stops permanently
+  for that trigger — if both attempts fail, that membership change is
+  silently lost with no automated alert. This was an explicit, accepted
+  simplicity trade-off (see the plan that shipped it), not an oversight —
+  don't "fix" it by quietly adding a reconciliation job without revisiting
+  that decision first.
 
 ## GitHub Actions automation
 
@@ -82,10 +99,19 @@ bypasses the gate for manual testing.
 This automation **only handles the automated-pull sources** — it commits
 regenerated `data/output/*.csv`, cleaned manual-pull CSVs, and
 `charts/*.html`/`chart_manifest.csv` back to `main`. It does not refresh
-the 3 manually-curated inputs (see the `refresh-manual-data` skill) and
-does not deploy anywhere or send notifications — both were deliberately
-scoped out for now (not forgotten); the workflow has a clean seam to add a
-`notify`/`deploy` job later if that's revisited.
+the 2 remaining manually-curated inputs (see the `refresh-manual-data`
+skill). It does not deploy anywhere — still scoped out for now; the
+workflow has a clean seam to add a `deploy` job later if that's revisited.
+
+A separate workflow, `.github/workflows/sync-zoho-abn-webhook.yml`, handles
+Tech Council member ABNs — event-driven via `repository_dispatch`, not on
+this file's 8-week schedule. It has no Zoho credentials of its own; the
+only credential in that whole path (a GitHub PAT) lives inside Zoho's own
+webhook config, not in this repo. See
+`scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`'s "Zoho
+webhook setup" section for the 3 Workflow Rules that drive it, and the two
+gotchas above (transition-only firing, no reconciliation) for why it's
+built the way it is.
 
 `charts/dashboard_status.html` (the `status` chart in `build_charts.py`)
 shows "Last updated" / "Next update" using the same cycle-anchor math as

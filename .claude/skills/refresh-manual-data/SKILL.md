@@ -1,11 +1,11 @@
 ---
 name: refresh-manual-data
-description: Refresh one of the 3 manually-curated data sources feeding the Tech Vector dashboard (headline metrics/gauges, Tech Council member ABNs, ABS TableBuilder exports) and rebuild the affected charts. Use when asked to update a gauge figure, refresh member ABNs, upload a TableBuilder export, or otherwise update data this pipeline can't fetch automatically.
+description: Refresh one of the 2 manually-curated data sources feeding the Tech Vector dashboard (headline metrics/gauges, ABS TableBuilder exports) and rebuild the affected charts. Use when asked to update a gauge figure, upload a TableBuilder export, or otherwise update data this pipeline can't fetch automatically.
 ---
 
 # Refresh manually-curated data
 
-Three inputs need a human to refresh them — nothing in this repo fetches
+Two inputs need a human to refresh them — nothing in this repo fetches
 them automatically, and the GitHub Actions rebuild workflow doesn't touch
 them either. Each has its own instructions doc under `scripts/`; **read the
 matching doc in full before editing anything** — don't improvise a CSV
@@ -14,14 +14,20 @@ shape or filename, the aggregation step reads exact column names/filenames.
 | Source | Instructions doc | Feeds |
 |---|---|---|
 | Tech Investment / Tech Sector GDP gauge figures, Tech Jobs raw source | `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_HEADLINE_METRICS.md` | `headline_metrics.csv`, `tech_jobs_in_australia.csv` |
-| Tech Council member ABNs | `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md` | `Tech_Council_ABNs.csv` |
 | ABS TableBuilder exports | `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TABLEBUILDER_UPLOAD.md` | `tech_roles_in_tech_subsector.csv`, `tech_jobs_in_australia.csv` |
+
+A third source — Tech Council member ABNs — used to be manual too; it's
+now automated via a Zoho CRM webhook (event-driven, see
+`scripts/sync_zoho_abn_webhook.py` and `.github/workflows/
+sync-zoho-abn-webhook.yml`). `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`
+is now only a fallback if that automation breaks — don't use it for a
+routine refresh.
 
 ## Steps
 
 1. **Identify which source needs refreshing.** If ambiguous, ask rather
-   than guessing — the three docs have non-overlapping but similarly-named
-   files (`tech_jobs_in_australia.csv` is shared between two of them).
+   than guessing — the two docs have non-overlapping but similarly-named
+   files (`tech_jobs_in_australia.csv` is shared between both of them).
 2. **Read and follow that doc exactly.** Exact filename, exact column
    name/casing (e.g. `ABN` must be exactly that, case-sensitive —
    `automated_data_prep.py` reads it by name and raises `KeyError`
