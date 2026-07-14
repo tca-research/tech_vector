@@ -1,0 +1,36 @@
+name: Tests
+
+# Runs the test suite (tests/) on every push and pull request — the pure
+# Python unit tests (data-prep/build_charts helpers) plus the Playwright
+# checks against the already-built charts/*.html files committed to the
+# repo. Unlike rebuild-data.yml, this needs no R setup and never commits
+# anything back — it only reads the checked-out repo.
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Install Playwright's Chromium browser
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run tests
+        run: python -m pytest

@@ -32,9 +32,11 @@ scripts/
     DATA_FORMAT.md       # the data contract each chart's loader/JS expects — read before changing what feeds a chart
     assets/              # shared CSS/JS + each chart's own HTML/JS template
   MANUAL_DATA_PULL_INSTRUCTIONS_*.md  # how to refresh each manually-curated input
+tests/                  # pytest suite — see tests/README.md
 .github/workflows/
   rebuild-data.yml           # scheduled 8-week rebuild, see below
   sync-zoho-abn-webhook.yml  # event-driven ABN sync, see below
+  test.yml                   # runs tests/ on every push/PR
 ```
 
 ## Running the full pipeline locally
@@ -99,6 +101,15 @@ The Tech Council member ABN list used to be a third manual input — it's
 now automated via a Zoho CRM webhook (see above). See
 **`scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`** only if
 that automation breaks and a manual fallback pull is needed.
+
+## Tests
+
+`.github/workflows/test.yml` runs the suite in `tests/` on every push and
+PR — pure-Python unit tests for `manual_data_prep.py`, `build_charts.py`,
+and `sync_zoho_abn_webhook.py`, plus Playwright checks against the
+already-built `charts/*.html` (console errors, tooltip behavior, a handful
+of chart-specific regressions). See `tests/README.md` for what's covered,
+what's deliberately not, and how to run it locally.
 
 ## The chart system
 

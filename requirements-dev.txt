@@ -1,0 +1,5 @@
+# Test-only dependencies — not needed to run the actual pipeline or CI
+# rebuild job, only `pytest`. See tests/README.md.
+-r requirements.txt
+pytest>=8.0
+pytest-playwright>=0.4
