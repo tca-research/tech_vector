@@ -8,9 +8,32 @@ name: Sync Zoho ABN webhook
 # No Zoho credentials live in this repo: the one credential this needs (a
 # GitHub PAT, so Zoho can call the dispatches API) is configured inside
 # Zoho's own webhook action, not here.
+#
+# Also runnable via workflow_dispatch, purely for testing — this is the
+# only way to exercise a *branch's* version of this file at all:
+# repository_dispatch always runs whatever copy of this workflow exists on
+# the default branch, with no ref you can point elsewhere, so a change
+# pushed to a feature branch can't be tested via a real/simulated Zoho
+# webhook call until it's merged. workflow_dispatch's "Run workflow" button
+# (or `ref` in the API call) lets you pick the branch instead.
 on:
   repository_dispatch:
     types: [tech_vector_export]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'upsert or remove'
+        type: choice
+        options: [upsert, remove]
+        default: upsert
+      abn:
+        description: 'ABN to add/remove'
+        type: string
+        required: true
+      account_name:
+        description: 'Account name (commit message / logging only)'
+        type: string
+        default: 'Manual test'
 
 concurrency:
   group: sync-zoho-abn
@@ -37,11 +60,14 @@ jobs:
       - name: Apply ABN update from webhook payload
         run: python3 scripts/sync_zoho_abn_webhook.py
         env:
-          ZOHO_WEBHOOK_ACTION: ${{ github.event.client_payload.action }}
-          ZOHO_WEBHOOK_ACCOUNT_NAME: ${{ github.event.client_payload.account_name }}
-          ZOHO_WEBHOOK_ABN: ${{ github.event.client_payload.abn }}
+          ZOHO_WEBHOOK_ACTION: ${{ github.event_name == 'workflow_dispatch' && inputs.action || github.event.client_payload.action }}
+          ZOHO_WEBHOOK_ACCOUNT_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.account_name || github.event.client_payload.account_name }}
+          ZOHO_WEBHOOK_ABN: ${{ github.event_name == 'workflow_dispatch' && inputs.abn || github.event.client_payload.abn }}
 
       - name: Commit if changed
+        env:
+          COMMIT_ACTION: ${{ github.event_name == 'workflow_dispatch' && inputs.action || github.event.client_payload.action }}
+          COMMIT_ACCOUNT_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.account_name || github.event.client_payload.account_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -49,6 +75,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Zoho webhook: ABN ${{ github.event.client_payload.action }} for ${{ github.event.client_payload.account_name }}"
+            git commit -m "Zoho webhook: ABN ${COMMIT_ACTION} for ${COMMIT_ACCOUNT_NAME}"
             git push origin HEAD:main
           fi
