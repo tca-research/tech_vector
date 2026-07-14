@@ -1,40 +1,53 @@
 """
-Applies a single ABN add/update/remove signal pushed from a Zoho CRM
-Workflow Rule's webhook action (see .github/workflows/
-sync-zoho-abn-webhook.yml, which passes github.event.client_payload
-through as the 3 env vars below).
+Replaces data/input/automated_pull/Tech_Council_ABNs.csv wholesale with the
+full current membership snapshot pushed by a Zoho-side process via
+GitHub's repository_dispatch API (see .github/workflows/
+sync-zoho-abn-webhook.yml).
 
-Replaces an earlier OAuth/CRM-polling design entirely: Zoho now pushes
-membership changes to us event-driven, via 3 Workflow Rules on the
-Accounts module (see scripts/MANUAL_DATA_PULL_INSTRUCTIONS_
-TECH_COUNCIL_ABNS.md's "Zoho webhook setup" section for the exact
-criteria/webhook-body configuration). No Zoho OAuth client and no GitHub
-secrets are needed for this path at all -- the only credential involved
-(a GitHub PAT with access to trigger repository_dispatch) lives inside
-Zoho's own webhook header config, never in this repo.
+Every delivery carries ALL currently-active Tech Council member Accounts
+in one payload, e.g.:
+    {"sync_date": "14-Jul-2026", "account_count": 158,
+     "accounts_data": [{"account_id": "...", "company_name": "...",
+     "abn": "44 645 215 194"}, ...]}
+So this script always overwrites the CSV wholesale rather than tracking
+incremental add/remove events -- this is self-healing by construction,
+since there's no way for the CSV to drift from Zoho's true state between
+deliveries when each one already IS the full true state.
 
-REQUIRED ENVIRONMENT VARIABLES (set by the workflow from
-github.event.client_payload)
+ABN NORMALIZATION
+------------------
+Zoho sends ABNs in human display format with space separators (e.g.
+"44 645 215 194"), not the bare-digit string automated_data_prep.py's
+.isin() match against WGEA's Employer ABN column needs -- leaving the
+spaces in would make every one of these companies silently fail to match
+anything, with no error. This is the same class of bug as this pipeline's
+established ISO-date and gauge-unit rules: it renders/runs fine and
+produces a wrong answer. Every ABN is stripped to bare digits before being
+written out (normalize_abn()).
+
+A real fraction of records have a missing ("") or malformed (not exactly
+11 digits, e.g. "149633116") ABN -- genuine data quality issues in the
+source CRM, not something this script can fix. Rather than failing the
+whole sync over a handful of bad records (which would block 150+ good
+ones over 2-3 companies with no valid ABN on file), invalid entries are
+skipped with a clear per-company warning, so whoever administers the CRM
+can go fix the record -- collect every issue and report it clearly,
+don't silently drop data or crash on the first bad row.
+
+REQUIRED ENVIRONMENT VARIABLE
 -------------------------------------------------------------------------
-    ZOHO_WEBHOOK_ACTION        - "upsert" or "remove"
-    ZOHO_WEBHOOK_ACCOUNT_NAME  - the Zoho Account's name (commit-message
-                                  traceability only -- ABN is the actual
-                                  join key downstream, not the name)
-    ZOHO_WEBHOOK_ABN           - the account's ABN
-
-Idempotent by design: Zoho's own workflow-rule semantics mean "remove"
-can arrive repeatedly for the same ABN -- a rule scoped to
-"Membership_Status is not Active" fires on every subsequent edit to an
-already-inactive record, not just the moment it became inactive (Zoho
-workflow rules only fire on a false->true criteria transition, so the
-reverse direction needs this separately-scoped rule, which then re-fires
-on every later edit too). Removing an ABN that's already absent, or
-upserting one that's already present with the same value, are both safe
-no-ops here -- that's what makes the repeated-firing behavior harmless.
+    ZOHO_WEBHOOK_PAYLOAD - the raw JSON string of the webhook's
+                            client_payload (see
+                            .github/workflows/sync-zoho-abn-webhook.yml
+                            for how this is populated from
+                            github.event.client_payload, or a
+                            workflow_dispatch test input)
 """
 
-import sys
+import json
 import os
+import re
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -43,50 +56,106 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 ABNS_CSV = REPO_ROOT / "data" / "input" / "automated_pull" / "Tech_Council_ABNs.csv"
 
 
-def _normalize_abn(value) -> str:
-    return str(value).strip()
+def normalize_abn(raw) -> str:
+    """Strips everything but digits. A valid Australian ABN is always
+    exactly 11 digits -- callers should treat any other length as
+    invalid, not attempt to coerce/pad it."""
+    return re.sub(r"\D", "", str(raw or ""))
+
+
+def extract_abns(accounts: list) -> tuple:
+    """Returns (valid_abns, skipped_descriptions). An account is skipped
+    if its normalized ABN isn't exactly 11 digits (covers both a blank
+    "" ABN and a wrong-length one like Deloitte's real "149633116")."""
+    valid = []
+    skipped = []
+    for acct in accounts:
+        name = acct.get("company_name") or acct.get("account_id") or "<unnamed>"
+        raw_abn = acct.get("abn")
+        abn = normalize_abn(raw_abn)
+        if len(abn) != 11:
+            skipped.append(f"{name} (raw ABN: {raw_abn!r})")
+            continue
+        valid.append(abn)
+    return valid, skipped
+
+
+def write_github_output(**kwargs):
+    """Best-effort: writes step outputs for the workflow's commit-message
+    step to reference. No-op if GITHUB_OUTPUT isn't set (e.g. running
+    this script by hand locally)."""
+    path = os.environ.get("GITHUB_OUTPUT")
+    if not path:
+        return
+    with open(path, "a", encoding="utf-8") as f:
+        for key, value in kwargs.items():
+            f.write(f"{key}={value}\n")
 
 
 def main():
-    action = os.environ.get("ZOHO_WEBHOOK_ACTION")
-    account_name = os.environ.get("ZOHO_WEBHOOK_ACCOUNT_NAME") or "<unknown>"
-    abn = os.environ.get("ZOHO_WEBHOOK_ABN")
+    raw_payload = os.environ.get("ZOHO_WEBHOOK_PAYLOAD")
+    if not raw_payload:
+        print("Error: ZOHO_WEBHOOK_PAYLOAD is missing or empty.", file=sys.stderr)
+        sys.exit(1)
 
-    if action not in ("upsert", "remove"):
+    try:
+        payload = json.loads(raw_payload)
+    except json.JSONDecodeError as e:
+        print(f"Error: ZOHO_WEBHOOK_PAYLOAD is not valid JSON: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    accounts = payload.get("accounts_data")
+    if not isinstance(accounts, list) or not accounts:
         print(
-            f"Error: ZOHO_WEBHOOK_ACTION must be 'upsert' or 'remove', got {action!r}.",
+            "Error: expected a non-empty 'accounts_data' list in the payload, got: "
+            f"{type(accounts).__name__ if accounts is not None else 'missing'}.",
             file=sys.stderr,
         )
         sys.exit(1)
-    if not abn or not _normalize_abn(abn):
-        print("Error: ZOHO_WEBHOOK_ABN is missing or empty -- refusing to guess.", file=sys.stderr)
+
+    expected_count = payload.get("account_count")
+    if expected_count is not None and expected_count != len(accounts):
+        print(
+            f"Warning: payload's account_count ({expected_count}) doesn't match "
+            f"the actual accounts_data length ({len(accounts)}) -- possible "
+            "truncated/corrupted payload. Proceeding with what was received.",
+            file=sys.stderr,
+        )
+
+    abns, skipped = extract_abns(accounts)
+
+    if skipped:
+        print(
+            f"Warning: skipped {len(skipped)} of {len(accounts)} account(s) with a "
+            "missing or malformed (not exactly 11 digits) ABN -- these companies "
+            "won't be cross-referenced against WGEA data until fixed in Zoho CRM:",
+            file=sys.stderr,
+        )
+        for s in skipped:
+            print(f"  - {s}", file=sys.stderr)
+
+    if not abns:
+        print(
+            "Error: zero usable ABNs extracted from the payload -- refusing to "
+            "overwrite the CSV with an empty/garbage result.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
-    abn = _normalize_abn(abn)
-
-    if ABNS_CSV.exists():
-        df = pd.read_csv(ABNS_CSV, dtype=str)
-    else:
-        df = pd.DataFrame({"ABN": []})
-
-    existing = set(df["ABN"].dropna().map(_normalize_abn))
-
-    if action == "upsert":
-        if abn in existing:
-            print(f"ABN {abn} ({account_name}) already present -- no change.")
-        else:
-            df = pd.concat([df, pd.DataFrame({"ABN": [abn]})], ignore_index=True)
-            print(f"Added ABN {abn} ({account_name}).")
-    else:  # remove
-        if abn not in existing:
-            print(f"ABN {abn} ({account_name}) not present -- no change.")
-        else:
-            df = df[df["ABN"].map(_normalize_abn) != abn]
-            print(f"Removed ABN {abn} ({account_name}).")
-
-    df = df.drop_duplicates(subset="ABN").sort_values("ABN").reset_index(drop=True)
+    df = pd.DataFrame({"ABN": sorted(set(abns))})
     ABNS_CSV.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(ABNS_CSV, index=False)
+
+    print(
+        f"Wrote {len(df)} unique ABN(s) to {ABNS_CSV} "
+        f"(from {len(accounts)} accounts in the payload, {len(skipped)} skipped)."
+    )
+    write_github_output(
+        written_count=len(df),
+        skipped_count=len(skipped),
+        account_count=len(accounts),
+        sync_date=payload.get("sync_date", ""),
+    )
 
 
 if __name__ == "__main__":

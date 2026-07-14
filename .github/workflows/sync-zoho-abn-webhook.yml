@@ -1,13 +1,16 @@
 name: Sync Zoho ABN webhook
 
-# Event-driven, not scheduled: a Zoho CRM Workflow Rule (see
-# scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md's "Zoho webhook
-# setup" section) POSTs directly to GitHub's repository_dispatch API
-# whenever a Tech Council member Account is added, edited, or removed in
-# Zoho CRM — carrying the changed Account's name/ABN in the payload itself.
-# No Zoho credentials live in this repo: the one credential this needs (a
-# GitHub PAT, so Zoho can call the dispatches API) is configured inside
-# Zoho's own webhook action, not here.
+# Event-driven, not scheduled: a Zoho-side process POSTs the full current
+# Tech Council member list directly to GitHub's repository_dispatch API
+# (see scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md's "Zoho
+# webhook setup" section) — carrying ALL currently-active member Accounts
+# in one payload (accounts_data: [{account_id, company_name, abn}, ...]),
+# not a single record's create/edit/delete. scripts/sync_zoho_abn_webhook.py
+# always overwrites Tech_Council_ABNs.csv wholesale with what it receives —
+# self-healing by construction, since every delivery already is the full
+# true state. No Zoho credentials live in this repo: the one credential
+# this needs (a GitHub PAT, so Zoho can call the dispatches API) is
+# configured inside Zoho's own webhook action, not here.
 #
 # Also runnable via workflow_dispatch, purely for testing — this is the
 # only way to exercise a *branch's* version of this file at all:
@@ -21,19 +24,10 @@ on:
     types: [tech_vector_export]
   workflow_dispatch:
     inputs:
-      action:
-        description: 'upsert or remove'
-        type: choice
-        options: [upsert, remove]
-        default: upsert
-      abn:
-        description: 'ABN to add/remove'
+      payload_json:
+        description: 'client_payload JSON to test with, e.g. {"sync_date": "...", "account_count": 2, "accounts_data": [{"company_name": "Test Co", "abn": "11 111 111 111"}]}'
         type: string
         required: true
-      account_name:
-        description: 'Account name (commit message / logging only)'
-        type: string
-        default: 'Manual test'
 
 concurrency:
   group: sync-zoho-abn
@@ -57,17 +51,13 @@ jobs:
       - name: Install pandas
         run: pip install "pandas>=2.0"
 
-      - name: Apply ABN update from webhook payload
+      - name: Apply full ABN sync from webhook payload
+        id: sync
         run: python3 scripts/sync_zoho_abn_webhook.py
         env:
-          ZOHO_WEBHOOK_ACTION: ${{ github.event_name == 'workflow_dispatch' && inputs.action || github.event.client_payload.action }}
-          ZOHO_WEBHOOK_ACCOUNT_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.account_name || github.event.client_payload.account_name }}
-          ZOHO_WEBHOOK_ABN: ${{ github.event_name == 'workflow_dispatch' && inputs.abn || github.event.client_payload.abn }}
+          ZOHO_WEBHOOK_PAYLOAD: ${{ github.event_name == 'workflow_dispatch' && inputs.payload_json || toJson(github.event.client_payload) }}
 
       - name: Commit if changed
-        env:
-          COMMIT_ACTION: ${{ github.event_name == 'workflow_dispatch' && inputs.action || github.event.client_payload.action }}
-          COMMIT_ACCOUNT_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.account_name || github.event.client_payload.account_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -75,6 +65,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Zoho webhook: ABN ${COMMIT_ACTION} for ${COMMIT_ACCOUNT_NAME}"
+            git commit -m "Zoho webhook: full ABN sync (${{ steps.sync.outputs.written_count }} written, ${{ steps.sync.outputs.skipped_count }} skipped, sync_date=${{ steps.sync.outputs.sync_date }})"
             git push origin HEAD:main
           fi

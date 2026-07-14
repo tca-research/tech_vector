@@ -24,7 +24,7 @@ charts/               # the 19 generated chart HTML files + chart_manifest.csv (
 scripts/
   automated_fetch_*.py/.R   # one script per automated data source
   automated_fetch_all_data.py  # runs all 5 of the above in sequence
-  sync_zoho_abn_webhook.py    # applies one Zoho CRM webhook event to Tech_Council_ABNs.csv
+  sync_zoho_abn_webhook.py    # overwrites Tech_Council_ABNs.csv with each webhook's full member snapshot
   manual_data_prep.py    # cleans raw manual-pull CSVs into *_cleaned.csv siblings
   automated_data_prep.py # the main aggregation step — reads data/input/*, writes data/output/*.csv
   charts/
@@ -73,14 +73,16 @@ has a clean seam to add a `deploy` job onto if that's revisited.
 ## Zoho CRM webhook (event-driven ABN sync)
 
 `data/input/automated_pull/Tech_Council_ABNs.csv` is kept current by
-`.github/workflows/sync-zoho-abn-webhook.yml`, triggered by a Zoho CRM
-Workflow Rule pushing directly to GitHub's `repository_dispatch` API
-whenever a member Account is added, edited, or its membership status
-changes — not by any scheduled pull. No Zoho credentials live in this
-repo; see `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`'s
-"Zoho webhook setup" section for the exact rule configuration and a
-documented trade-off (no periodic reconciliation if a webhook delivery is
-ever permanently lost).
+`.github/workflows/sync-zoho-abn-webhook.yml`, triggered by a Zoho-side
+process pushing directly to GitHub's `repository_dispatch` API — not by
+any scheduled pull. Each delivery carries the **full current list** of
+active Tech Council members in one payload, and the receiving script
+(`scripts/sync_zoho_abn_webhook.py`) overwrites the CSV wholesale rather
+than applying an incremental diff. No Zoho credentials live in this repo;
+see `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`'s payload
+contract section for the exact shape and known data-quality caveats
+(ABNs need whitespace stripped, a handful of accounts have blank/invalid
+ABNs upstream).
 
 ## Manually-curated data
 
