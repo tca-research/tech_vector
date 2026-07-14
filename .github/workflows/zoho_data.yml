@@ -10,5 +10,4 @@ jobs:
     steps:
       - name: Read Payload Data
         run: |
-          echo "Received data from Zoho!"
           echo "Payload content: '${{ toJson(github.event.client_payload) }}'"
