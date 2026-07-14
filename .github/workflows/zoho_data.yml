@@ -10,6 +10,5 @@ jobs:
     steps:
       - name: Read Payload Data
         run: |
-          # GitHub automatically injects the payload map sent by Deluge
           echo "Received data from Zoho!"
           echo "Payload content: '${{ toJson(github.event.client_payload) }}'"
