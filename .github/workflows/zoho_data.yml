@@ -13,14 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository so the runner can modify files
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Extract JSON payload and write it into a CSV using inline Python
       - name: Process JSON to CSV
         env:
-          # Safely passes the array from Zoho into the environment to avoid character escaping issues
           ACCOUNTS_DATA: ${{ toJson(github.event.client_payload.accounts_data) }}
         shell: python
         run: |
@@ -51,7 +48,6 @@ jobs:
 
           print(f"Successfully compiled {len(accounts)} rows into {csv_filename}")
 
-      # 3. Automatically commit the new CSV file back to your repo
       - name: Commit and Push CSV changes
         run: |
           git config --global user.name "github-actions[bot]"
