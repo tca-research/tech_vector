@@ -2,7 +2,6 @@ name: Handle Incoming Zoho Data
 
 on:
   repository_dispatch:
-    # This must match the 'event_type' string we send from Zoho Deluge
     types: [tech_vector_export]
 
 jobs:
