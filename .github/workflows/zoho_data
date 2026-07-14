@@ -1,0 +1,16 @@
+name: Handle Incoming Zoho Data
+
+on:
+  repository_dispatch:
+    # This must match the 'event_type' string we send from Zoho Deluge
+    types: [tech_vector_export]
+
+jobs:
+  process-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read Payload Data
+        run: |
+          # GitHub automatically injects the payload map sent by Deluge
+          echo "Received data from Zoho!"
+          echo "Payload content: '${{ toJson(github.event.client_payload) }}'"
