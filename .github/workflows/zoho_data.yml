@@ -1,13 +1,68 @@
-name: Handle Incoming Zoho Data
+name: Handle Zoho CRM Tech Vector Data
 
 on:
   repository_dispatch:
     types: [tech_vector_export]
 
+# CRITICAL: Gives GitHub Actions permission to write/commit files back into your repo
+permissions:
+  contents: write
+
 jobs:
-  process-data:
+  convert-to-csv:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Read Payload Data
+      # 1. Checkout the repository so the runner can modify files
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Extract JSON payload and write it into a CSV using inline Python
+      - name: Process JSON to CSV
+        env:
+          # Safely passes the array from Zoho into the environment to avoid character escaping issues
+          ACCOUNTS_DATA: ${{ toJson(github.event.client_payload.accounts_data) }}
+        shell: python
         run: |
-          echo "Payload content: '${{ toJson(github.event.client_payload) }}'"
+          import os
+          import json
+          import csv
+
+          # Read raw string from environment variable and parse JSON array
+          raw_data = os.environ.get("ACCOUNTS_DATA", "[]")
+          accounts = json.loads(raw_data)
+
+          # Designate file target path
+          csv_filename = "active_memberships.csv"
+
+          # Write the data into standard CSV format with headers
+          with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
+              writer = csv.writer(file)
+
+              # Set your CSV headers matching the keys generated in Deluge
+              writer.writerow(["Account ID", "Company Name", "ABN"])
+
+              for account in accounts:
+                  writer.writerow([
+                      account.get("account_id", ""),
+                      account.get("company_name", ""),
+                      account.get("abn", "")
+                  ])
+
+          print(f"Successfully compiled {len(accounts)} rows into {csv_filename}")
+
+      # 3. Automatically commit the new CSV file back to your repo
+      - name: Commit and Push CSV changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add active_memberships.csv
+
+          # Only commit and push if the data actually changed, avoiding workflow loops/errors
+          if git diff --staged --quiet; then
+            echo "No data adjustments detected. Skipping commit execution."
+          else
+            git commit -m "Automated Sync: Updated active_memberships.csv from Zoho CRM"
+            git push
+          fi
