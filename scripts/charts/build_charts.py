@@ -605,20 +605,18 @@ def load_stacked_small_multiples_data(config=STACKED_SMALL_MULTIPLES_CONFIG, sou
 # =============================================================================
 TECH_SHARE_LINE_CONFIG = {
     "pageTitle": "Tech Vector — tech roles as a share of the labour force",
-    "title": "Tech Roles as a Share of the Total Labour Force",
     "caption": "This proportion indicates how tech employment has grown as a segment of the overall workforce, showing tech's increasing economic importance over time.",
     "source": "Source: Australian Bureau of Statistics ({year}). Data is aggregated by the Tech Council of Australia.",
     "downloadFilename": "tech_occupations_share_of_labour_force.csv",
     "dateColumn": "date",
     "valueColumn": "% of labour force in tech occupations (smoothed)",
-    "endLabel": "% of labour force in tech occupations (smoothed)",
+    "endLabel": "% - labour force in tech occupations (smoothed)",
     "lineColor": "cat-3",
     "valueFormat": {"suffix": "%", "decimals": 0},
 }
 
 TOTAL_TECH_EMPLOYMENT_LINE_CONFIG = {
     "pageTitle": "Tech Vector — total employment in the direct tech sector",
-    "title": "Total Employment in the Direct Tech Sector",
     "caption": "Total number of people employed by companies in the direct tech sector.",
     "source": "Source: Australian Bureau of Statistics ({year}). Data is aggregated by the Tech Council of Australia.",
     "downloadFilename": "total_employment_direct_tech_sector.csv",
