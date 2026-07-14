@@ -41,6 +41,7 @@
 #   value) reflect readabs' long-standing standard tidy format; flagged
 #   here in case a newer version has renamed anything.
 
+install.packages(c("readabs", "readrba"))
 suppressPackageStartupMessages({
   library(readabs)
   library(readrba)
