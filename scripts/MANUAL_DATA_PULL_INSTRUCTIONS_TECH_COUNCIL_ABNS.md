@@ -10,7 +10,9 @@
 - ABNs arrive in human display format with spaces (`"44 645 215 194"`); `sync_zoho_abn_webhook.py` strips them to bare digits before writing. It also skips (with a per-company warning, not a hard failure) any account whose ABN isn't exactly 11 digits after stripping — real production data has had both blank ABNs and wrong-length ones (e.g. a 9-digit value) for a handful of accounts; these need fixing at the CRM source, this script can't guess a company's real ABN.
 - `account_count` is checked against `len(accounts_data)` as an integrity sanity check (a mismatch is only a warning, not a hard failure — an update to this doc noting whatever generates the payload should probably make these agree).
 
-**What sends this payload, and on what trigger, isn't documented here yet** — this section previously described a 3-Workflow-Rule, per-record-change design that turned out not to match what's actually running. Whoever owns the Zoho-side process (a scheduled function, a report export, etc.) should fill in: what triggers a send (a schedule? a manual run? a record change that then queries everyone?), and the GitHub PAT setup (`Authorization: token <PAT>` header, `POST https://api.github.com/repos/tca-research/tech_vector/dispatches`) it uses to reach this repo.
+**Owner:** Leo (leo@techcouncil.com.au) owns the Zoho-side process that sends this payload — he's the contact for changes to the trigger, the GitHub PAT, or the payload shape.
+
+**What sends this payload, and on what trigger, isn't documented here yet** — this section previously described a 3-Workflow-Rule, per-record-change design that turned out not to match what's actually running. Leo should fill in: what triggers a send (a schedule? a manual run? a record change that then queries everyone?), and the GitHub PAT setup (`Authorization: token <PAT>` header, `POST https://api.github.com/repos/tca-research/tech_vector/dispatches`) it uses to reach this repo.
 
 This document explains how to get the current list of Tech Council of Australia member ABNs into this repository so `scripts/automated_data_prep.py` can identify which WGEA-reporting companies are Tech Council members.
 
@@ -61,7 +63,7 @@ git push -u origin update_tca_abns
 - **File must be a CSV, not an Excel file.**
 
 **Future automation — done**
-- This is now automated via a Zoho CRM webhook pushing directly to `scripts/sync_zoho_abn_webhook.py` — see the "Zoho webhook setup" section above for the exact rule/criteria/webhook-body configuration.
+- This is now automated via a Zoho CRM webhook pushing directly to `scripts/sync_zoho_abn_webhook.py` — see "Payload contract" above for the exact payload shape and field-level caveats, and "Owner" above for who to contact about the Zoho-side setup.
 - `scripts/automated_data_prep.py` now reads `data/input/automated_pull/Tech_Council_ABNs.csv` by default. **If you're using this doc's fallback steps**, temporarily change that read path back to `DATA_INPUT / "manual_pull" / "Tech_Council_ABNs.csv"` until the webhook is working again, and revert once fixed.
 
 **Where to put files (fallback only)**

@@ -30,7 +30,7 @@ This document explains how to download CSVs from the ABS TableBuilder and upload
 
 ```bash
 git add data/input/manual_pull/*.csv
-git commit -m "Add ABS TableBuilder CSV'
+git commit -m "Add ABS TableBuilder CSV: tech_roles_in_tech_subsector.csv"
 git push origin main
 ```
 

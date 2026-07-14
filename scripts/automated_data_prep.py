@@ -329,7 +329,7 @@ mapping_data = pd.DataFrame({
         100 - round(tech_council_wgea_salary_df['Upper quartile % women'].mean() * 100, 1)
     ],
     'TCA Members - Example Roles': [
-        f"Quartile 1 band include, on average, an  {picked_1[0].lower()}, a {picked_1[1].lower()}, a {picked_1[2].lower()}, or a {picked_2[3].lower()}.",
+        f"Quartile 1 band include, on average, an  {picked_1[0].lower()}, a {picked_1[1].lower()}, a {picked_1[2].lower()}, or a {picked_1[3].lower()}.",
         f"Low-mid quartile roles include, on average, an {picked_2[0].lower()}, a {picked_2[1].lower()}, a {picked_2[2].lower()}, or a {picked_2[3].lower()}.",
         f"Mid-upper quartile roles include, on average, an {picked_3[0].lower()}, a {picked_3[1].lower()}, a {picked_3[2].lower()}, or a {picked_3[3].lower()}.",
         f"This top-paying quartile would contain high-level leadership roles including C-Suite and Vice President-level executives as well as top-tier technical roles like a {picked_4[0].lower()}, a {picked_4[1].lower()}."
@@ -510,7 +510,7 @@ other_sectors_comp = wgea_workforce_composition
 
 direct_tech_sector_comp =  wgea_workforce_composition[wgea_workforce_composition['anzsic_class'].isin(anzsic_class)]
 
-wgea_workforce_composition['employer_abn'] = wgea_workforce_composition['employer_abn'].astype(str).str.rstrip('.0')
+wgea_workforce_composition['employer_abn'] = wgea_workforce_composition['employer_abn'].astype(str).str.replace(r'\.0$', '', regex=True)
 tca_sector_comp = wgea_workforce_composition[wgea_workforce_composition['employer_abn'].isin(abn_df['ABN'])].copy()
 
 tca_sector_comp['Sector'] = 'TCA Member Companies'
@@ -622,7 +622,10 @@ ai_total_ranking_top_5.to_csv(DATA_OUTPUT / "global_ai_rankings.csv", index = Fa
 global_oecd = global_oecd.rename(columns={'country': 'Category', 'value': '% of GDP'})
 global_oecd['% of GDP'] = round(global_oecd['% of GDP'], 1)
 
-region_map = {
+# Shared by the R&D and Skills sections below (both use OECD-style country
+# names) — previously two separately-maintained copies that had drifted
+# apart, e.g. Singapore was "APAC" here but "EMEA" in the Skills copy.
+OECD_REGION_MAP = {
     "Israel": "EMEA",
     "Korea": "APAC",
     "United States": "Americas",
@@ -656,12 +659,15 @@ region_map = {
     "Ireland": "EMEA",
     "Luxembourg": "EMEA",
     "Slovak Republic": "EMEA",
+    "Slovak Rep.": "EMEA",
     "Latvia": "EMEA",
     "Chile": "Americas",
-    "Costa Rica": "Americas"
+    "Costa Rica": "Americas",
+    "Singapore": "APAC",
+    "Average": "Global Average"
 }
 
-global_oecd["Region"] = global_oecd["Category"].map(region_map)
+global_oecd["Region"] = global_oecd["Category"].map(OECD_REGION_MAP)
 
 rd_top_5= (
     global_oecd.groupby("Region", group_keys=False)
@@ -680,47 +686,10 @@ rd_total_ranking_top_5.to_csv(DATA_OUTPUT / "global_r_and_d_rankings.csv", index
 
 
 skills = skills_index.merge(labour_market_pressure_index, on = 'Category')
-region_map = {
-    "Israel": "EMEA",
-    "Korea": "APAC",
-    "United States": "Americas",
-    "Sweden": "EMEA",
-    "Belgium": "EMEA",
-    "Japan": "APAC",
-    "Austria": "EMEA",
-    "Switzerland": "EMEA",
-    "Germany": "EMEA",
-    "Finland": "EMEA",
-    "United Kingdom": "EMEA",
-    "Denmark": "EMEA",
-    "Iceland": "EMEA",
-    "Netherlands": "EMEA",
-    "France": "EMEA",
-    "Slovenia": "EMEA",
-    "Czechia": "EMEA",
-    "Norway": "EMEA",
-    "Canada": "Americas",
-    "Estonia": "EMEA",
-    "Portugal": "EMEA",
-    "Australia": "Australia",
-    "Hungary": "EMEA",
-    "New Zealand": "APAC",
-    "Greece": "EMEA",
-    "Poland": "EMEA",
-    "Italy": "EMEA",
-    "Türkiye": "EMEA",
-    "Spain": "EMEA",
-    "Lithuania": "EMEA",
-    "Ireland": "EMEA",
-    "Luxembourg": "EMEA",
-    "Slovak Rep.": "EMEA",
-    "Latvia": "EMEA",
-    "Chile": "Americas",
-    "Costa Rica": "Americas",
-    "Singapore": "EMEA", 
-    "Average": "Global Average"
-}
 
-skills["Region"] = skills["Category"].map(region_map)
+skills["Region"] = skills["Category"].map(OECD_REGION_MAP)
+# This chart breaks Australia out as its own category instead of grouping
+# it into APAC with the other countries — deliberate, not a mapping gap.
+skills.loc[skills["Category"] == "Australia", "Region"] = "Australia"
 
 skills.to_csv(DATA_OUTPUT / "global_skills_rankings.csv", index = False)

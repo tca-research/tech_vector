@@ -112,7 +112,9 @@ webhook config, not in this repo. See
 contract section, and the two gotchas above (full-snapshot semantics,
 ABN normalization) for why the receiving script is built the way it is.
 What exactly triggers a send on the Zoho side isn't documented yet —
-flagged as an open item in that doc.
+flagged as an open item in that doc. Leo (leo@techcouncil.com.au) owns
+that Zoho-side process — he's the contact for changing the trigger, the
+GitHub PAT, or the payload shape.
 
 `charts/dashboard_status.html` (the `status` chart in `build_charts.py`)
 shows "Last updated" / "Next update" using the same cycle-anchor math as
