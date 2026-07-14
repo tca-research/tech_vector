@@ -71,22 +71,22 @@ this file — invoke them rather than re-deriving the steps:
 - **`automated_data_prep.py`'s pay-quartiles example-role text uses
   unseeded `random.sample()`** — running it purely to verify produces a
   spurious diff each time, not a real data change. Don't commit that noise.
-- **Zoho CRM workflow rules only fire on a false→true criteria transition,
-  never true→false.** A rule scoped to "Membership_Status = Active" catches
-  a company joining but will never catch one leaving — that needs a second,
-  oppositely-scoped rule (see `sync-zoho-abn-webhook.yml`'s design in
-  `MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`). That second rule
-  then re-fires on every subsequent edit to an already-non-matching record,
-  not just the transition moment — `sync_zoho_abn_webhook.py` has to be
-  idempotent (remove-if-present, upsert-if-absent) specifically because of
-  this, not as a general defensive habit.
-- **The Zoho ABN webhook has no periodic reconciliation.** Zoho retries a
-  failed webhook delivery once, ~15 minutes later, then stops permanently
-  for that trigger — if both attempts fail, that membership change is
-  silently lost with no automated alert. This was an explicit, accepted
-  simplicity trade-off (see the plan that shipped it), not an oversight —
-  don't "fix" it by quietly adding a reconciliation job without revisiting
-  that decision first.
+- **The Zoho ABN webhook sends a full membership snapshot every time, not
+  an incremental change.** `sync_zoho_abn_webhook.py` overwrites
+  `Tech_Council_ABNs.csv` wholesale with whatever `accounts_data` list it
+  receives — it does not merge/diff against the existing file. A payload
+  containing only a subset of members (a bug on the sending side, a
+  truncated request, etc.) would silently drop every member missing from
+  it. This is what makes the sync self-healing against a single failed
+  delivery (the next good snapshot fully corrects everything), but it also
+  means "always send the complete list" is a hard requirement on whatever
+  generates the payload, not just a nice-to-have.
+- **Zoho sends ABNs in human display format with spaces**
+  (`"44 645 215 194"`), not bare digits — `sync_zoho_abn_webhook.py` strips
+  them before writing. Real production data has also had blank and
+  wrong-length (e.g. 9-digit) ABNs for a handful of accounts; these are
+  skipped with a per-company warning rather than failing the whole sync,
+  since the CRM data itself needs fixing, not this script's logic.
 
 ## GitHub Actions automation
 
@@ -108,10 +108,11 @@ Tech Council member ABNs — event-driven via `repository_dispatch`, not on
 this file's 8-week schedule. It has no Zoho credentials of its own; the
 only credential in that whole path (a GitHub PAT) lives inside Zoho's own
 webhook config, not in this repo. See
-`scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`'s "Zoho
-webhook setup" section for the 3 Workflow Rules that drive it, and the two
-gotchas above (transition-only firing, no reconciliation) for why it's
-built the way it is.
+`scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`'s payload
+contract section, and the two gotchas above (full-snapshot semantics,
+ABN normalization) for why the receiving script is built the way it is.
+What exactly triggers a send on the Zoho side isn't documented yet —
+flagged as an open item in that doc.
 
 `charts/dashboard_status.html` (the `status` chart in `build_charts.py`)
 shows "Last updated" / "Next update" using the same cycle-anchor math as
