@@ -17,10 +17,11 @@ shape or filename, the aggregation step reads exact column names/filenames.
 | ABS TableBuilder exports | `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TABLEBUILDER_UPLOAD.md` | `tech_roles_in_tech_subsector.csv`, `tech_jobs_in_australia.csv` |
 
 A third source — Tech Council member ABNs — used to be manual too; it's
-now automated via `scripts/automated_fetch_zoho_abns.py` (pulls from Zoho
-CRM). `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md` is now
-only a fallback if that automation breaks — don't use it for a routine
-refresh.
+now automated via a Zoho CRM webhook (event-driven, see
+`scripts/sync_zoho_abn_webhook.py` and `.github/workflows/
+sync-zoho-abn-webhook.yml`). `scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md`
+is now only a fallback if that automation breaks — don't use it for a
+routine refresh.
 
 ## Steps
 

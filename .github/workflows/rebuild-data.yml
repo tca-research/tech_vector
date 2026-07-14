@@ -12,10 +12,6 @@ on:
         description: 'Run the full rebuild regardless of the 8-week cycle gate'
         type: boolean
         default: false
-      force_reminder:
-        description: 'Send the reminder email now regardless of the 7-day-before gate'
-        type: boolean
-        default: false
 
 concurrency:
   group: rebuild-data
@@ -31,8 +27,6 @@ env:
 jobs:
   rebuild:
     runs-on: ubuntu-latest
-    outputs:
-      did_rebuild: ${{ steps.gate.outputs.should_run }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,10 +73,6 @@ jobs:
       - name: Fetch all source data
         if: steps.gate.outputs.should_run == 'true'
         run: python3 scripts/automated_fetch_all_data.py
-        env:
-          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
-          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
-          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
 
       - name: Clean manual-pull CSVs
         if: steps.gate.outputs.should_run == 'true'
@@ -114,84 +104,3 @@ jobs:
             git commit -m "Automated data refresh + chart rebuild ($(date -u +%Y-%m-%d))"
             git push origin HEAD:main
           fi
-
-  send-reminder:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read   # only checks out code + calls the Zoho Mail API — never commits
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Check whether a rebuild is exactly 7 days away
-        id: gate
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force_reminder }}" = "true" ]; then
-            echo "Manual force run — bypassing the 7-day-before gate."
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          today=$(date -u +%Y-%m-%d)
-          days_since=$(( ( $(date -u -d "$today" +%s) - $(date -u -d "$CYCLE_ANCHOR_DATE" +%s) ) / 86400 ))
-          # Bash's % is a truncating remainder (sign follows the dividend),
-          # not true mathematical mod — for a negative days_since (e.g. -7,
-          # the very first reminder, 7 days before CYCLE_ANCHOR_DATE itself)
-          # a raw `days_since % CYCLE_LENGTH_DAYS` evaluates to -7, not 49.
-          # Normalize to a true non-negative mod first: ((x % n) + n) % n.
-          mod=$(( ( (days_since % CYCLE_LENGTH_DAYS) + CYCLE_LENGTH_DAYS) % CYCLE_LENGTH_DAYS ))
-          echo "Today (UTC): $today; days since anchor ($CYCLE_ANCHOR_DATE): $days_since; normalized mod: $mod"
-          # Reminder day = exactly 7 days before a rebuild day, i.e.
-          # days_since ≡ -7 ≡ 49 (mod 56). Guard days_since >= -7 so this
-          # doesn't also match -63, -119, ... (mod 56 gives 49 there too,
-          # but those precede the anchor's very first cycle and aren't
-          # real reminder days).
-          if [ "$days_since" -ge -7 ] && [ "$mod" -eq 49 ]; then
-            echo "7 days before a rebuild — sending reminder."
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Not a reminder day — skipping."
-            echo "should_run=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Set up Python
-        if: steps.gate.outputs.should_run == 'true'
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Python dependencies
-        if: steps.gate.outputs.should_run == 'true'
-        run: pip install requests
-
-      - name: Send reminder email
-        if: steps.gate.outputs.should_run == 'true'
-        run: python3 scripts/automated_send_reminder_email.py
-        env:
-          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
-          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
-          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
-
-  send-completion-notice:
-    needs: rebuild
-    if: needs.rebuild.outputs.did_rebuild == 'true' && needs.rebuild.result == 'success'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read   # only checks out code + calls the Zoho Mail API — never commits
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Python dependencies
-        run: pip install requests
-
-      - name: Send completion email
-        run: python3 scripts/automated_send_completion_email.py
-        env:
-          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
-          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
-          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}

@@ -1,14 +1,16 @@
 """
-Runs all six data-pull scripts in one go:
+Runs all five data-pull scripts in one go:
     - automated_fetch_oecd.py               (OECD MSTI - Australia GERD % of GDP, all countries)
     - automated_fetch_wgea.py                (WGEA salary/composition/management stats)
     - automated_fetch_global_ai_ranking.py   (Stanford HAI Global AI Vibrancy ranking)
     - automated_fetch_levels_fyi.py          (Levels FYI - Australia tech sector salaries)
     - automated_fetch_macro_data.R           (Macro data - ABS unemployment rate, RBA cash
                                      rate, ABS EQ08 employed by occupation)
-    - automated_fetch_zoho_abns.py           (Zoho CRM - current Tech Council member ABNs;
-                                     needs ZOHO_CLIENT_ID/ZOHO_CLIENT_SECRET/ZOHO_REFRESH_TOKEN
-                                     in the environment - see that script's docstring)
+
+Tech Council member ABNs are NOT fetched here -- that source is
+event-driven via a Zoho CRM webhook, not a scheduled pull. See
+scripts/sync_zoho_abn_webhook.py and .github/workflows/
+sync-zoho-abn-webhook.yml.
 
 Each script is fully standalone with its own sensible defaults (no required
 arguments), so this just calls each one in turn and reports what happened -
@@ -41,7 +43,6 @@ SCRIPTS = [
     "automated_fetch_global_ai_ranking.py",
     "automated_fetch_levels_fyi.py",
     "automated_fetch_macro_data.R",
-    "automated_fetch_zoho_abns.py",
 ]
 
 INTERPRETERS = {

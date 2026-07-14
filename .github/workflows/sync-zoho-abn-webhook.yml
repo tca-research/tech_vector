@@ -1,0 +1,54 @@
+name: Sync Zoho ABN webhook
+
+# Event-driven, not scheduled: a Zoho CRM Workflow Rule (see
+# scripts/MANUAL_DATA_PULL_INSTRUCTIONS_TECH_COUNCIL_ABNS.md's "Zoho webhook
+# setup" section) POSTs directly to GitHub's repository_dispatch API
+# whenever a Tech Council member Account is added, edited, or removed in
+# Zoho CRM — carrying the changed Account's name/ABN in the payload itself.
+# No Zoho credentials live in this repo: the one credential this needs (a
+# GitHub PAT, so Zoho can call the dispatches API) is configured inside
+# Zoho's own webhook action, not here.
+on:
+  repository_dispatch:
+    types: [zoho-abn-sync]
+
+concurrency:
+  group: sync-zoho-abn
+  cancel-in-progress: false   # queue, don't race, if events arrive close together
+
+permissions:
+  contents: write   # to commit the updated ABN CSV back to main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pandas
+        run: pip install "pandas>=2.0"
+
+      - name: Apply ABN update from webhook payload
+        run: python3 scripts/sync_zoho_abn_webhook.py
+        env:
+          ZOHO_WEBHOOK_ACTION: ${{ github.event.client_payload.action }}
+          ZOHO_WEBHOOK_ACCOUNT_NAME: ${{ github.event.client_payload.account_name }}
+          ZOHO_WEBHOOK_ABN: ${{ github.event.client_payload.abn }}
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/input/automated_pull/Tech_Council_ABNs.csv
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Zoho webhook: ABN ${{ github.event.client_payload.action }} for ${{ github.event.client_payload.account_name }}"
+            git push origin HEAD:main
+          fi
