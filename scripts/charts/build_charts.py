@@ -283,7 +283,7 @@ def load_scatter_data(config=SCATTER_CONFIG, source_file="global_skills_rankings
 # =============================================================================
 INTERACTIVE_LINE_CONFIG = {
     "pageTitle": "Tech Vector — employment by occupation",
-    "title": "Employed persons by tech occupation, 1986–2025",
+    "title": "Employed persons by tech occupation, 1986–{year}",
     "source": "Source: Australian Bureau of Statistics ({year}).",
     "downloadFilename": "tech_occupations_over_time.csv",
     # Which column holds the date label, and its strptime format (used only
