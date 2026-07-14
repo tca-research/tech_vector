@@ -149,8 +149,12 @@ function renderInteractiveLine() {
 
     // hover crosshair + shared tooltip
     const hit = el("rect", { x: padL, y: padT, width: plotW, height: plotH, fill: "transparent" }, svg);
-    const cross = el("line", { x1: 0, x2: 0, y1: padT, y2: padT + plotH, stroke: "var(--axis)", "stroke-width": 1, opacity: 0 }, svg);
-    hit.addEventListener("pointermove", (ev) => {
+    // pointer-events: none — see small_multiples.js's identical crosshair for
+    // why: without it, hover repositioning this line under the cursor makes
+    // it win hit-testing over the hit rect beneath, firing a spurious
+    // pointerleave that hides the tooltip the same pointermove just showed.
+    const cross = el("line", { x1: 0, x2: 0, y1: padT, y2: padT + plotH, stroke: "var(--axis)", "stroke-width": 1, opacity: 0, "pointer-events": "none" }, svg);
+    bindTooltipHover(hit, (ev) => {
       const rect = svg.getBoundingClientRect();
       const scale = rect.width / W;
       const mx = (ev.clientX - rect.left) / scale;
@@ -163,8 +167,7 @@ function renderInteractiveLine() {
       if (rows.length) {
         showTooltip(ev.clientX, ev.clientY, ttBox(data.dates[idx], rows));
       }
-    });
-    hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTooltip(); });
+    }, () => { cross.setAttribute("opacity", 0); hideTooltip(); });
 
     registerDownload(
       "line",

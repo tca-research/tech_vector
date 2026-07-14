@@ -65,11 +65,10 @@ function renderBarChart() {
       bar.style.cursor = "pointer";
       const hit = el("rect", { x: labelW, y: by - 2, width: Math.max(w, 6), height: barH + 4, fill: "transparent" }, svg);
       [bar, hit].forEach((node) => {
-        node.addEventListener("pointermove", (ev) => {
+        bindTooltipHover(node, (ev) => {
           bar.style.filter = "brightness(1.08)";
           showTooltip(ev.clientX, ev.clientY, ttBox(d.category, [ttRow(barColor, s.label, formatValue(val))]));
-        });
-        node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
+        }, () => { bar.style.filter = ""; hideTooltip(); });
       });
       const textColor = colorTextVar(s.color);
       textEl(labelW + w + 8, by + barH / 2 + 5, formatValue(val), { "font-size": "13.5", "font-weight": "700", fill: textColor }, svg);

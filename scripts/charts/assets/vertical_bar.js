@@ -52,11 +52,10 @@ function renderVerticalBar() {
     const valueLabel = formatValue(d.value);
     [bar, hit].forEach((node) => {
       node.style.cursor = "pointer";
-      node.addEventListener("pointermove", (ev) => {
+      bindTooltipHover(node, (ev) => {
         bar.style.filter = "brightness(1.08)";
         showTooltip(ev.clientX, ev.clientY, ttBox(d.category, [ttRow(color, "Value", valueLabel)]));
-      });
-      node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
+      }, () => { bar.style.filter = ""; hideTooltip(); });
     });
     textEl(cx, barTop + 24, valueLabel, { "text-anchor": "middle", "font-size": "14", "font-weight": "700", fill: "#fff" }, svg);
     textEl(cx, padT + plotH + 22, d.category, { "text-anchor": "middle", "font-size": "12.5", "font-weight": "600", fill: "var(--ink-primary)" }, svg);

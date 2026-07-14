@@ -97,11 +97,10 @@ function renderTopRankedDual() {
         const valueLabel = formatValue(r.value);
         [bar, hit].forEach((node) => {
           node.style.cursor = "pointer";
-          node.addEventListener("pointermove", (ev) => {
+          bindTooltipHover(node, (ev) => {
             bar.style.filter = "brightness(1.1)";
             showTooltip(ev.clientX, ev.clientY, ttBox(r.label, [ttRow(color, p.title, valueLabel)]));
-          });
-          node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
+          }, () => { bar.style.filter = ""; hideTooltip(); });
         });
         textEl(labelW + w + 6, rowY + barH / 2 + 4, valueLabel, { "font-size": "12", "font-weight": "700", fill: colorTextVar(p.color) }, svg);
         tableRows.push([active, p.title, r.label, valueLabel]);

@@ -166,7 +166,13 @@ figure.chart-card {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 22px 18px;
 }
-.sm-panel-title { font-size: 13px; font-weight: 700; margin: 0 0 6px; }
+/* min-height reserves space for 2 lines regardless of how a given panel's
+   title actually wraps at the current column width — same fix pattern as
+   .kpi-card's min-height above. Without it, a panel with a short one-line
+   title starts its chart-mount higher than neighbors whose longer title
+   wraps to 2 lines, so the plotted charts (and their bottom edges) don't
+   line up across the row. */
+.sm-panel-title { font-size: 13px; font-weight: 700; line-height: 1.3; margin: 0 0 6px; min-height: 34px; }
 
 .stacked-sm-panels { display: flex; flex-direction: column; gap: 20px; }
 .stacked-sm-panel svg { display: block; width: 100%; height: auto; }
@@ -181,7 +187,18 @@ figure.chart-card {
 .reference-item a { color: var(--cat-4-text); }
 
 .tooltip {
-  position: fixed; pointer-events: none; z-index: 50;
+  /* top/left: 0 are load-bearing, not decorative defaults — showTooltip()
+     positions this element purely via a "translate(x,y)" transform, on the
+     assumption that (x,y) is a viewport-absolute offset. But a
+     position:fixed element with top/left left at their "auto" default is
+     anchored to its own static in-flow position (here, wherever this div
+     falls in the page after all the preceding chart content) and the
+     transform then offsets from THAT point, not from the viewport's
+     top-left corner — so without an explicit 0/0 anchor the tooltip renders
+     however far down the page its DOM position happens to be, plus the
+     intended offset, i.e. far below the cursor on any page with real
+     content above this div. */
+  position: fixed; top: 0; left: 0; pointer-events: none; z-index: 50;
   background: var(--ink-primary); color: var(--surface);
   font-size: 12.5px; line-height: 1.45; border-radius: 8px;
   padding: 8px 10px; box-shadow: 0 6px 18px rgba(0,0,0,0.18);
@@ -205,6 +222,16 @@ figure.chart-card {
 .axis-label { fill: var(--ink-muted); font-size: 11.5px; }
 .grid-line { stroke: var(--grid); stroke-width: 1; }
 .axis-line { stroke: var(--axis); stroke-width: 1; }
+
+/* No chart ever hangs a listener on an SVG <text> — hit-testing always goes
+   through a dedicated invisible rect/circle drawn separately. But value
+   labels drawn *inside* a bar/segment (e.g. vertical_bar.js, the "labelInside"
+   branch of percentile_bar.js, drawStackedBarSegments' in-bar % labels) paint
+   on top of that hit target and, being real painted content, still swallow
+   the pointer event themselves — so hovering directly over the printed
+   number showed no tooltip at all. Blanket pointer-events:none on chart text
+   makes every hit target reachable through its own labels, everywhere. */
+svg text { pointer-events: none; }
 
 @media (max-width: 640px) {
   figure.chart-card { padding: 12px 12px 10px; }
@@ -303,13 +330,6 @@ function formatMoney(v) {
 function formatCount(v) {
   return Math.round(v).toLocaleString("en-AU");
 }
-function formatCountShort(v) {
-  // Independent-axis small multiples can have a max well under 1000 (e.g. a
-  // ~100-160 range) — dividing everything by 1000 there would print "0K" on
-  // every tick, so only use the K suffix once it's actually needed.
-  if (Math.abs(v) < 1000) return String(Math.round(v));
-  return Math.round(v / 1000) + "K";
-}
 function rollingMeanCentered(values, window) {
   const half = Math.floor(window / 2);
   return values.map((_, i) => {
@@ -358,6 +378,34 @@ function showTooltip(x, y, html) {
 function hideTooltip() {
   tooltipEl.classList.remove("visible");
 }
+// A tap alone (no drag) never fires "pointermove" — it's just pointerdown ->
+// pointerup with no movement — so every chart's hover-driven tooltip was
+// invisible on touch devices. bindTooltipHover adds pointerdown as a second
+// trigger for touch, and skips the pointerleave auto-hide for touch (its
+// transient pointer fires pointerleave right after pointerup as part of
+// lifting the finger, which isn't the user asking to dismiss anything, and
+// would otherwise hide the tooltip before it's ever seen). A capture-phase
+// listener below dismisses the currently-open one on the next tap anywhere
+// else, since touch has no equivalent of "the mouse moved away".
+let activeTouchDismiss = null;
+function bindTooltipHover(el, onMove, onLeave) {
+  el.addEventListener("pointermove", onMove);
+  el.addEventListener("pointerleave", (ev) => {
+    if (ev.pointerType === "touch") return;
+    onLeave();
+  });
+  el.addEventListener("pointerdown", (ev) => {
+    if (ev.pointerType !== "touch") return;
+    onMove(ev);
+    activeTouchDismiss = onLeave;
+  });
+}
+document.addEventListener("pointerdown", (ev) => {
+  if (ev.pointerType === "touch" && activeTouchDismiss) {
+    activeTouchDismiss();
+    activeTouchDismiss = null;
+  }
+}, true);
 function ttRow(color, label, value) {
   const row = document.createElement("div");
   row.className = "tt-row";
@@ -452,11 +500,10 @@ function drawStackedBarSegments(svg, x0, y, plotW, barH, series, values, tooltip
       const valueLabel = (Math.round(val * 10) / 10) + "%";
       [seg, hit].forEach((node) => {
         node.style.cursor = "pointer";
-        node.addEventListener("pointermove", (ev) => {
+        bindTooltipHover(node, (ev) => {
           seg.style.filter = "brightness(1.08)";
           showTooltip(ev.clientX, ev.clientY, ttBox(tooltipTitle, [ttRow(color, s.label, valueLabel)]));
-        });
-        node.addEventListener("pointerleave", () => { seg.style.filter = ""; hideTooltip(); });
+        }, () => { seg.style.filter = ""; hideTooltip(); });
       });
       if (w > 36) {
         textEl(cursor + w / 2, y + barH / 2 + 4, valueLabel, { "text-anchor": "middle", "font-size": "12", "font-weight": "700", fill: "#fff" }, svg);
@@ -610,8 +657,12 @@ function renderLineChart() {
   }
 
   const hit = el("rect", { x: padL, y: padT, width: plotW, height: plotH, fill: "transparent" }, svg);
-  const cross = el("line", { x1: 0, x2: 0, y1: padT, y2: padT + plotH, stroke: "var(--axis)", "stroke-width": 1, opacity: 0 }, svg);
-  hit.addEventListener("pointermove", (ev) => {
+  // pointer-events: none — see small_multiples.js's identical crosshair for
+  // why: without it, hover repositioning this line under the cursor makes it
+  // win hit-testing over the hit rect beneath, firing a spurious
+  // pointerleave that hides the tooltip the same pointermove just showed.
+  const cross = el("line", { x1: 0, x2: 0, y1: padT, y2: padT + plotH, stroke: "var(--axis)", "stroke-width": 1, opacity: 0, "pointer-events": "none" }, svg);
+  bindTooltipHover(hit, (ev) => {
     const rect = svg.getBoundingClientRect();
     const scale = rect.width / W;
     const mx = (ev.clientX - rect.left) / scale;
@@ -620,8 +671,7 @@ function renderLineChart() {
     if (data.values[idx] == null) return;
     cross.setAttribute("x1", x(dates[idx])); cross.setAttribute("x2", x(dates[idx])); cross.setAttribute("opacity", 1);
     showTooltip(ev.clientX, ev.clientY, ttBox(data.dates[idx], [ttRow(color, cfg.endLabel || cfg.title, formatValue(data.values[idx]))]));
-  });
-  hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTooltip(); });
+  }, () => { cross.setAttribute("opacity", 0); hideTooltip(); });
 
   registerDownload(
     "line",

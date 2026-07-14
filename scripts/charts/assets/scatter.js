@@ -63,13 +63,13 @@ function renderScatter() {
     if (isHighlighted) {
       textEl(cx + 12, cy + 4, d.name, { "font-size": "12", "font-weight": "700", fill: color }, svg);
     }
-    el("circle", { cx, cy, r: 14, fill: "transparent" }, svg).addEventListener("pointermove", (ev) => {
+    const hitCircle = el("circle", { cx, cy, r: 14, fill: "transparent" }, svg);
+    bindTooltipHover(hitCircle, (ev) => {
       showTooltip(ev.clientX, ev.clientY, ttBox(d.name, [
         ttRow(color, cfg.xAxisLabel, d.x.toFixed(2)),
         ttRow(color, cfg.yAxisLabel, d.y.toFixed(2)),
       ]));
-    });
-    svg.lastChild.addEventListener("pointerleave", hideTooltip);
+    }, hideTooltip);
     tableRows.push([d.name, d.group, d.x.toFixed(3), d.y.toFixed(3)]);
   });
 

@@ -105,11 +105,10 @@ function renderPercentileBar() {
       const valueLabel = formatValue(d.value);
       [bar, hit].forEach((node) => {
         node.style.cursor = "pointer";
-        node.addEventListener("pointermove", (ev) => {
+        bindTooltipHover(node, (ev) => {
           bar.style.filter = "brightness(1.1)";
           showTooltip(ev.clientX, ev.clientY, ttBox(activeJobTitle + " — " + activeLevel, [ttRow(color, d.percentile, valueLabel)]));
-        });
-        node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
+        }, () => { bar.style.filter = ""; hideTooltip(); });
       });
       const labelInside = w > 60;
       textEl(

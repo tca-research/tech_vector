@@ -80,11 +80,10 @@ function renderRankedBar() {
       const valueLabel = (Math.round(d.value * 10) / 10) + (cfg.valueSuffix || "");
       [bar, hit].forEach((node) => {
         node.style.cursor = "pointer";
-        node.addEventListener("pointermove", (ev) => {
+        bindTooltipHover(node, (ev) => {
           bar.style.filter = "brightness(1.1)";
           showTooltip(ev.clientX, ev.clientY, ttBox(d.name, [ttRow(color, d.region || "", valueLabel)]));
-        });
-        node.addEventListener("pointerleave", () => { bar.style.filter = ""; hideTooltip(); });
+        }, () => { bar.style.filter = ""; hideTooltip(); });
       });
       textEl(labelW + w + 6, rowY + barH / 2 + 4, valueLabel, { "font-size": "12", "font-weight": "700", fill: isHighlighted ? colorTextVar(cfg.highlightColor) : "var(--ink-secondary)" }, svg);
       tableRows.push([d.name, d.region || "", valueLabel]);

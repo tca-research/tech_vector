@@ -91,8 +91,13 @@ function renderSmallMultiples() {
   function hoverLayer(svg, dates, seriesList, yMax) {
     const x = xScaleFor(dates);
     const hit = el("rect", { x: padL, y: padT, width: plotW, height: plotH, fill: "transparent" }, svg);
-    const cross = el("line", { x1: 0, x2: 0, y1: padT, y2: padT + plotH, stroke: "var(--axis)", "stroke-width": 1, opacity: 0 }, svg);
-    hit.addEventListener("pointermove", (ev) => {
+    // pointer-events: none — this line is drawn after (so painted over) the
+    // hit rect, and hover repositions it to sit right under the cursor's own
+    // x-coordinate; without this it would then win hit-testing over the hit
+    // rect at that exact pixel, firing a spurious pointerleave that hides
+    // the tooltip the same pointermove just showed.
+    const cross = el("line", { x1: 0, x2: 0, y1: padT, y2: padT + plotH, stroke: "var(--axis)", "stroke-width": 1, opacity: 0, "pointer-events": "none" }, svg);
+    bindTooltipHover(hit, (ev) => {
       const rect = svg.getBoundingClientRect();
       const scale = rect.width / W;
       const mx = (ev.clientX - rect.left) / scale;
@@ -105,8 +110,7 @@ function renderSmallMultiples() {
         .filter((s) => s.values[idx] != null)
         .map((s) => ttRow(s.color, s.label, s.fmt(s.values[idx])));
       showTooltip(ev.clientX, ev.clientY, ttBox(new Date(dates[idx]).toLocaleDateString("en-AU", { year: "numeric", month: "short" }), rows));
-    });
-    hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTooltip(); });
+    }, () => { cross.setAttribute("opacity", 0); hideTooltip(); });
   }
 
   // macro panel — an arbitrary number of series, all sharing one Y-axis,
@@ -126,7 +130,7 @@ function renderSmallMultiples() {
     const macroTicks = niceTicks(0, Math.max(...seriesValues.flat().filter((v) => v != null)), 4);
     const yMax = macroTicks[macroTicks.length - 1];
     const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
-    drawAxes(svg, dates, macroTicks, yMax, (v) => v);
+    drawAxes(svg, dates, macroTicks, yMax, (v) => v + "%");
     macroCfg.series.forEach((s, i) => linePath(svg, dates, seriesValues[i], yMax, colorVar(s.color), 2, null));
     hoverLayer(svg, dates, macroCfg.series.map((s, i) => ({
       label: s.label,
@@ -152,8 +156,13 @@ function renderSmallMultiples() {
       panelYMax = panelTicks[panelTicks.length - 1];
     }
 
+    // tech_jobs_in_australia.csv's Count column is already reported in
+    // thousands of people (same column the Tech Jobs gauge multiplies by
+    // 1000 to get a headcount) — so an axis tick of "200" is 200,000
+    // people, not 200. Suffix "K" unconditionally to make that legible
+    // rather than reading as a bare, much-too-small headcount.
     const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H }, mount);
-    drawAxes(svg, dates, panelTicks, panelYMax, formatCountShort);
+    drawAxes(svg, dates, panelTicks, panelYMax, (v) => Math.round(v) + "K");
     linePath(svg, dates, raw, panelYMax, "var(--ink-muted)", 1.5, "4 3");
     linePath(svg, dates, smoothed, panelYMax, "var(--cat-3)", 2, null);
     hoverLayer(svg, dates, [

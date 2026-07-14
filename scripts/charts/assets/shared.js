@@ -67,13 +67,6 @@ function formatMoney(v) {
 function formatCount(v) {
   return Math.round(v).toLocaleString("en-AU");
 }
-function formatCountShort(v) {
-  // Independent-axis small multiples can have a max well under 1000 (e.g. a
-  // ~100-160 range) — dividing everything by 1000 there would print "0K" on
-  // every tick, so only use the K suffix once it's actually needed.
-  if (Math.abs(v) < 1000) return String(Math.round(v));
-  return Math.round(v / 1000) + "K";
-}
 function rollingMeanCentered(values, window) {
   const half = Math.floor(window / 2);
   return values.map((_, i) => {
@@ -122,6 +115,34 @@ function showTooltip(x, y, html) {
 function hideTooltip() {
   tooltipEl.classList.remove("visible");
 }
+// A tap alone (no drag) never fires "pointermove" — it's just pointerdown ->
+// pointerup with no movement — so every chart's hover-driven tooltip was
+// invisible on touch devices. bindTooltipHover adds pointerdown as a second
+// trigger for touch, and skips the pointerleave auto-hide for touch (its
+// transient pointer fires pointerleave right after pointerup as part of
+// lifting the finger, which isn't the user asking to dismiss anything, and
+// would otherwise hide the tooltip before it's ever seen). A capture-phase
+// listener below dismisses the currently-open one on the next tap anywhere
+// else, since touch has no equivalent of "the mouse moved away".
+let activeTouchDismiss = null;
+function bindTooltipHover(el, onMove, onLeave) {
+  el.addEventListener("pointermove", onMove);
+  el.addEventListener("pointerleave", (ev) => {
+    if (ev.pointerType === "touch") return;
+    onLeave();
+  });
+  el.addEventListener("pointerdown", (ev) => {
+    if (ev.pointerType !== "touch") return;
+    onMove(ev);
+    activeTouchDismiss = onLeave;
+  });
+}
+document.addEventListener("pointerdown", (ev) => {
+  if (ev.pointerType === "touch" && activeTouchDismiss) {
+    activeTouchDismiss();
+    activeTouchDismiss = null;
+  }
+}, true);
 function ttRow(color, label, value) {
   const row = document.createElement("div");
   row.className = "tt-row";
@@ -216,11 +237,10 @@ function drawStackedBarSegments(svg, x0, y, plotW, barH, series, values, tooltip
       const valueLabel = (Math.round(val * 10) / 10) + "%";
       [seg, hit].forEach((node) => {
         node.style.cursor = "pointer";
-        node.addEventListener("pointermove", (ev) => {
+        bindTooltipHover(node, (ev) => {
           seg.style.filter = "brightness(1.08)";
           showTooltip(ev.clientX, ev.clientY, ttBox(tooltipTitle, [ttRow(color, s.label, valueLabel)]));
-        });
-        node.addEventListener("pointerleave", () => { seg.style.filter = ""; hideTooltip(); });
+        }, () => { seg.style.filter = ""; hideTooltip(); });
       });
       if (w > 36) {
         textEl(cursor + w / 2, y + barH / 2 + 4, valueLabel, { "text-anchor": "middle", "font-size": "12", "font-weight": "700", fill: "#fff" }, svg);
