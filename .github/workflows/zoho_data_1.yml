@@ -1,0 +1,50 @@
+name: Handle Zoho CRM Tech Vector Data
+
+on:
+  repository_dispatch:
+    types: [tech_vector_export]
+
+permissions:
+  contents: write
+
+jobs:
+  convert-to-csv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Process JSON to CSV
+        env:
+          ACCOUNTS_DATA: ${{ toJson(github.event.client_payload.accounts_data) }}
+        shell: python
+        run: |
+          import os
+          import json
+          import csv
+
+          raw_data = os.environ.get("ACCOUNTS_DATA", "[]")
+          accounts = json.loads(raw_data)
+          csv_filename = "active_memberships.csv"
+
+          with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
+              writer = csv.csvwriter = csv.writer(file)
+              writer.writerow(["Account ID", "Company Name", "ABN"])
+              for account in accounts:
+                  writer.writerow([
+                      account.get("account_id", ""),
+                      account.get("company_name", ""),
+                      account.get("abn", "")
+                  ])
+
+      - name: Commit and Push CSV changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add active_memberships.csv
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Automated Sync: Updated active_memberships.csv"
+            git push
+          fi
