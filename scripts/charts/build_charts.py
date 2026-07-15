@@ -497,9 +497,10 @@ def load_ranked_bar_data(config, source_file):
             # JS-safe, so map back to the real column name when it differs.
             src_col = "% of GDP" if col == "pct_gdp" else col
             values[col] = None if pd.isna(row[src_col]) else float(row[src_col])
+        region = row.get(config["regionColumn"], "")
         rows.append({
             "name": row[config["nameColumn"]],
-            "region": row.get(config["regionColumn"], ""),
+            "region": "" if pd.isna(region) else region,
             "values": values,
         })
     return rows
