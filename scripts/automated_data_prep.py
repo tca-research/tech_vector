@@ -664,7 +664,19 @@ OECD_REGION_MAP = {
     "Chile": "Americas",
     "Costa Rica": "Americas",
     "Singapore": "APAC",
-    "Average": "Global Average"
+    "Average": "Global Average",
+    "Argentina": "Americas",
+    "Bulgaria": "EMEA",
+    "China (People’s Republic of)": "APAC",
+    "Chinese Taipei": "APAC",
+    "Croatia": "EMEA",
+    "Romania": "EMEA",
+    "South Africa": "EMEA",
+    # Whole-of-OECD and EU-27 aggregates, not individual countries — bucketed
+    # the same as "Average" so they show up as their own category rather
+    # than competing with real countries for a region's top-5 slots.
+    "OECD": "Global Average",
+    "European Union (27 countries from 01/02/2020)": "Global Average",
 }
 
 global_oecd["Region"] = global_oecd["Category"].map(OECD_REGION_MAP)
