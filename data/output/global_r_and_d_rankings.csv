@@ -1,13 +1,18 @@
 Category,year,metric,% of GDP,Region
-Korea,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,4.9,APAC
-Japan,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.4,APAC
+Korea,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,4.9,
+Chinese Taipei,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,4.0,
+Japan,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.4,
+China (People’s Republic of),2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,2.6,
+Singapore,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,2.0,
+United States,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.4,
+Canada,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,1.9,
+Argentina,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,0.6,
+Costa Rica,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,0.3,
+Israel,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,7.0,
+Sweden,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.6,
+Austria,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.2,
+Belgium,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.2,
+Germany,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.1,
+OECD,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,2.7,
+European Union (27 countries from 01/02/2020),2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,2.1,
 Australia,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,1.7,APAC
-New Zealand,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,1.5,APAC
-United States,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.4,Americas
-Canada,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,1.9,Americas
-Costa Rica,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,0.3,Americas
-Israel,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,7.0,EMEA
-Sweden,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.6,EMEA
-Austria,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.2,EMEA
-Belgium,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.2,EMEA
-Germany,2023,Gross Domestic Expenditure on R&D (GERD) - Percentage of GDP,3.1,EMEA
