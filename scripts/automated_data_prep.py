@@ -125,7 +125,7 @@ lfs_perc_occ.to_csv(DATA_OUTPUT / "tech_jobs_tech_occupations_as_percent_of_labo
 
 ## -- Data downloaded from Table Builder
 
-jobs_per_industry['Date'] = jobs_per_industry['Date'].fillna(method='ffill')
+jobs_per_industry['Date'] = jobs_per_industry['Date'].ffill()
 jobs_per_industry['Number'] = jobs_per_industry['Count']*1000
 
 jobs_tech_sector = jobs_per_industry.groupby('Date', as_index=False)['Number'].sum()
